@@ -6,13 +6,15 @@ export default function SectionHeader({
   smallHeading = "",
   heading = "",
   description = "",
-  gradientHeading = true, // Always true since you're using gradient
+  gradientHeading = true,
   gradientFrom = "from-black",
   gradientVia = "via-red-600",
   gradientTo = "to-gray-900",
   // Individual color props for small heading and description only
   smallHeadingColor = "text-red-600",
   descriptionColor = "text-gray-600",
+  // Alignment prop - defaults to "center"
+  alignment = "center", // "left", "center", "right"
   // Optional custom classes
   className = "",
   smallHeadingClassName = "",
@@ -22,8 +24,22 @@ export default function SectionHeader({
   // Gradient styles for main heading
   const headingStyles = `bg-clip-text text-transparent bg-gradient-to-r ${gradientFrom} ${gradientVia} ${gradientTo}`;
 
+  // Alignment classes
+  const alignmentClasses = {
+    left: "text-left",
+    center: "text-center",
+    right: "text-right"
+  };
+
+  // Description max-width classes based on alignment
+  const descriptionWidthClasses = {
+    left: "max-w-3xl",
+    center: "max-w-3xl mx-auto",
+    right: "max-w-3xl ml-auto"
+  };
+
   return (
-    <div className={`text-center mb-12 ${className}`}>
+    <div className={`${alignmentClasses[alignment]} mb-12 ${className}`}>
       {/* Small Heading - Manrope font */}
       {smallHeading && (
         <motion.div
@@ -64,7 +80,7 @@ export default function SectionHeader({
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <p
-            className={`font-['Manrope'] text-base md:text-lg max-w-3xl mx-auto mt-4 ${descriptionColor} ${descriptionClassName}`}
+            className={`font-['Manrope'] text-base md:text-lg ${descriptionWidthClasses[alignment]} mt-4 ${descriptionColor} ${descriptionClassName}`}
             style={{ fontFamily: 'var(--font-manrope)' }}
           >
             {description}
