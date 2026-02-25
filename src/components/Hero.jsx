@@ -77,7 +77,7 @@ export default function Hero() {
       />
       
       {/* Content */}
-      <div className="container mx-auto pt-20 px-4 md:px-6 flex flex-col md:flex-row items-center gap-10 relative z-10">
+      <div className="container mx-auto pt-10 px-4 md:px-6 flex flex-col md:flex-row items-center gap-10 relative z-10">
         {/* Left column - text */}
         <motion.div 
           initial="hidden"

@@ -8,10 +8,39 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+
+  // Handle mount state to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Handle scroll effect - only on client side
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 20;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Initial check
+    handleScroll();
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrolled, mounted]);
 
   // Prevent scrolling when drawer is open
   useEffect(() => {
+    if (!mounted) return;
+    
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -20,11 +49,11 @@ export default function Navbar() {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, mounted]);
 
   const navLinks = [
     { href: "/", label: "Home" },
-     { href: "/about", label: "About" },
+    { href: "/about", label: "About" },
     { href: "/services", label: "Services" },
     { href: "/process", label: "Process" },
     { href: "/contact", label: "Contact" },
@@ -58,21 +87,61 @@ export default function Navbar() {
     })
   };
 
+  // Don't render anything until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <>
+        <nav className="fixed top-0 left-0 right-0 z-50">
+          <div className="w-full mx-auto">
+            <div className="relative group">
+              <div className="relative shadow-xl px-3 sm:px-4 py-1 bg-white">
+                <div className="flex items-center justify-between h-12 sm:h-14">
+                  <div className="flex items-center">
+                    <Image 
+                      src="/logo.png" 
+                      alt="AHMTECH Logo"
+                      width={120}
+                      height={120}
+                      className="object-contain w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px] h-auto"
+                      priority
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <div className="h-16 sm:h-18" />
+      </>
+    );
+  }
+
   return (
     <>
       <motion.nav 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="fixed top-3 sm:top-4 left-3 sm:left-4 right-3 sm:right-4 z-50"
+        className="fixed top-0 left-0 right-0 z-50"
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full mx-auto">
           {/* Main navbar container */}
           <div className="relative group">
-            {/* Main navbar - MINIMAL HEIGHT with BIG LOGO */}
-            <div className="relative bg-white backdrop-blur-xl rounded-4xl border border-red-600/20 shadow-lg px-3 sm:px-4 py-1">
+            {/* Main navbar with scroll-based blur - ALMOST TRANSPARENT */}
+            <motion.div 
+              animate={{
+                backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: scrolled ? 'blur(20px)' : 'blur(10px)',
+                boxShadow: scrolled ? '0 4px 30px rgba(0, 0, 0, 0.1)' : 'none',
+              }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="relative shadow-xl px-3 sm:px-4 py-1"
+              style={{
+                WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'blur(10px)',
+              }}
+            >
               <div className="flex items-center justify-between h-12 sm:h-14">
-                {/* Logo - BIG SIZE but navbar stays slim */}
+                {/* Logo */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -90,7 +159,7 @@ export default function Navbar() {
                   </Link>
                 </motion.div>
 
-                {/* Desktop Navigation Links - with fade in */}
+                {/* Desktop Navigation Links */}
                 <div className="hidden lg:flex items-center gap-1">
                   {navLinks.map((link, index) => {
                     const isActive = pathname === link.href;
@@ -106,9 +175,9 @@ export default function Navbar() {
                           className={`relative px-3 xl:px-4 py-1.5 uppercase transition-all duration-300 text-[11px] xl:text-xs tracking-[0.2em] font-light group/link ${
                             isActive 
                               ? 'text-red-600 font-normal' 
-                              : 'text-gray-600 hover:text-black'
+                              : 'text-black hover:text-gray-800'
                           }`}
-                              style={{ fontFamily: 'var(--font-manrope)' }}
+                          style={{ fontFamily: 'var(--font-manrope)' }}
                         >
                           <span className="relative z-10 font-bold ">{link.label}</span>
                           {isActive && (
@@ -132,7 +201,6 @@ export default function Navbar() {
                     href="/book-meeting"
                     className="relative group/btn hidden sm:block"
                   >
-                  
                     <button className="btn-primary px-3 py-1 text-[9px] sm:text-[10px] whitespace-nowrap tracking-wider">
                       Book Meeting
                     </button>
@@ -151,7 +219,7 @@ export default function Navbar() {
                     </button>
                   </Link>
 
-                  {/* Mobile/Tablet Menu Button - visible below lg */}
+                  {/* Mobile/Tablet Menu Button */}
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -169,10 +237,13 @@ export default function Navbar() {
                   </motion.button>
                 </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </motion.nav>
+
+      {/* Spacer to prevent content from hiding behind fixed navbar */}
+      <div className="h-16 sm:h-18" />
 
       {/* Premium Side Drawer for Mobile/Tablet */}
       <AnimatePresence>
@@ -230,7 +301,7 @@ export default function Navbar() {
                 </motion.button>
               </motion.div>
 
-              {/* Drawer Navigation Links - with right to left staggered animation */}
+              {/* Drawer Navigation Links */}
               <div className="p-6">
                 <div className="flex flex-col gap-2">
                   {navLinks.map((link, index) => {
@@ -263,12 +334,12 @@ export default function Navbar() {
                             />
                           )}
                           
-                          {/* Link text with premium font */}
+                          {/* Link text */}
                           <span 
                             className={`block text-sm sm:text-base tracking-[0.15em] uppercase ${
                               isActive ? 'font-normal' : 'font-light'
                             }`}
-                            style={{ fontFamily: '"Inter", "Helvetica Neue", sans-serif' }}
+                            style={{ fontFamily: 'var(--font-manrope)' }}
                           >
                             {link.label}
                           </span>
@@ -281,7 +352,7 @@ export default function Navbar() {
                   })}
                 </div>
 
-                {/* Premium Divider - with animation */}
+                {/* Premium Divider */}
                 <motion.div 
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
@@ -289,7 +360,7 @@ export default function Navbar() {
                   className="my-6 border-t border-red-600/10 origin-left"
                 />
 
-                {/* Book Meeting button inside drawer for mobile - with animation */}
+                {/* Book Meeting button inside drawer */}
                 <motion.div
                   custom={navLinks.length}
                   variants={mobileNavItemVariants}
@@ -315,7 +386,7 @@ export default function Navbar() {
                   </Link>
                 </motion.div>
 
-                {/* Optional: Social Links or Company Info for Premium Feel */}
+                {/* Footer */}
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

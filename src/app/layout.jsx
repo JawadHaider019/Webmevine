@@ -2,6 +2,7 @@ import { Marcellus, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CTA from '@/components/CTA'
 
 const marcellus = Marcellus({
   weight: "400",
@@ -40,6 +41,7 @@ export default function RootLayout({ children }) {
       <body className="antialiased">
         <Navbar />
         {children}
+         <CTA/>
         <Footer/>
       </body>
     </html>
