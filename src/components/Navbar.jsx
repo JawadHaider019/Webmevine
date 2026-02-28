@@ -97,21 +97,25 @@ export default function Navbar() {
               <div className="relative shadow-xl px-3 sm:px-4 py-1 bg-white">
                 <div className="flex items-center justify-between h-12 sm:h-14">
                   <div className="flex items-center">
-                    <Image 
-                      src="/logo.png" 
-                      alt="AHMTECH Logo"
-                      width={120}
-                      height={120}
-                      className="object-contain w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px] h-auto"
-                      priority
-                    />
+                <div className="flex items-center">
+  <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
+    <Image 
+      src="/logo.png" 
+      alt="AHMTECH Logo"
+      width={140}
+      height={140}
+      className="object-contain w-full h-auto"
+      priority
+    />
+  </div>
+</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </nav>
-        <div className="h-16 sm:h-18" />
+   
       </>
     );
   }
@@ -127,17 +131,19 @@ export default function Navbar() {
         <div className="w-full mx-auto">
           {/* Main navbar container */}
           <div className="relative group">
-            {/* Main navbar with scroll-based blur - ALMOST TRANSPARENT */}
+            {/* Main navbar with scroll-based blur - SOLUTION 3 APPLIED */}
             <motion.div 
               animate={{
-                backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: scrolled ? 'blur(20px)' : 'blur(10px)',
-                boxShadow: scrolled ? '0 4px 30px rgba(0, 0, 0, 0.1)' : 'none',
+                backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.9)' : 'white',
+                backdropFilter: scrolled ? 'blur(10px)' : 'none',
+                boxShadow: scrolled 
+                  ? '0 4px 30px rgba(0, 0, 0, 0.1)' 
+                  : '0 2px 10px rgba(0, 0, 0, 0.05)',
               }}
               transition={{ duration: 0.3, ease: "easeOut" }}
               className="relative shadow-xl px-3 sm:px-4 py-1"
               style={{
-                WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'blur(10px)',
+                WebkitBackdropFilter: scrolled ? 'blur(10px)' : 'none',
               }}
             >
               <div className="flex items-center justify-between h-12 sm:h-14">
@@ -147,16 +153,18 @@ export default function Navbar() {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
-                  <Link href="/" className="flex items-center group/logo ">
-                    <Image 
-                      src="/logo.png" 
-                      alt="AHMTECH Logo"
-                      width={120}
-                      height={120}
-                      className="object-contain w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px] h-auto"
-                      priority
-                    />
-                  </Link>
+                 <Link href="/" className="flex items-center group/logo">
+  <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
+    <Image 
+      src="/logo.png" 
+      alt="AHMTECH Logo"
+      width={140}
+      height={140}
+      className="object-contain w-full h-auto"
+      priority
+    />
+  </div>
+</Link>
                 </motion.div>
 
                 {/* Desktop Navigation Links */}
@@ -242,8 +250,6 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
-      {/* Spacer to prevent content from hiding behind fixed navbar */}
-      <div className="h-16 sm:h-18" />
 
       {/* Premium Side Drawer for Mobile/Tablet */}
       <AnimatePresence>

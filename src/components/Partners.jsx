@@ -15,68 +15,78 @@ export default function Partners() {
   
   // State for animated numbers
   const [counts, setCounts] = useState({
-    partners: 0,
     projects: 0,
-    satisfaction: 0
+    clients: 0,
+    retention: 0
   });
 
   // Stats data with numeric values
   const stats = [
-    { id: 1, value: 500, suffix: "+", label: "Global Partners", key: "partners" },
-    { id: 2, value: 500, suffix: "+", label: "Projects Completed", key: "projects" },
-    { id: 3, value: 99, suffix: "%", label: "Client Satisfaction", key: "satisfaction" },
+    { id: 1, value: 100, suffix: "+", label: "Projects Delivered", key: "projects" },
+    { id: 2, value: 100, suffix: "+", label: "International Client Base", key: "clients" },
+    { id: 3, value: 99, suffix: "%", label: "Client Retention Rate", key: "retention" },
   ];
 
-  // Partner logos array
-  const partners = [
-    { id: 1, src: "/logo.png", alt: "Partner 1", width: 210, height: 70 },
-    { id: 2, src: "/logo.png", alt: "Partner 2", width: 210, height: 70 },
-    { id: 3, src: "/logo.png", alt: "Partner 3", width: 210, height: 70 },
-    { id: 4, src: "/logo.png", alt: "Partner 4", width: 210, height: 70 },
-    { id: 5, src: "/logo.png", alt: "Partner 5", width: 210, height: 70 },
-    { id: 6, src: "/logo.png", alt: "Partner 6", width: 210, height: 70 },
-    { id: 7, src: "/logo.png", alt: "Partner 7", width: 210, height: 70 },
-    { id: 8, src: "/logo.png", alt: "Partner 8", width: 210, height: 70 },
-    { id: 9, src: "/logo.png", alt: "Partner 9", width: 210, height: 70 },
-    { id: 10, src: "/logo.png", alt: "Partner 10", width: 210, height: 70 },
+  // Partner logos array - First 6 for top slider
+  const topPartners = [
+    { id: 1, src: "/partner/campuna.png", alt: "Campuna", width: 180, height: 60 },
+    { id: 2, src: "/partner/cdl school.png", alt: "CDL School", width: 180, height: 60 },
+    { id: 3, src: "/partner/eternox.png", alt: "Eternox", width: 180, height: 60 },
+    { id: 4, src: "/partner/fintalio.png", alt: "Fintalio", width: 180, height: 60 },
+    { id: 5, src: "/partner/fivup.png", alt: "Fivup", width: 180, height: 60 },
+    { id: 6, src: "/partner/goodbyemama.png", alt: "Goodbye Mama", width: 180, height: 60 },
+  ];
+
+  // Partner logos array - Next 6 for bottom slider
+  const bottomPartners = [
+    { id: 7, src: "/partner/jocelyn.png", alt: "Jocelyn", width: 180, height: 60 },
+    { id: 8, src: "/partner/magus.png", alt: "Magus", width: 180, height: 60 },
+    { id: 9, src: "/partner/pureclay.png", alt: "Pure Clay", width: 180, height: 60 },
+    { id: 10, src: "/partner/righthire.png", alt: "Right Hire", width: 180, height: 60 },
+    { id: 11, src: "/partner/unitedmercy.png", alt: "United Mercy", width: 180, height: 60 },
+    { id: 12, src: "/partner/zola.png", alt: "Zola", width: 180, height: 60 },
   ];
 
   // Calculate total width for smooth infinite scroll
-  const partnerWidth = 210; // width
+  const partnerWidth = 180; // width
   const gap = 40; // gap-10 = 2.5rem = 40px
-  const totalWidth = (partnerWidth + gap) * partners.length;
+  const topTotalWidth = (partnerWidth + gap) * topPartners.length;
+  const bottomTotalWidth = (partnerWidth + gap) * bottomPartners.length;
 
   // Duplicate partners for infinite scroll effect
-  const duplicatedPartners = [...partners, ...partners, ...partners, ...partners];
+  const duplicatedTopPartners = [...topPartners, ...topPartners, ...topPartners, ...topPartners];
+  const duplicatedBottomPartners = [...bottomPartners, ...bottomPartners, ...bottomPartners, ...bottomPartners];
 
   // Start slider animations automatically
   useEffect(() => {
     topControls.start({
-      x: [0, -totalWidth],
+      x: [0, -topTotalWidth],
       transition: {
         x: {
           repeat: Infinity,
           repeatType: "loop",
-          duration: 40,
+          duration: 30,
           ease: "linear",
           repeatDelay: 0,
         },
       },
     });
+  }, [topControls, topTotalWidth]); // Fixed dependency array
 
+  useEffect(() => {
     bottomControls.start({
-      x: [-totalWidth, 0],
+      x: [-bottomTotalWidth, 0],
       transition: {
         x: {
           repeat: Infinity,
           repeatType: "loop",
-          duration: 40,
+          duration: 30,
           ease: "linear",
           repeatDelay: 0,
         },
       },
     });
-  }, [topControls, bottomControls, totalWidth]);
+  }, [bottomControls, bottomTotalWidth]); // Fixed dependency array
 
   // Animate numbers when stats come into view
   useEffect(() => {
@@ -94,9 +104,9 @@ export default function Partners() {
         const eased = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
         
         setCounts({
-          partners: Math.min(Math.floor(500 * eased), 500),
-          projects: Math.min(Math.floor(500 * eased), 500),
-          satisfaction: Math.min(Math.floor(99 * eased), 99)
+          projects: Math.min(Math.floor(100 * eased), 100),
+          clients: Math.min(Math.floor(100 * eased), 100),
+          retention: Math.min(Math.floor(99 * eased), 99)
         });
 
         if (progress >= 1) {
@@ -129,7 +139,7 @@ export default function Partners() {
           />
         </motion.div>
 
-        {/* First Slider - Left to Right */}
+        {/* First Slider - Top 6 Partners (Left to Right) */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -147,7 +157,7 @@ export default function Partners() {
             className="flex gap-10 items-center"
             style={{ width: "fit-content", willChange: "transform" }}
           >
-            {duplicatedPartners.map((partner, index) => (
+            {duplicatedTopPartners.map((partner, index) => (
               <motion.div
                 key={`top-${partner.id}-${index}`}
                 className="flex-shrink-0 group cursor-pointer"
@@ -186,7 +196,7 @@ export default function Partners() {
           </motion.div>
         </motion.div>
 
-        {/* Second Slider - Right to Left */}
+        {/* Second Slider - Bottom 6 Partners (Right to Left) */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -204,7 +214,7 @@ export default function Partners() {
             className="flex gap-10 items-center"
             style={{ width: "fit-content", willChange: "transform" }}
           >
-            {duplicatedPartners.map((partner, index) => (
+            {duplicatedBottomPartners.map((partner, index) => (
               <motion.div
                 key={`bottom-${partner.id}-${index}`}
                 className="flex-shrink-0 group cursor-pointer"
@@ -213,7 +223,7 @@ export default function Partners() {
                   transition: { duration: 0.3, ease: "easeOut" }
                 }}
               >
-                <div className="relative overflow-hidden rounded-lg">
+                <div className="relative overflow-hidden">
                   {/* Grayscale filter with smooth transition */}
                   <motion.div
                     whileHover={{ filter: "grayscale(0%)" }}
@@ -250,8 +260,9 @@ export default function Partners() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="flex items-center justify-center flex-wrap sm:gap-4 gap-8 mt-20 px-4"
+          className="flex items-center justify-center flex-wrap gap-8 md:gap-16 mt-20 px-4"
         >
+          {/* 100+ Projects Delivered */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -263,22 +274,22 @@ export default function Partners() {
               stiffness: 80,
               damping: 12
             }}
-            className="text-center flex items-center gap-5 justify-center"
+            className="text-center"
           >
             <motion.div
               className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-black via-red-600 to-gray-900"
               style={{ fontFamily: 'var(--font-marcellus)' }}
             >
-              {counts.partners}+
+              {counts.projects}+
             </motion.div>
             <motion.div 
-              className="text-gray-600 text-sm md:text-base uppercase tracking-wider"
-              style={{ fontFamily: 'var(--font-manrope)' }}
+              className="text-gray-600 text-sm md:text-base mt-2 font-['Manrope']"
             >
-              Global Partners
+              Projects Delivered
             </motion.div>
           </motion.div>
 
+          {/* International Client Base */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -290,22 +301,22 @@ export default function Partners() {
               stiffness: 80,
               damping: 12
             }}
-            className="text-center flex items-center gap-5 justify-center"
+            className="text-center"
           >
             <motion.div
               className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-black via-red-600 to-gray-900"
               style={{ fontFamily: 'var(--font-marcellus)' }}
             >
-              {counts.projects}+
+              {counts.clients}+
             </motion.div>
             <motion.div 
-              className="text-gray-600 text-sm md:text-base uppercase tracking-wider"
-              style={{ fontFamily: 'var(--font-manrope)' }}
+              className="text-gray-600 text-sm md:text-base mt-2 font-['Manrope']"
             >
-              Projects Completed
+              International Client Base
             </motion.div>
           </motion.div>
 
+          {/* High Client Retention Rate */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -317,19 +328,18 @@ export default function Partners() {
               stiffness: 80,
               damping: 12
             }}
-            className="text-center flex items-center gap-5 justify-center"
+            className="text-center"
           >
             <motion.div
               className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-black via-red-600 to-gray-900"
               style={{ fontFamily: 'var(--font-marcellus)' }}
             >
-              {counts.satisfaction}%
+              {counts.retention}%
             </motion.div>
             <motion.div 
-              className="text-gray-600 text-sm md:text-base uppercase tracking-wider"
-              style={{ fontFamily: 'var(--font-manrope)' }}
+              className="text-gray-600 text-sm md:text-base mt-2 font-['Manrope']"
             >
-              Client Satisfaction
+              Client Retention Rate
             </motion.div>
           </motion.div>
         </motion.div>

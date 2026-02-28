@@ -31,9 +31,8 @@ export default function InteractiveGradient() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Add animations to global stylesheet instead of using styled-jsx
+  // Add animations to global stylesheet
   useEffect(() => {
-    // Check if styles already exist
     if (document.getElementById('gradient-animations')) return;
 
     const styleSheet = document.createElement("style");
@@ -78,82 +77,82 @@ export default function InteractiveGradient() {
       </svg>
 
       <div className="relative w-full h-full" style={{ filter: 'url(#goo) blur(40px)' }}>
-        {/* g1 */}
+        {/* g1 - Reduced size */}
         <div 
           className="absolute rounded-full mix-blend-hard-light"
           style={{
-            width: '80%',
-            height: '80%',
-            top: '10%',
-            left: '10%',
+            width: '60%',
+            height: '60%',
+            top: '20%',
+            left: '20%',
             background: 'radial-gradient(circle at center, rgba(220,20,20,0.8) 0, rgba(220,20,20,0) 50%)',
             animation: 'moveVertical 30s ease infinite',
           }}
         />
         
-        {/* g2 */}
+        {/* g2 - Reduced size */}
         <div 
           className="absolute rounded-full mix-blend-hard-light"
           style={{
-            width: '80%',
-            height: '80%',
-            top: '10%',
-            left: '10%',
-            background: 'radial-gradient(circle at center, rgba(180,0,0,0.8) 0, rgba(180,0,0,0) 50%)',
-            transformOrigin: 'calc(50% - 400px)',
+            width: '60%',
+            height: '60%',
+            top: '20%',
+            left: '20%',
+            background: 'radial-gradient(circle at center, rgba(220,0,0,0.8) 0, rgba(220,0,0,0) 50%)',
+            transformOrigin: 'calc(50% - 200px)',
             animation: 'rotate 20s linear infinite',
           }}
         />
         
-        {/* g3 */}
+        {/* g3 - Reduced size */}
         <div 
           className="absolute rounded-full mix-blend-hard-light"
           style={{
-            width: '80%',
-            height: '80%',
-            top: 'calc(10% + 100px)',
-            left: 'calc(10% - 200px)',
-            background: 'radial-gradient(circle at center, rgba(255,40,40,0.8) 0, rgba(255,40,40,0) 50%)',
-            transformOrigin: 'calc(50% + 400px)',
+            width: '60%',
+            height: '60%',
+            top: 'calc(20% + 50px)',
+            left: 'calc(20% - 100px)',
+            background: 'radial-gradient(circle at center, rgba(220,40,40,0.8) 0, rgba(220,40,40,0) 50%)',
+            transformOrigin: 'calc(50% + 200px)',
             animation: 'rotate 40s linear infinite',
           }}
         />
         
-        {/* g4 */}
+        {/* g4 - Reduced size */}
         <div 
           className="absolute rounded-full mix-blend-hard-light"
           style={{
-            width: '80%',
-            height: '80%',
-            top: '10%',
-            left: '10%',
-            background: 'radial-gradient(circle at center, rgba(150,0,0,0.8) 0, rgba(150,0,0,0) 50%)',
+            width: '60%',
+            height: '60%',
+            top: '20%',
+            left: '20%',
+            background: 'radial-gradient(circle at center, rgba(220,0,0,0.8) 0, rgba(220,0,0,0) 50%)',
             animation: 'moveHorizontal 40s ease infinite',
           }}
         />
         
-        {/* g5 */}
+        {/* g5 - Reduced size */}
         <div 
           className="absolute rounded-full mix-blend-hard-light"
           style={{
-            width: '160%',
-            height: '160%',
-            top: '-30%',
-            left: '-30%',
-            background: 'radial-gradient(circle at center, rgba(200,0,0,0.8) 0, rgba(200,0,0,0) 50%)',
+            width: '100%',
+            height: '100%',
+            top: '-10%',
+            left: '-10%',
+            background: 'radial-gradient(circle at center, rgba(220,0,0,0.8) 0, rgba(220,0,0,0) 50%)',
             animation: 'rotate 25s linear infinite',
           }}
         />
         
-        {/* Interactive */}
+        {/* Interactive - Adjusted size */}
         <div 
           ref={interactiveRef}
           className="absolute pointer-events-none mix-blend-hard-light"
           style={{
-            width: '100%',
-            height: '100%',
-            top: '-50%',
-            left: '-50%',
+            width: '80%',
+            height: '80%',
+            top: '-30%',
+            left: '-30%',
             background: 'radial-gradient(circle at center, rgba(255,60,60,0.8) 0, rgba(255,60,60,0) 50%)',
             opacity: 0.7,
           }}

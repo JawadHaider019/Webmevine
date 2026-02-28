@@ -173,23 +173,7 @@ export default function FounderFocus() {
           ))}
         </motion.div>
 
-        {/* View More Button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          viewport={{ once: true }}
-          className="text-center mt-12"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-primary"
-          >
-            Watch More Stories
-          </motion.button>
-        </motion.div>
-
+     
       
       </div>
     </section>

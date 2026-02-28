@@ -8,47 +8,47 @@ export default function FAQ() {
   const [openItems, setOpenItems] = useState([1]); // First item open by default
 
   const faqItems = [
-    {
-      id: 1,
-      question: "How does your rapid launch process work?",
-      answer: "Our rapid launch process is designed to get your app to market in weeks, not months. We start with a deep discovery call to understand your vision, then move to rapid prototyping where you'll see your app take shape in Figma. Development happens in 1-week sprints with daily updates, so you're never left wondering about progress. By week 4, you'll have a production-ready app in your hands."
-    },
-    {
-      id: 2,
-      question: "How fast can you really build an MVP?",
-      answer: "From strategy call to App Store in just 4 weeks. This timeline includes: Week 1 - Discovery & UX design, Week 2 - UI design & prototyping, Week 3 - Core development, Week 4 - QA testing & deployment. Of course, complex projects may take longer, but we pride ourselves on being the fastest route to market without sacrificing quality."
-    },
-    {
-      id: 3,
-      question: "How much does it cost to build an app with you?",
-      answer: "Our pricing is transparent and tailored to your specific needs. Most MVPs start from $15k-$25k, depending on complexity. We offer flexible payment structures: 50% upfront to begin, 25% at prototype approval, and 25% upon launch. We also offer equity-based partnerships for promising startups with limited runway."
-    },
-    {
-      id: 4,
-      question: "Do I need to have a technical background?",
-      answer: "Not at all! We speak founder language, not just developer jargon. Throughout the process, we guide you through technical decisions in plain English, explaining trade-offs and recommendations so you can make informed choices. Your job is to focus on your vision and users—we handle the tech."
-    },
-    {
-      id: 5,
-      question: "What happens after you launch my app?",
-      answer: "We don't disappear after launch. You get 30 days of free support to handle any bugs or tweaks. After that, we offer flexible maintenance packages or can train your in-house team. Many clients continue working with us for ongoing feature development as they scale."
-    },
-    {
-      id: 6,
-      question: "Can you work with my existing team?",
-      answer: "Absolutely. We seamlessly integrate with your existing team—whether you have in-house developers, designers, or product managers. We can augment your team's capabilities, handle specific features, or take on the entire development process while your team focuses on core business."
-    },
-    {
-      id: 7,
-      question: "Do you offer refunds if I'm not satisfied?",
-      answer: "We're confident in our process, but we also understand that sometimes things don't work out. We offer a satisfaction guarantee: if after the first week (discovery & design) you're not completely happy with our direction, we'll refund your deposit minus the work completed. Your satisfaction is our priority."
-    },
-    {
-      id: 8,
-      question: "What technologies do you specialize in?",
-      answer: "We're technology-agnostic—we choose the right tool for your specific needs. Our stack includes React/Next.js for web apps, React Native/Flutter for mobile, Node.js/Python for backend, and various no-code tools like FlutterFlow and Bubble for rapid MVPs. We're honest about what will serve you best long-term."
-    }
-  ];
+  {
+    id: 1,
+    question: "How does the 21-day website development process work?",
+    answer: "Our 21-day framework is structured and milestone-driven. Week 1 focuses on strategy and conversion architecture. Week 2 covers UX design and wireframes. Week 3 is dedicated to custom React or Bubble.io development. Week 4 includes QA testing, performance optimization, and launch. No delays. No guesswork."
+  },
+  {
+    id: 2,
+    question: "Do you build custom-coded websites or use templates?",
+    answer: "We specialize in custom website development. Every project is either custom-coded in React JS with scalable architecture or strategically built in Bubble.io for SaaS MVPs. No templates. No shortcuts."
+  },
+  {
+    id: 3,
+    question: "Are you a React JS development company or a Bubble.io agency?",
+    answer: "We are both. WebMavine is a React JS development company and a Bubble.io development agency. We choose the right technology based on your business model, scalability needs, and growth roadmap."
+  },
+  {
+    id: 4,
+    question: "Do you build SaaS and e-commerce platforms?",
+    answer: "Yes. We specialize in SaaS website development and high-performance e-commerce website development. From MVP validation to scalable revenue-driven platforms, we build for growth and conversions."
+  },
+  {
+    id: 5,
+    question: "What if I'm not satisfied with the final result?",
+    answer: "We operate with a zero-risk guarantee. If you're not satisfied after project completion, you get your money back. We remove hesitation so you can move forward with confidence."
+  },
+  {
+    id: 6,
+    question: "How much does a custom website cost?",
+    answer: "Pricing depends on scope, complexity, and integrations. Most custom-coded websites and SaaS MVPs start at premium-tier pricing due to performance, scalability, and strategy focus. We discuss exact investment during your strategy call."
+  },
+  {
+    id: 7,
+    question: "Do you offer support after launch?",
+    answer: "Yes. We provide post-launch support, optimization, and performance monitoring. We don’t disappear after deployment. We build long-term partnerships."
+  },
+  {
+    id: 8,
+    question: "Is WebMavine a good fit for small businesses?",
+    answer: "We work with serious small businesses, SaaS founders, and e-commerce brands focused on long-term growth. If you're looking for the cheapest option, we’re not the right fit. If you're building for scale, we are."
+  }
+];
 
   // Toggle FAQ item
   const toggleItem = (id) => {

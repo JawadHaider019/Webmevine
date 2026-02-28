@@ -7,6 +7,7 @@ import Testimonials from "@/components/Testimonials";
 import FounderFocus from "@/components/FounderFocus";
 import FAQ from "@/components/FAQ";
 import CTA from '@/components/CTA'
+import ValueSection from "@/components/ValueSection";
 
 export default function Home() {
   return (

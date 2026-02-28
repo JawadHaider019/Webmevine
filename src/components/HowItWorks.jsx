@@ -3,6 +3,16 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import SectionHeader from "./SectionHeader";
+import GlowingButton from "./GlowingButton";
+
+// Font Awesome imports
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChartLine,
+  faPencilRuler,
+  faCode,
+  faRocket,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function HowItWorks() {
   const [isMobile, setIsMobile] = useState(false);
@@ -23,32 +33,34 @@ export default function HowItWorks() {
     {
       id: 1,
       number: "01",
-      title: "Discovery Call",
-      description: "We dive deep into your project to understand your goals, your users, and what success looks like for you."
+      week: "Week 1",
+      title: "Strategy & Conversion Planning",
+      description: "We research your market, define clear goals, and build a conversion-focused strategy to ensure your website drives measurable results.",
+      icon: faChartLine
     },
     {
       id: 2,
       number: "02",
-      title: "UI/UX Design",
-      description: "We map your entire user journey and create rough UI wireframes in Figma. You'll see everything before we even start developing."
+      week: "Week 2",
+      title: "UX Design & Wireframing",
+      description: "We create intuitive wireframes and user flows designed for clarity, engagement, and high-converting user experience.",
+      icon: faPencilRuler
     },
     {
       id: 3,
       number: "03",
-      title: "Development",
-      description: "We build your app over 3 weeks with constant updates throughout, so you never have to ask about the progress on that feature you love."
+      week: "Week 3",
+      title: "Development & System Build",
+      description: "Your custom website is built in React JS or Bubble.io, optimized for performance, scalability, and seamless integrations.",
+      icon: faCode
     },
     {
       id: 4,
       number: "04",
-      title: "Quality Assurance",
-      description: "The next week is dedicated to QA testing. We catch the bugs before your users do, so they get something that actually works."
-    },
-    {
-      id: 5,
-      number: "05",
-      title: "Launch and support",
-      description: "Once everything is done, we launch your apps, and stick with you for 30 days in case you need any support from us."
+      week: "Week 4",
+      title: "Testing, Optimization & Launch",
+      description: "We run full QA testing, refine performance, and deploy your site smoothly ensuring a confident, high-impact launch.",
+      icon: faRocket
     }
   ];
 
@@ -118,6 +130,14 @@ export default function HowItWorks() {
 
   return (
     <section className="py-16 md:py-20 bg-white relative overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(239,68,68,0.1) 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }} />
+      </div>
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -179,7 +199,7 @@ export default function HowItWorks() {
                   }`
                 }`}
               >
-                {/* Number Circle */}
+                {/* Number Circle with Icon */}
                 <motion.div 
                   className={`${
                     isMobile 
@@ -189,19 +209,22 @@ export default function HowItWorks() {
                   variants={numberVariants}
                 >
                   <motion.div
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ scale: 1.1}}
                     whileTap={{ scale: 0.95 }}
-                    className="relative w-12 h-12 rounded-full flex items-center justify-center shadow-lg cursor-default"
+                    className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-lg cursor-default"
                   >
                     {/* Gradient Border */}
                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-600 via-red-400 to-red-600 p-[2px]">
-                      <div className="w-full h-full bg-white rounded-full" />
+                      <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
+                        {/* Icon inside */}
+                        <FontAwesomeIcon 
+                          icon={step.icon} 
+                          className="w-5 h-5 text-red-600"
+                        />
+                      </div>
                     </div>
                     
-                    {/* Number */}
-                    <span className="relative z-10 font-['Marcellus'] text-transparent bg-clip-text bg-gradient-to-br from-red-600 via-red-400 to-red-600 font-bold text-lg">
-                      {step.number}
-                    </span>
+            
                   </motion.div>
                 </motion.div>
 
@@ -217,19 +240,62 @@ export default function HowItWorks() {
                     variants={isMobile ? cardVariants : (isLeft ? leftCardVariants : rightCardVariants)}
                     whileHover={!isMobile ? { 
                       y: -5,
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.1)"
+                      boxShadow: "0 20px 40px rgba(239,68,68,0.15)"
                     } : {}}
-                    className="relative bg-gradient-to-br from-gray-100 to-white p-5 md:p-6 rounded-xl border border-gray-100 shadow-sm transition-all duration-300"
+                    className="relative bg-white p-5 md:p-6 rounded-xl border border-gray-100 shadow-sm transition-all duration-300"
                   >
+                    {/* Week Badge - Positioned based on card side */}
+                    {!isMobile && (
+                      <div className={`absolute top-4 ${isLeft ? 'right-4' : 'left-4'}`}>
+                        <span className="font-['Manrope'] text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-900">
+                          {step.week}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Title with Icon for Mobile */}
+                    {isMobile && (
+                      <div className="flex items-center gap-2 mb-2">
+                      
+                        <span className="text-sm font-['Manrope'] text-red-600 font-semibold">
+                          {step.week}
+                        </span>
+                      </div>
+                    )}
+
                     {/* Title */}
-                    <h3 className="font-['Marcellus'] text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2">
+                    <h3 className={`font-['Marcellus'] text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 ${
+                      !isMobile && isLeft ? 'pr-20' : !isMobile && !isLeft ? 'pl-20' : ''
+                    }`}>
                       {step.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="font-['Manrope'] text-gray-600 text-sm md:text-base leading-relaxed">
+                    <p className={`font-['Manrope'] text-gray-600 text-sm md:text-base leading-relaxed ${
+                      !isMobile && isLeft ? 'pr-20' : !isMobile && !isLeft ? 'pl-20' : ''
+                    }`}>
                       {step.description}
                     </p>
+
+                    {/* Bottom Accent Line */}
+                    <motion.div
+                      className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-gradient-to-r from-red-600 to-red-700"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: '30%' }}
+                      transition={{ duration: 0.5, delay: 0.3 }}
+                      viewport={{ once: true }}
+                    />
+
+                    {/* Visible Step Number - Positioned based on card side */}
+                    {!isMobile && (
+                      <div className={`absolute top-1/2 -translate-y-1/2 ${
+                        isLeft ? 'left-4' : 'right-4'
+                      } opacity-20`}>
+                        <span className="font-['Marcellus'] text-8xl font-black text-gray-300">
+                          {step.number}
+                        </span>
+                      </div>
+                    )}
                   </motion.div>
                 </div>
 
@@ -248,13 +314,14 @@ export default function HowItWorks() {
           viewport={{ once: true }}
           className="text-center mt-8 md:mt-16"
         >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn-primary px-6 py-3 md:px-8 md:py-4 text-sm md:text-base"
+         <GlowingButton 
+            glowColor="255, 150, 150"
+            spreadSize="small"
+            speed="medium"
+            waveCount={5} 
           >
             Get Your Custom Roadmap
-          </motion.button>
+          </GlowingButton>
         </motion.div>
       </div>
     </section>

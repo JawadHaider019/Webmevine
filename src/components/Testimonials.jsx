@@ -1,121 +1,164 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { useState, useRef, useEffect } from "react";
 import SectionHeader from "./SectionHeader";
+import Image from "next/image";
+
+// Font Awesome imports
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { 
+  faQuoteRight, 
+  faStar
+} from "@fortawesome/free-solid-svg-icons";
+
+// Country flags using flagcdn.com for reliable flags
+const countryFlags = {
+  "Romania": "https://flagcdn.com/w20/ro.png",
+  "United States": "https://flagcdn.com/w20/us.png",
+  "United Kingdom": "https://flagcdn.com/w20/gb.png",
+  "Italy": "https://flagcdn.com/w20/it.png",
+  "India": "https://flagcdn.com/w20/in.png"
+};
 
 export default function Testimonials() {
+  const [isPaused, setIsPaused] = useState(false);
+  const [currentX, setCurrentX] = useState(-1920);
+  const scrollRef = useRef(null);
+  const [width, setWidth] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile on mount and when window resizes
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const testimonials = [
     {
       id: 1,
-      quote: "Ahmtech didn't just build our app—they became true partners in our vision. The speed and quality allowed us to launch in weeks instead of months.",
-      author: "Alexander Chen",
-      role: "Founder & CEO",
-      company: "FinTech Labs",
-      image: "/Ahmad.png",
+      quote: "Great experience! He worked quickly, responded fast, and understood exactly what was needed. Highly recommend!",
+      author: "alex_octa12",
       rating: 5,
-      location: "Singapore"
+      location: "Romania"
     },
     {
       id: 2,
-      quote: "The team's ability to translate complex requirements into an elegant, scalable solution was remarkable. Enterprise-grade quality at startup speed.",
-      author: "Victoria Laurent",
-      role: "Co-Founder",
-      company: "Luxe Retail",
-     image: "/Ahmad.png",
+      quote: "I've worked with many freelancers before, but Muhammad genuinely stands out. His workflow was smooth, his communication was clear, and every delivery was spot-on. What impressed me most was his ability to think ahead and suggest smarter ways to approach the task. He's a rare combination of skill, strategy, and reliability. Working with him gave me total peace of mind. Highly recommended.",
+      author: "thomas5542",
       rating: 5,
-      location: "Paris"
+      location: "United States"
     },
     {
       id: 3,
-      quote: "Working with Ahmtech felt like having an extension of our own team. Their expertise combined with genuine care for our success made all the difference.",
-      author: "Marcus Webb",
-      role: "CTO",
-      company: "HealthTech Solutions",
- image: "/Ahmad.png",
+      quote: "Working with Muhammad was an outstanding experience from start to finish. He immediately grasped what I needed, even things I hadn't fully explained, and translated them into clean, professional, high-quality work. He was highly responsive, proactive with suggestions, and delivered ahead of schedule. It's rare to find someone who combines technical expertise, clear communication, and genuine care for the final result like Muhammad does. He exceeded expectations, and I'll absolutely work with him again.",
+      author: "fanninmathew",
       rating: 5,
-      location: "London"
+      location: "United States"
     },
     {
       id: 4,
-      quote: "From concept to launch in under 4 weeks—absolutely incredible. The platform handles thousands of users flawlessly.",
-      author: "Sophia Rahman",
-      role: "Founder",
-      company: "EduPlatform",
-      image: "/Ahmad.png",
+      quote: "Always a pleasure working with mo, he is always professional and has a great ethic of work",
+      author: "dianarobinso282",
       rating: 5,
-      location: "Dubai"
+      location: "United Kingdom"
     },
     {
       id: 5,
-      quote: "Their attention to detail and commitment to excellence set them apart. Every interaction felt premium and purposeful.",
-      author: "James Mitchell",
-      role: "Product Director",
-      company: "Innovate Labs",
-    image: "/Ahmad.png",
+      quote: "Working with Muhammad Ahmad was an absolute pleasure! His code expertise and attention to detail truly SHINE, and his professionalism elevated the entire project. Plus, his quick responsiveness and cooperation made the process a BREEZE",
+      author: "martinez_cole",
       rating: 5,
-      location: "New York"
+      location: "United Kingdom"
     },
     {
       id: 6,
-      quote: "A rare find—a team that combines technical excellence with genuine business understanding. They speak founder language.",
-      author: "Elena Rodriguez",
-      role: "Founder",
-      company: "BeautyTech",
-    image: "/Ahmad.png",
+      quote: "i asking for more work and my second order, Is very good delivery on coding quality and timing. i likes to collaborate for my next order👍",
+      author: "paolosili",
       rating: 5,
-      location: "Milan"
+      location: "Italy"
+    },
+    {
+      id: 7,
+      quote: "very fast and with good feel to code quality and delivery time.",
+      author: "paolosili",
+      rating: 5,
+      location: "Italy"
+    },
+    {
+      id: 8,
+      quote: "Great sense of understanding the platform and understands our need and over delivers",
+      author: "unitedmercy",
+      rating: 5,
+      location: "India"
+    },
+    {
+      id: 9,
+      quote: "It is great working with Ahmad. He is very good at his job and goes beyond the work to be done and always available to support wherever required",
+      author: "unitedmercy",
+      rating: 5,
+      location: "India"
+    },
+    {
+      id: 10,
+      quote: "Understood the project well and worked hand in hand throughout, well incorporated modifications.",
+      author: "Sahil",
+      rating: 5,
+      location: "India"
+    },
+    {
+      id: 11,
+      quote: "I came back to him for a second project, and that honestly says everything. His attention to detail is on another level, and what I value most is the peace of mind. I never have to second-guess anything — he thinks ahead, catches issues early, and makes smart improvements that truly elevate the product. If you want someone who treats your project like a real business, not just a gig, he's the right choice. Reliable, professional, and genuinely comfortable to work with. I wouldn't hesitate to hire him again.",
+      author: "thomas5542",
+      rating: 5,
+      location: "United States"
     }
   ];
 
-  // Duplicate testimonials for infinite scroll effect
-  const duplicatedTestimonials = [...testimonials, ...testimonials, ...testimonials];
+  // Duplicate testimonials for infinite scroll effect (6x for seamless loop)
+  const duplicatedTestimonials = [
+    ...testimonials, 
+    ...testimonials, 
+    ...testimonials,
+    ...testimonials, 
+    ...testimonials, 
+    ...testimonials
+  ];
 
-  // Animation variants for continuous scrolling
-  const scrollVariants = {
-    animate: {
-      x: [0, -1920],
-      transition: {
-        x: {
-          repeat: Infinity,
-          repeatType: "loop",
-          duration: 50,
-          ease: "linear",
-        },
-      },
-    },
-  };
+  useEffect(() => {
+    if (scrollRef.current) {
+      setWidth(scrollRef.current.scrollWidth / 4);
+    }
+  }, []);
 
-  // Card animation variants - only entry animations, no hover
-  const cardVariants = {
-    hidden: { 
-      opacity: 0,
-      y: 50,
-      scale: 0.9
-    },
-    visible: { 
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 12,
-        duration: 0.6
+  // Handle pause (hover on desktop, touch on mobile)
+  const handlePause = () => {
+    if (scrollRef.current) {
+      const transform = window.getComputedStyle(scrollRef.current).transform;
+      if (transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        setCurrentX(matrix.m41);
       }
     }
+    setIsPaused(true);
   };
 
-  // Quote Icon SVG Component
-  const QuoteIcon = () => (
-    <svg 
-      className="w-12 h-12 text-red-600/20" 
-      fill="currentColor" 
-      viewBox="0 0 24 24"
-    >
-      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-    </svg>
-  );
+  // Handle resume
+  const handleResume = () => {
+    setIsPaused(false);
+  };
+
+  // Touch events - only used on mobile
+  const touchHandlers = isMobile ? {
+    onTouchStart: handlePause,
+    onTouchEnd: handleResume,
+    onTouchCancel: handleResume,
+  } : {};
 
   return (
     <section className="py-24 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden">
@@ -154,127 +197,109 @@ export default function Testimonials() {
         {/* Running Carousel Container */}
         <div className="mt-16 relative">
           {/* Gradient fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-5 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-5 bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none" />
 
           {/* Running carousel */}
           <div className="overflow-hidden">
             <motion.div
-              variants={scrollVariants}
-              animate="animate"
-              className="flex gap-6"
+              ref={scrollRef}
+              animate={!isPaused ? {
+                x: [currentX, currentX - width],
+              } : {
+                x: currentX
+              }}
+              transition={!isPaused ? {
+                x: {
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 120,
+                  ease: "linear",
+                  repeatDelay: 0
+                }
+              } : {
+                duration: 0.3,
+                ease: "easeOut"
+              }}
+              // Desktop hover events (always enabled)
+              onHoverStart={handlePause}
+              onHoverEnd={handleResume}
+              // Mobile touch events (only enabled on mobile)
+              {...touchHandlers}
+              className={`flex gap-6 ${!isMobile ? 'cursor-grab active:cursor-grabbing' : ''}`}
               style={{ width: "fit-content" }}
+              // Enable dragging only on mobile
+              drag={isMobile ? "x" : false}
+              dragConstraints={scrollRef}
+              dragElastic={0.1}
+              dragMomentum={false}
+              onDragStart={isMobile ? handlePause : undefined}
+              onDragEnd={isMobile ? handleResume : undefined}
             >
               {duplicatedTestimonials.map((testimonial, index) => (
                 <motion.div
                   key={`${testimonial.id}-${index}`}
-                  variants={cardVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.3 }}
-                  className="min-w-[350px] md:min-w-[400px] lg:min-w-[450px]"
+                  className="min-w-[350px] md:min-w-[400px] lg:min-w-[450px] select-none"
+                  whileTap={isMobile ? { scale: 0.98 } : undefined}
                 >
                   {/* Testimonial Card */}
-                  <div className="relative h-[320px] my-5">
-                    {/* Card - No hover effects */}
-                    <div className="relative h-full bg-white/90 backdrop-blur-sm p-8 rounded-2xl border border-gray-100 shadow-lg">
+                  <div className="relative h-[280px] my-5">
+                    {/* Card */}
+                    <div className="relative h-full bg-white/90 backdrop-blur-sm p-8 rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                       
-                      {/* Quote Icon with entry animation */}
-                      <motion.div 
-                        className="absolute top-6 right-6"
-                        initial={{ scale: 0, rotate: -45 }}
-                        whileInView={{ scale: 1, rotate: 0 }}
-                        transition={{ 
-                          type: "spring",
-                          stiffness: 200,
-                          damping: 15,
-                          delay: 0.2 
-                        }}
-                        viewport={{ once: true }}
-                      >
-                        <QuoteIcon />
-                      </motion.div>
+                      {/* Large Quote Icon */}
+                      <div className="absolute top-4 right-4">
+                        <FontAwesomeIcon 
+                          icon={faQuoteRight} 
+                          className="w-20 h-20 text-red-600/15"
+                        />
+                      </div>
 
-                      {/* Rating stars with staggered entry animation */}
-                      <motion.div 
-                        className="flex gap-1 mb-6"
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                      >
+                      {/* Rating stars */}
+                      <div className="flex gap-1 mb-4 relative z-10">
                         {[...Array(5)].map((_, i) => (
-                          <motion.svg
+                          <FontAwesomeIcon 
                             key={i}
-                            initial={{ opacity: 0, scale: 0 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ 
-                              delay: 0.1 + i * 0.05,
-                              type: "spring",
-                              stiffness: 300
-                            }}
-                            viewport={{ once: true }}
-                            className={`w-5 h-5 ${
+                            icon={faStar} 
+                            className={`w-4 h-4 ${
                               i < testimonial.rating
                                 ? 'text-yellow-400'
                                 : 'text-gray-200'
                             }`}
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                          </motion.svg>
+                          />
                         ))}
-                      </motion.div>
+                      </div>
 
-                      {/* Quote with fade-in animation */}
-                      <motion.blockquote 
-                        className="font-['Manrope'] text-gray-700 text-sm leading-relaxed mb-4 line-clamp-3"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 0.5 }}
-                        viewport={{ once: true }}
-                      >
-                        "{testimonial.quote}"
-                      </motion.blockquote>
+                      {/* Quote */}
+                      <div className="flex-1 relative z-10">
+                        <p className="font-['Manrope'] text-gray-700 text-sm leading-relaxed line-clamp-4">
+                          "{testimonial.quote}"
+                        </p>
+                      </div>
 
-                      {/* Author info with slide-up animation */}
-                      <motion.div 
-                        className="flex items-center gap-4 pt-4 border-t border-gray-100"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4, duration: 0.5 }}
-                        viewport={{ once: true }}
-                      >
-                        {/* Author image - no hover effects */}
-                        <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-red-600/20 flex-shrink-0">
-                          {testimonial.image ? (
-                            <Image
-                              src={testimonial.image}
-                              alt={testimonial.author}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                              <span className="text-xl text-gray-400">
-                                {testimonial.author.charAt(0)}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-['Marcellus'] text-lg font-bold text-gray-900 truncate">
+                      {/* Author info with flag */}
+                      <div className="pt-4 border-t border-gray-100 mt-4 relative z-10">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-['Marcellus'] text-base font-bold text-gray-900">
                             {testimonial.author}
                           </h4>
-                          <p className="font-['Manrope'] text-sm text-gray-600 truncate">
-                            {testimonial.role}
-                          </p>
-                          <p className="font-['Manrope'] text-xs text-gray-400 mt-1">
-                            {testimonial.company} · {testimonial.location}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            {/* Flag image from flagcdn.com */}
+                            <div className="relative w-5 h-3.5 overflow-hidden rounded-sm shadow-sm">
+                              <Image
+                                src={countryFlags[testimonial.location]}
+                                alt={`${testimonial.location} flag`}
+                                fill
+                                className="object-cover"
+                                unoptimized
+                              />
+                            </div>
+                            <span className="font-['Manrope'] text-xs text-gray-500">
+                              {testimonial.location}
+                            </span>
+                          </div>
                         </div>
-                      </motion.div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -283,6 +308,7 @@ export default function Testimonials() {
           </div>
         </div>
 
+    
       </div>
     </section>
   );
