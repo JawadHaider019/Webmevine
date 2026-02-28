@@ -52,7 +52,7 @@ body {
   position: relative;
   padding: 0.875rem 2rem;
    font-family: "Manrope", sans-serif;
-  background: linear-gradient(135deg, #f87c7c 0%, #d8d8d8 100%);
+  background: linear-gradient(135deg, #d8d8d8 0%,#ffff  100%);
   color: black;
   font-weight: 600;
   font-size: 0.875rem;
@@ -67,7 +67,6 @@ body {
 
   .btn-secondary:hover {
   transform: scale(1.05);
-   background: linear-gradient(135deg, #d8d8d8 0%,#ffff  100%);
 }
 .btn-secondary:active,
 .btn-primary:active {

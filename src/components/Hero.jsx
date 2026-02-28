@@ -156,7 +156,7 @@ export default function Hero() {
     glowColor="200, 0, 0"
     spreadSize="small"
     speed="medium"
-     waveCount={5} 
+     waveCount={3} 
   >
     Book Your Free Strategy Call
   </GlowingButton>

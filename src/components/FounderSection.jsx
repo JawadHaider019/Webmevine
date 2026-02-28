@@ -101,8 +101,8 @@ const FounderSection = () => {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <SectionHeader
-            heading="Founder"
-            description="Real results from real projects. See how we've helped founders launch faster."
+            heading="Meet the Founder"
+            description="Crafting High-Performance Websites & Scalable Digital Solutions."
             gradientHeading={true}
             smallHeadingColor="text-white" 
             descriptionColor="text-white"
@@ -142,12 +142,12 @@ const FounderSection = () => {
               className="space-y-4 text-white/80 leading-relaxed text-sm sm:text-base lg:text-lg text-center lg:text-left font-['Manrope']"
             >
               <p>
-                With several years of hands-on experience in full-stack development, I've dedicated my career to turning ideas into reliable, efficient digital solutions. I started with a passion for technology and a belief that every business, big or small, deserves access to smart, well-designed software.
-              </p>
+             I’m a specialist web designer and developer with 5+ years of experience creating high-performance websites and custom web applications for startups, businesses, and ambitious founders. With 100+ projects successfully delivered, I combine React JS development, Bubble.io SaaS builds, and AI-powered integrations to craft websites that are not only visually appealing but also conversion-focused and scalable. </p>
               
               <p>
-                My approach combines deep technical expertise with practical problem-solving. I craft scalable applications and systems that help startups and growing businesses achieve measurable results.
-              </p>
+              At WebMavine, we don’t just write code we engineer digital assets that drive growth. From custom website development to fast MVP launches, every project is built with speed, quality, and ROI in mind.
+
+My approach blends minimalist, user-centric design with robust technical architecture, ensuring your website or SaaS platform is future-ready, performance-optimized, and designed to scale. </p>
             </motion.div>
           </motion.div>
 

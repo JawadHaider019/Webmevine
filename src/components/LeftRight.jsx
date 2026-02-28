@@ -2,9 +2,9 @@
 
 import { useRef } from 'react';
 import Link from 'next/link';
-import { FaArrowRight } from 'react-icons/fa';
 import { motion, useInView } from 'framer-motion';
 import SectionHeader from './SectionHeader';
+import GlowingButton from './GlowingButton';
 
 const LeftRight = ({
   smallHeading,
@@ -66,22 +66,6 @@ const LeftRight = ({
     }
   };
 
-  const buttonVariants = {
-    hover: {
-      scale: 1.05,
-      backgroundColor: "#000000",
-      color: "#ef4444", // red-500
-      borderColor: "#ef4444",
-      transition: {
-        duration: 0.3,
-        ease: "easeOut"
-      }
-    },
-    tap: {
-      scale: 0.98
-    }
-  };
-
   return (
     <motion.section 
       ref={sectionRef}
@@ -116,19 +100,15 @@ const LeftRight = ({
                   variants={leftContentVariants}
                   className="flex flex-row gap-3 justify-center lg:justify-start mt-8"
                 >
-                  <motion.div
-                    variants={buttonVariants}
-                    whileHover="hover"
-                    whileTap="tap"
+                  <GlowingButton 
+                    glowColor="200, 0, 0"
+                    spreadSize="small"
+                    speed="medium"
+                    waveCount={3}
+                    onClick={() => window.location.href = buttonLink}
                   >
-                    <Link
-                      href={buttonLink}
-                      className="btn-primary"
-                    >
-                      {buttonText}
-                     
-                    </Link>
-                  </motion.div>
+                    {buttonText}
+                  </GlowingButton>
                 </motion.div>
               )}
             </motion.div>
@@ -137,15 +117,15 @@ const LeftRight = ({
           {/* Right Side - Content Sections */}
           <motion.div 
             variants={containerVariants}
-            className="lg:w-3/5 flex flex-col gap-8 sm:gap-10 lg:gap-12"
+            className="lg:w-3/5 flex flex-col gap-0 sm:gap-8"
           >
             {sections?.map((section, index) => (
               <motion.div
                 key={index}
                 variants={rightItemVariants}
-                className="min-h-[40vh] sm:min-h-[45vh] lg:min-h-[50vh] flex items-center py-8 sm:py-12 lg:py-16 border-b border-gray-100 last:border-0"
+                className="flex items-center py-4 sm:py-6 border-b border-gray-100 last:border-0"
               >
-                <div className="w-full space-y-3 sm:space-y-4 lg:space-y-6 text-center lg:text-left">
+                <div className="w-full space-y-3 sm:space-y-4 text-center lg:text-left">
                   <motion.div 
                     className="text-red-500 text-sm sm:text-base lg:text-lg font-semibold font-['Manrope']"
                   >

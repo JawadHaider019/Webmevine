@@ -1,14 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { FiArrowRight } from "react-icons/fi";
+import GlowingButton from "./GlowingButton";
 
 // Reusable Hero Section Component
 export default function HeroSection({
   // Content Props
   badge = "✦ Launch your app in 19 days — few spots left! ✦",
   heading = "Who we are",
+  headingAccent = "",
   subheading = "We're a leader in No Code digital transformation",
   ctaText = "Book a Free Call",
   ctaLink = "/contact",
@@ -24,7 +24,7 @@ export default function HeroSection({
   patternOpacity = "opacity-30",
   
   // Layout Props
-  height = "h-[70vh]",
+  height = "h-[60vh]",
   paddingTop = "pt-30",
   maxWidth = "max-w-7xl",
   
@@ -63,21 +63,6 @@ export default function HeroSection({
     }
   };
 
-  const badgeVariants = {
-    hidden: { opacity: 0, scale: 0.9, y: -20 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 200,
-        damping: 15,
-        delay: 0.1
-      }
-    }
-  };
-
   return (
     <section className={`relative ${height} ${paddingTop} overflow-hidden bg-gradient-to-br ${gradientFrom} ${gradientVia} ${gradientTo} ${className}`}>
       {/* Background Pattern */}
@@ -95,51 +80,19 @@ export default function HeroSection({
           initial="hidden"
           animate="visible"
         >
-          {/* Badge (Optional) */}
-          {badge && (
-            <motion.div
-              variants={badgeVariants}
-              className="inline-block mb-6"
-            >
-              <span className={`px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full ${badgeColor} text-sm font-['Manrope'] tracking-wider`}>
-                {badge}
-              </span>
-            </motion.div>
-          )}
+     
 
           {/* Heading */}
           <motion.h1
             variants={itemVariants}
             className={`font-['Marcellus'] text-5xl md:text-6xl lg:text-7xl ${textColor} mb-6`}
           >
-            {heading}
+            {heading} {headingAccent && (
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-100 via-red-200 to-red-400">
+                {headingAccent}
+              </span>
+            )}
           </motion.h1>
-
-          {/* CTA Button (Optional) */}
-          {ctaText && (
-            <motion.div
-              variants={itemVariants}
-            >
-              <Link href={ctaLink}>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={` ${ctaBgColor} ${ctaTextColor} btn-secondary`}
-                >
-                  
-                    {ctaText}
-                 
-           
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "200%" }}
-                    transition={{ duration: 0.8 }}
-                  />
-                </motion.button>
-              </Link>
-            </motion.div>
-          )}
 
           {/* Subheading (Optional) */}
           {subheading && (
@@ -149,6 +102,25 @@ export default function HeroSection({
             >
               {subheading}
             </motion.p>
+          )}
+
+          {/* CTA Button (Optional) */}
+          {ctaText && (
+            <motion.div
+              variants={itemVariants}
+              className="mt-10"
+            >
+              <GlowingButton 
+                glowColor="200, 0, 0"
+                spreadSize="small"
+                speed="medium"
+                waveCount={3}
+                variant="secondary"
+                onClick={() => window.location.href = ctaLink} // Fixed: ctaLink instead of buttonLink
+              >
+                {ctaText}
+              </GlowingButton>
+            </motion.div>
           )}
 
           {/* Additional Children (for custom content) */}

@@ -6,12 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import HeroSection from "@/components/HeroSection";
 import Partners from "@/components/Partners";
 import Testimonials from "@/components/Testimonials";
+import GlowingButton from "@/components/GlowingButton";
 
 const SERVICES = [
   {
     title: "AI-Powered MVP Development",
     description: [
-      "Launch your MVP in as little as 19 days using cutting-edge AI tools and low-code platforms.",
+      "Launch your MVP in as little as 21 days using cutting-edge AI tools and low-code platforms.",
       "We combine the speed of no-code with the flexibility of custom development to get you to market faster.",
       "Perfect for founders who need to validate their idea without months of development time."
     ]
@@ -24,14 +25,7 @@ const SERVICES = [
       "Responsive design that works flawlessly across all devices."
     ]
   },
-  {
-    title: "Mobile App Development",
-    description: [
-      "Native and cross-platform mobile apps for iOS and Android using React Native and Flutter.",
-      "Smooth performance, beautiful UI, and seamless user experience.",
-      "Push notifications, offline capabilities, and device feature integration."
-    ]
-  },
+
   {
     title: "AI Integration & Automation",
     description: [
@@ -97,6 +91,7 @@ const SERVICES = [
     ]
   }
 ];
+
 
 export default function ServicesPage() {
   const [expanded, setExpanded] = useState(0); // First item open by default
@@ -260,9 +255,14 @@ export default function ServicesPage() {
           <p className="font-['Manrope'] text-gray-500 mb-6">
             Not sure which service you need? Let's talk about your project.
           </p>
-          <button className="font-['Manrope'] btn-primary">
-            Book a Free Consultation
-          </button>
+         <GlowingButton 
+    glowColor="200, 0, 0"
+    spreadSize="small"
+    speed="medium"
+     waveCount={3} 
+  >
+    Book Your Free Strategy Call
+  </GlowingButton>
         </div>
       </section>
       

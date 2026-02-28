@@ -73,7 +73,7 @@ export default function CaseStudiesSection() {
         name: "Sarah Chen",
         title: "Founder, ArtisanHub"
       },
-      image: "/project.png",
+      image: "/casestudy/fintalio.png",
       color: "#ffffff",
       number: "03",
       gradient: "from-gray-50 to-white",
@@ -92,7 +92,7 @@ export default function CaseStudiesSection() {
         name: "Michael Roberts",
         title: "CEO, FinDash"
       },
-      image: "/project.png",
+      image: "/casestudy/fivupai.png",
       color: "#ffffff",
       number: "04",
       gradient: "from-gray-50 to-white",
@@ -257,12 +257,12 @@ export default function CaseStudiesSection() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.4 }}
-                        className="relative h-full flex flex-col lg:flex-row p-3 sm:p-4 md:p-6 lg:p-8 gap-4 md:gap-6 lg:gap-8"
+                        className="relative h-full flex flex-col lg:flex-row p-3 sm:p-4 md:p-6 lg:p-8 gap-4 md:gap-6 lg:gap-8 items-center"
                       >
                         {/* Left side - Image with founder info */}
-                        <div className="relative w-full lg:w-[45%] h-48 sm:h-56 md:h-64 lg:h-full flex flex-col">
+                        <div className="relative w-full lg:w-[45%] h-48 sm:h-56 md:h-64 lg:h-[80%] flex flex-col">
                           {/* Image */}
-                          <div className="relative w-full h-full rounded-xl md:rounded-2xl overflow-hidden shadow-md md:shadow-xl mb-3 md:mb-4">
+                          <div className="relative w-full bg-[#1c1c1c] h-full rounded-xl md:rounded-2xl overflow-hidden shadow-md md:shadow-xl mb-3 md:mb-4">
                             {study.image ? (
                               <Image
                                 src={study.image}

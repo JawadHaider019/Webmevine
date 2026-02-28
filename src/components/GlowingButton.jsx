@@ -15,7 +15,7 @@ const GlowingButton = ({
   
   const spreadConfig = {
     small: {
-      baseScale: 1.1,
+      baseScale: 1.0,
       increment: 0.1,
     },
     medium: {
