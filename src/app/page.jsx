@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import Whyus from "@/components/Whyus";
+import WebsiteValueSection from '@/components/WebsiteValueSection'
 import CaseStudies from "@/components/CaseStudies";
 import Partners from "@/components/Partners";
 import HowItWorks from "@/components/HowItWorks";
@@ -13,6 +14,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <WebsiteValueSection/>
        <Whyus/>
        <CaseStudies/>
        <Partners />

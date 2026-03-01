@@ -3,14 +3,19 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import SectionHeader from "./SectionHeader";
+import GlowingButton from "./GlowingButton";
+import { caseStudies } from "@/data/caseStudies";
 
 export default function CaseStudiesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // Check if mobile on mount and when window resizes
   useEffect(() => {
+    setMounted(true);
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -21,87 +26,21 @@ export default function CaseStudiesSection() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const caseStudies = [
-    {
-      id: 1,
-      category: "Social & Lifestyle",
-      description: "A social startup needed to validate their flatmate-matching concept fast.",
-      achievement: "Using no-code + AI automation, we designed, built, and shipped the Good Bye Mama MVP in just 4 weeks.",
-      stats: [
-        { label: "Live In", value: "4 Weeks" },
-        { label: "Beta Users", value: "150+" }
-      ],
-      founder: {
-        name: "Marta Ruiz",
-        title: "Co-Founder, Good Bye Mama"
-      },
-      image: "/project.png",
-      color: "#ffffff",
-      number: "01",
-      gradient: "from-gray-50 to-white",
-      cta: "Read the Story"
-    },
-    {
-      id: 2,
-      category: "AI SaaS",
-      description: "An early-stage founder needed to validate a next-gen Business Model Canvas idea.",
-      achievement: "We built a powerful AI-driven platform with automated insights, subscription billing, and blockchain certification all delivered in just 4 weeks.",
-      stats: [
-        { label: "Beta Users", value: "500+" },
-        { label: "AI Adoption", value: "70%" }
-      ],
-      founder: {
-        name: "David Ramos",
-        title: "Founder & CEO"
-      },
-      image: "/project.png",
-      color: "#ffffff",
-      number: "02",
-      gradient: "from-gray-50 to-white",
-      cta: "Read the Story"
-    },
-    {
-      id: 3,
-      category: "E-Commerce",
-      description: "A marketplace startup needed to scale their artisan platform quickly.",
-      achievement: "We built a scalable marketplace with integrated payments and AI-powered recommendations in just 4 weeks.",
-      stats: [
-        { label: "First Month GMV", value: "$2M" },
-        { label: "Active Sellers", value: "500+" }
-      ],
-      founder: {
-        name: "Sarah Chen",
-        title: "Founder, ArtisanHub"
-      },
-      image: "/casestudy/fintalio.png",
-      color: "#ffffff",
-      number: "03",
-      gradient: "from-gray-50 to-white",
-      cta: "Read the Story"
-    },
-    {
-      id: 4,
-      category: "FinTech",
-      description: "A financial startup needed to build a real-time analytics dashboard.",
-      achievement: "We delivered a comprehensive financial intelligence platform with real-time data visualization in just 4 weeks.",
-      stats: [
-        { label: "Daily Transactions", value: "1M+" },
-        { label: "Uptime", value: "99.9%" }
-      ],
-      founder: {
-        name: "Michael Roberts",
-        title: "CEO, FinDash"
-      },
-      image: "/casestudy/fivupai.png",
-      color: "#ffffff",
-      number: "04",
-      gradient: "from-gray-50 to-white",
-      cta: "Read the Story"
-    }
-  ];
+  // Don't render on server to avoid hydration mismatch
+  if (!mounted) {
+    return null;
+  }
 
   const handleSlideClick = (index) => {
-    setActiveIndex(index);
+    // On desktop, clicking a closed slide opens it
+    if (!isMobile) {
+      setActiveIndex(index);
+    }
+  };
+
+  const handleOpenSlideClick = (slug) => {
+    // Navigate to case study detail page when clicking on open slide
+    window.location.href = `/case-studies/${slug}`;
   };
 
   // Responsive widths
@@ -145,8 +84,21 @@ export default function CaseStudiesSection() {
 
   return (
     <section className="relative min-h-screen bg-gradient-to-r from-black via-red-600 to-black pt-16 pb-20 overflow-hidden">
+      {/* Remove scrollbar completely with global style */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          .no-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+        `
+      }} />
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-       {/* Header with fade-in animation */}
+        {/* Header with fade-in animation */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -198,9 +150,9 @@ export default function CaseStudiesSection() {
           </div>
         )}
 
-        {/* Slides Container */}
+        {/* Slides Container - No scrollbar */}
         <div className={`relative w-full ${isMobile ? 'h-auto' : 'h-[400px] md:h-[500px] lg:h-[600px]'}`}>
-          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 h-full`}>
+          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 h-full no-scrollbar`}>
             {caseStudies.map((study, index) => {
               const isActive = index === activeIndex;
               const width = getSlideWidth(index);
@@ -226,7 +178,7 @@ export default function CaseStudiesSection() {
                     mass: 1,
                     layout: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
                   }}
-                  onClick={() => !isMobile && handleSlideClick(index)}
+                  onClick={() => isActive ? handleOpenSlideClick(study.slug) : handleSlideClick(index)}
                   className={`
                     relative rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer
                     ${isActive ? 'shadow-2xl' : 'shadow-lg hover:shadow-xl'}
@@ -250,7 +202,7 @@ export default function CaseStudiesSection() {
                   {/* Content based on active state */}
                   <AnimatePresence mode="wait">
                     {isActive ? (
-                      /* Open Slide Content - Responsive */
+                      /* Open Slide Content */
                       <motion.div
                         key="open"
                         initial={{ opacity: 0 }}
@@ -259,7 +211,7 @@ export default function CaseStudiesSection() {
                         transition={{ duration: 0.4 }}
                         className="relative h-full flex flex-col lg:flex-row p-3 sm:p-4 md:p-6 lg:p-8 gap-4 md:gap-6 lg:gap-8 items-center"
                       >
-                        {/* Left side - Image with founder info */}
+                        {/* Left side - Image */}
                         <div className="relative w-full lg:w-[45%] h-48 sm:h-56 md:h-64 lg:h-[80%] flex flex-col">
                           {/* Image */}
                           <div className="relative w-full bg-[#1c1c1c] h-full rounded-xl md:rounded-2xl overflow-hidden shadow-md md:shadow-xl mb-3 md:mb-4">
@@ -268,7 +220,7 @@ export default function CaseStudiesSection() {
                                 src={study.image}
                                 alt={study.category}
                                 fill
-                                className="object-contain transition-transform duration-700 "
+                                className="object-contain transition-transform duration-700"
                               />
                             ) : (
                               <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
@@ -285,13 +237,18 @@ export default function CaseStudiesSection() {
                         </div>
 
                         {/* Right side - Content */}
-                        <div className="flex-1 flex flex-col justify-center overflow-y-auto">
+                        <div className="flex-1 flex flex-col justify-center">
                           {/* Category tag */}
                           <div className="inline-block mb-2 md:mb-4">
                             <span className="font-['Manrope'] text-[10px] md:text-xs font-semibold text-red-600 bg-red-50 px-2 md:px-3 py-1 rounded-full">
                               {study.category}
                             </span>
                           </div>
+
+                          {/* Title */}
+                          <h3 className="font-['Marcellus'] text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 md:mb-4">
+                            {study.title}
+                          </h3>
 
                           {/* Description */}
                           <p className="font-['Manrope'] text-gray-900 text-sm sm:text-base md:text-lg lg:text-xl font-medium mb-2 md:mb-4">
@@ -319,63 +276,62 @@ export default function CaseStudiesSection() {
                             <p className="font-['Manrope'] text-[10px] text-gray-400">{study.founder.title}</p>
                           </div>
 
-                          {/* Read Story button */}
-                          <motion.button
-                            whileHover={{ scale: 1.05, x: 5 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 md:gap-3 text-red-600 font-semibold text-xs sm:text-sm md:text-base w-fit group"
+                          {/* "Read the Story" text indicator */}
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 0.7 }}
+                            transition={{ delay: 0.5 }}
+                            className="flex items-center gap-2 text-red-600/70 text-xs sm:text-sm mt-4"
                           >
-                            <span className="font-['Manrope']">{study.cta}</span>
-                            <div className="w-6 h-6 md:w-8 md:h-8 bg-red-600 rounded-full flex items-center justify-center group-hover:bg-red-700 transition-colors">
-                              <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                              </svg>
-                            </div>
-                          </motion.button>
+                            <span>Click anywhere to read the full story</span>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                          </motion.div>
                         </div>
                       </motion.div>
                     ) : (
-                      /* Closed Slide Content - Responsive */
+                      /* Closed Slide Content */
                       <motion.div
                         key="closed"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={() => isMobile && handleSlideClick(index)}
                         className="relative h-full flex items-center justify-center p-2"
                       >
                         {/* Mobile closed view */}
                         {isMobile ? (
                           <div className="flex items-center justify-between w-full px-4">
-                            <span className="font-['Manrope'] text-sm font-medium text-gray-700">{study.category}</span>
-                            <span className="font-['Marcellus'] text-lg font-bold text-gray-400">{study.number}</span>
+                            <span className="font-['Manrope'] text-sm font-medium text-gray-700 truncate max-w-[70%]">{study.category}</span>
+                            <span className="font-['Marcellus'] text-lg font-bold text-gray-400 ml-2">{study.number}</span>
                           </div>
                         ) : (
                           /* Desktop closed view */
-                          <div className="relative z-10 flex flex-col items-center justify-center">
-                            <motion.span 
-                              className="font-['Marcellus'] text-3xl md:text-5xl lg:text-7xl font-black text-gray-900/20"
-                              animate={{ 
-                                scale: [1, 1.1, 1],
-                              }}
-                              transition={{
-                                duration: 2,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                              }}
-                            >
-                              {study.number}
-                            </motion.span>
+                          <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
+                            {/* Number at top */}
+                            <div className="absolute top-4 left-1/2 -translate-x-1/2 w-full text-center">
+                              <span className="font-['Marcellus'] text-2xl md:text-3xl lg:text-4xl font-black text-gray-900/20">
+                                {study.number}
+                              </span>
+                            </div>
                             
-                            {/* Vertical category */}
-                            <div className="mt-2 md:mt-4 h-16 md:h-24 flex items-center justify-center">
+                            {/* Vertical category in middle */}
+                            <div className="flex items-center justify-center h-full">
                               <span className="font-['Manrope'] text-[10px] md:text-xs font-medium text-gray-400 tracking-wider whitespace-nowrap rotate-90 origin-center uppercase">
                                 {study.category}
                               </span>
                             </div>
+
+                            {/* Click to open indicator */}
+                            <motion.div 
+                              className="absolute bottom-4 left-1/2 -translate-x-1/2 text-gray-400/50 text-[8px] uppercase tracking-wider"
+                              animate={{ opacity: [0.3, 0.6, 0.3] }}
+                              transition={{ duration: 2, repeat: Infinity }}
+                            >
+                              Click to open
+                            </motion.div>
                           </div>
                         )}
-
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -395,7 +351,7 @@ export default function CaseStudiesSection() {
           </div>
         </div>
 
-        {/* Desktop Navigation Dots */}
+        {/* Navigation Dots */}
         <div className="flex justify-center gap-3 mt-8 md:mt-10">
           {caseStudies.map((_, index) => (
             <motion.button
@@ -417,6 +373,27 @@ export default function CaseStudiesSection() {
             </motion.button>
           ))}
         </div>
+
+        {/* View All Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="flex justify-center mt-12"
+        >
+          <Link href="/case-studies">
+            <GlowingButton 
+              glowColor="255, 255, 255"
+              spreadSize="small"
+              speed="medium"
+              waveCount={3}
+              variant="secondary"
+            >
+              View All Case Studies
+            </GlowingButton>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

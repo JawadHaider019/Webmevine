@@ -157,7 +157,7 @@ export default function Navbar() {
   <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
     <Image 
       src="/logo.png" 
-      alt="AHMTECH Logo"
+      alt="WebMevine Logo"
       width={140}
       height={140}
       className="object-contain w-full h-auto"
