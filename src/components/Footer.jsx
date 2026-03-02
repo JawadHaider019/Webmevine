@@ -25,7 +25,8 @@ export default function Footer() {
       { name: "About", href: "/about" },
       { name: "Services", href: "/services" },
       { name: "Process", href: "/process" },
-      { name: "Contact", href: "/contact" }
+      { name: "Contact", href: "/contact" },
+            { name: "Blogs", href: "/blog" }
     ],
     legal: [
       { name: "Privacy", href: "/privacy" },
