@@ -415,7 +415,7 @@ export default function CaseStudiesSection() {
             <GlowingButton 
               glowColor="255, 255, 255"
               spreadSize="small"
-              speed="medium"
+              speed="fast"
               waveCount={3}
               variant="secondary"
             >

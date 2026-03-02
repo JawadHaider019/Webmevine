@@ -151,7 +151,7 @@ export default function Hero() {
             className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 lg:gap-4 xl:gap-6 justify-center lg:justify-start px-2 sm:px-0"
           >
             <GlowingButton 
-              glowColor="200, 0, 0"
+               glowColor="255, 255, 255"
               spreadSize="small"
               speed="medium"
               waveCount={3} 

@@ -134,7 +134,7 @@ export default function HeroSection({
               className="mt-10"
             >
               <GlowingButton 
-                glowColor="200, 0, 0"
+                glowColor="255,255, 255"
                 spreadSize="small"
                 speed="medium"
                 waveCount={3}

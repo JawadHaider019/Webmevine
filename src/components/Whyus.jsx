@@ -218,10 +218,10 @@ export default function Whyus() {
           className="text-center mt-16"
         >
           <GlowingButton 
-            glowColor="255, 150, 150"
+            glowColor="255, 0, 0"
             spreadSize="small"
             speed="medium"
-            waveCount={5} 
+            waveCount={3} 
           >
             Talk to an Expert
           </GlowingButton>
