@@ -55,8 +55,6 @@ function generateSlug(title) {
 }
 
 // Helper function to upload image
-// In src/services/decapApi.js - Fix uploadImage function
-
 async function uploadImage(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -96,126 +94,117 @@ async function uploadImage(file) {
     reader.readAsDataURL(file);
   });
 }
+
 export const decapApi = {
   // Get all blogs from GitHub
-// In src/services/decapApi.js - Update getAllBlogs
-
-getAllBlogs: async () => {
-  try {
-    const response = await fetch(`/api/github?path=${BLOG_FOLDER}`);
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        return [];
-      }
-      throw new Error('Failed to fetch blogs');
-    }
-    
-    const files = await response.json();
-    
-    if (!Array.isArray(files)) return [];
-    
-    const blogs = await Promise.all(
-      files.map(async (file) => {
-        if (file.name === '.gitkeep') return null;
-        if (!file.name.endsWith('.md')) return null;
-        
-        const contentResponse = await fetch(file.download_url);
-        const content = await contentResponse.text();
-        
-        const { data, content: markdown } = parseFrontmatter(content);
-        
-        // Ensure imageUrl is a full GitHub URL if it's a local path
-        let imageUrl = data.imageUrl;
-        if (imageUrl && imageUrl.startsWith('/images/')) {
-          const fileName = imageUrl.split('/').pop();
-          imageUrl = `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/public/images/${fileName}`;
+  getAllBlogs: async () => {
+    try {
+      const response = await fetch(`/api/github?path=${BLOG_FOLDER}`);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          return [];
         }
-        
-        return {
-          id: file.sha,
-          slug: file.name.replace('.md', ''),
-          ...data,
-          imageUrl, // Use the converted URL
-          content: markdown
-        };
-      })
-    );
-    
-    return blogs.filter(blog => blog !== null);
-  } catch (error) {
-    console.error('Error fetching blogs:', error);
-    return [];
-  }
-},
-  // Get single blog by slug
-// In src/services/decapApi.js - Update getAllBlogs
-
-getAllBlogs: async () => {
-  try {
-    const response = await fetch(`/api/github?path=${BLOG_FOLDER}`);
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        return [];
+        throw new Error('Failed to fetch blogs');
       }
-      throw new Error('Failed to fetch blogs');
+      
+      const files = await response.json();
+      
+      if (!Array.isArray(files)) return [];
+      
+      const blogs = await Promise.all(
+        files.map(async (file) => {
+          if (file.name === '.gitkeep') return null;
+          if (!file.name.endsWith('.md')) return null;
+          
+          const contentResponse = await fetch(file.download_url);
+          const content = await contentResponse.text();
+          
+          const { data, content: markdown } = parseFrontmatter(content);
+          
+          console.log('📄 Parsed blog data:', { 
+            slug: file.name.replace('.md', ''),
+            title: data.title,
+            imageUrl: data.imageUrl,
+            hasImage: !!data.imageUrl
+          });
+          
+          return {
+            id: file.sha,
+            slug: file.name.replace('.md', ''),
+            ...data,
+            content: markdown
+          };
+        })
+      );
+      
+      return blogs.filter(blog => blog !== null);
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+      return [];
     }
-    
-    const files = await response.json();
-    
-    if (!Array.isArray(files)) return [];
-    
-    const blogs = await Promise.all(
-      files.map(async (file) => {
-        if (file.name === '.gitkeep') return null;
-        if (!file.name.endsWith('.md')) return null;
-        
-        const contentResponse = await fetch(file.download_url);
-        const content = await contentResponse.text();
-        
-        const { data, content: markdown } = parseFrontmatter(content);
-        
-        console.log('📄 Parsed blog data:', { 
-          slug: file.name.replace('.md', ''),
-          title: data.title,
-          imageUrl: data.imageUrl,
-          hasImage: !!data.imageUrl
-        });
-        
-        return {
-          id: file.sha,
-          slug: file.name.replace('.md', ''),
-          ...data,
-          content: markdown
-        };
-      })
-    );
-    
-    return blogs.filter(blog => blog !== null);
-  } catch (error) {
-    console.error('Error fetching blogs:', error);
-    return [];
-  }
-},
-  // Create new blog
-// In src/services/decapApi.js - Update createBlog
+  },
 
-createBlog: async (blogData, file) => {
-  try {
-    // Generate slug from title
-    const slug = generateSlug(blogData.title);
-    
-    // Format tags for frontmatter
-    const tagsString = blogData.tags && blogData.tags.length > 0
-      ? `[${blogData.tags.map(t => `"${t}"`).join(', ')}]`
-      : '[]';
-    
-    // Make sure imageUrl is included in frontmatter
-    const imageUrlLine = blogData.imageUrl ? `imageUrl: ${blogData.imageUrl}\n` : '';
-    
-    // Convert blog data to markdown with frontmatter
-    const frontmatter = `---
+  // Get single blog by slug
+  getBlogBySlug: async (slug) => {
+    try {
+      console.log('🔍 Fetching blog with slug:', slug);
+      
+      const response = await fetch(`/api/github?path=${BLOG_FOLDER}/${slug}.md`);
+      
+      console.log('📡 API Response status:', response.status);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.error('❌ Blog file not found:', `${BLOG_FOLDER}/${slug}.md`);
+          return null;
+        }
+        throw new Error('Blog not found');
+      }
+      
+      const file = await response.json();
+      console.log('📄 File found:', file.name);
+      
+      const content = atob(file.content);
+      
+      // Parse frontmatter and content
+      const { data, content: markdown } = parseFrontmatter(content);
+      
+      console.log('📝 Parsed blog data:', {
+        slug: file.name.replace('.md', ''),
+        title: data.title,
+        category: data.category,
+        hasImage: !!data.imageUrl
+      });
+      
+      return {
+        id: file.sha,
+        slug: file.name.replace('.md', ''),
+        ...data,
+        content: markdown
+      };
+    } catch (error) {
+      console.error('Error fetching blog:', error);
+      return null;
+    }
+  },
+
+  // Create new blog
+  createBlog: async (blogData, file) => {
+    try {
+      // Generate slug from title
+      const slug = generateSlug(blogData.title);
+      
+      // Format tags for frontmatter
+      const tagsString = blogData.tags && blogData.tags.length > 0
+        ? `[${blogData.tags.map(t => `"${t}"`).join(', ')}]`
+        : '[]';
+      
+      // Make sure imageUrl is included in frontmatter
+      const imageUrlLine = blogData.imageUrl ? `imageUrl: ${blogData.imageUrl}\n` : '';
+      
+      // Convert blog data to markdown with frontmatter
+      const frontmatter = `---
 title: ${blogData.title}
 date: ${new Date().toISOString()}
 category: ${blogData.category || ''}
@@ -229,75 +218,74 @@ ${imageUrlLine}---
 
 ${blogData.content}`;
 
-    console.log('📝 Frontmatter being saved:', frontmatter);
+      console.log('📝 Frontmatter being saved:', frontmatter);
 
-    // Upload image if exists
-    let imageUrl = blogData.imageUrl;
-    if (file) {
-      imageUrl = await uploadImage(file);
-    }
-
-    // Create blog file in GitHub
-    const response = await fetch('/api/github', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        path: `${BLOG_FOLDER}/${slug}.md`,
-        content: btoa(unescape(encodeURIComponent(frontmatter))),
-        message: `Create blog: ${blogData.title}`
-      })
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      console.error('GitHub API Error:', result);
-      return { 
-        success: false, 
-        error: result.message || 'Failed to create blog',
-        details: result
-      };
-    }
-    
-    const blogId = result.content?.sha || result.commit?.sha || Date.now().toString();
-    
-    return {
-      success: true,
-      data: {
-        id: blogId,
-        slug,
-        ...blogData,
-        imageUrl, // Make sure imageUrl is in the returned data
-        createdAt: new Date().toISOString()
+      // Upload image if exists
+      let imageUrl = blogData.imageUrl;
+      if (file) {
+        imageUrl = await uploadImage(file);
       }
-    };
-  } catch (error) {
-    console.error('Error creating blog:', error);
-    return { success: false, error: error.message };
-  }
-},
-  // Update blog
-// In src/services/decapApi.js - Fix the updateBlog function
 
-updateBlog: async (id, blogData, file) => {
-  try {
-    console.log('📝 Updating blog:', { id, blogData, hasFile: !!file });
-    
-    // Get current file to get SHA
-    const getResponse = await fetch(`/api/github?path=${BLOG_FOLDER}/${blogData.slug}.md`);
-    
-    if (!getResponse.ok) throw new Error('Blog not found');
-    const currentFile = await getResponse.json();
-    
-    // Format tags for frontmatter
-    const tagsString = blogData.tags && blogData.tags.length > 0
-      ? `[${blogData.tags.map(t => `"${t}"`).join(', ')}]`
-      : '[]';
-    
-    // Update frontmatter - use the existing imageUrl, don't try to upload again
-    const frontmatter = `---
+      // Create blog file in GitHub
+      const response = await fetch('/api/github', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          path: `${BLOG_FOLDER}/${slug}.md`,
+          content: btoa(unescape(encodeURIComponent(frontmatter))),
+          message: `Create blog: ${blogData.title}`
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('GitHub API Error:', result);
+        return { 
+          success: false, 
+          error: result.message || 'Failed to create blog',
+          details: result
+        };
+      }
+      
+      const blogId = result.content?.sha || result.commit?.sha || Date.now().toString();
+      
+      return {
+        success: true,
+        data: {
+          id: blogId,
+          slug,
+          ...blogData,
+          imageUrl,
+          createdAt: new Date().toISOString()
+        }
+      };
+    } catch (error) {
+      console.error('Error creating blog:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  // Update blog
+  updateBlog: async (id, blogData, file) => {
+    try {
+      console.log('📝 Updating blog:', { id, blogData, hasFile: !!file });
+      
+      // Get current file to get SHA
+      const getResponse = await fetch(`/api/github?path=${BLOG_FOLDER}/${blogData.slug}.md`);
+      
+      if (!getResponse.ok) throw new Error('Blog not found');
+      const currentFile = await getResponse.json();
+      
+      // Format tags for frontmatter
+      const tagsString = blogData.tags && blogData.tags.length > 0
+        ? `[${blogData.tags.map(t => `"${t}"`).join(', ')}]`
+        : '[]';
+      
+      // Update frontmatter - use the existing imageUrl, don't try to upload again
+      const frontmatter = `---
 title: ${blogData.title}
 date: ${blogData.createdAt || new Date().toISOString()}
 category: ${blogData.category || ''}
@@ -312,98 +300,96 @@ imageUrl: ${blogData.imageUrl || ''}
 
 ${blogData.content}`;
 
-    // Update file
-    const response = await fetch('/api/github', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        path: `${BLOG_FOLDER}/${blogData.slug}.md`,
-        content: btoa(unescape(encodeURIComponent(frontmatter))),
-        message: `Update blog: ${blogData.title}`,
-        sha: currentFile.sha
-      })
-    });
+      // Update file
+      const response = await fetch('/api/github', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          path: `${BLOG_FOLDER}/${blogData.slug}.md`,
+          content: btoa(unescape(encodeURIComponent(frontmatter))),
+          message: `Update blog: ${blogData.title}`,
+          sha: currentFile.sha
+        })
+      });
 
-    const result = await response.json();
+      const result = await response.json();
 
-    if (!response.ok) {
-      console.error('GitHub API Error:', result);
-      return { 
-        success: false, 
-        error: result.message || 'Failed to update blog' 
-      };
-    }
-    
-    const updatedId = result.content?.sha || id;
-    
-    return { 
-      success: true, 
-      data: { 
-        ...blogData, 
-        id: updatedId,
-        // Keep the existing imageUrl, don't try to re-upload
-        imageUrl: blogData.imageUrl 
+      if (!response.ok) {
+        console.error('GitHub API Error:', result);
+        return { 
+          success: false, 
+          error: result.message || 'Failed to update blog' 
+        };
       }
-    };
-  } catch (error) {
-    console.error('Error updating blog:', error);
-    return { success: false, error: error.message };
-  }
-},
+      
+      const updatedId = result.content?.sha || id;
+      
+      return { 
+        success: true, 
+        data: { 
+          ...blogData, 
+          id: updatedId,
+          imageUrl: blogData.imageUrl 
+        }
+      };
+    } catch (error) {
+      console.error('Error updating blog:', error);
+      return { success: false, error: error.message };
+    }
+  },
 
   // Delete blog
-// In src/services/decapApi.js - Update deleteBlog function
+  deleteBlog: async (slug) => {
+    try {
+      console.log('🗑️ Attempting to delete blog with slug:', slug);
+      
+      // Get current file to get SHA
+      const getResponse = await fetch(`/api/github?path=${BLOG_FOLDER}/${slug}.md`);
+      
+      if (!getResponse.ok) {
+        console.error('Blog not found when trying to delete:', slug);
+        return { 
+          success: false, 
+          error: 'Blog not found' 
+        };
+      }
+      
+      const currentFile = await getResponse.json();
+      console.log('📄 Found blog file to delete:', currentFile);
+      
+      // Delete file
+      const deleteResponse = await fetch('/api/github', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          path: `${BLOG_FOLDER}/${slug}.md`,
+          message: `Delete blog: ${slug}`,
+          sha: currentFile.sha
+        })
+      });
 
-deleteBlog: async (slug) => {
-  try {
-    console.log('🗑️ Attempting to delete blog with slug:', slug);
-    
-    // Get current file to get SHA
-    const getResponse = await fetch(`/api/github?path=${BLOG_FOLDER}/${slug}.md`);
-    
-    if (!getResponse.ok) {
-      console.error('Blog not found when trying to delete:', slug);
-      return { 
-        success: false, 
-        error: 'Blog not found' 
-      };
+      const result = await deleteResponse.json();
+
+      if (!deleteResponse.ok) {
+        console.error('Delete API Error:', result);
+        return { 
+          success: false, 
+          error: result.message || 'Failed to delete blog' 
+        };
+      }
+      
+      console.log('✅ Blog deleted successfully:', result);
+      return { success: true };
+    } catch (error) {
+      console.error('Error in deleteBlog:', error);
+      return { success: false, error: error.message };
     }
-    
-    const currentFile = await getResponse.json();
-    console.log('📄 Found blog file to delete:', currentFile);
-    
-    // Delete file
-    const deleteResponse = await fetch('/api/github', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        path: `${BLOG_FOLDER}/${slug}.md`,
-        message: `Delete blog: ${slug}`,
-        sha: currentFile.sha
-      })
-    });
+  },
 
-    const result = await deleteResponse.json();
-
-    if (!deleteResponse.ok) {
-      console.error('Delete API Error:', result);
-      return { 
-        success: false, 
-        error: result.message || 'Failed to delete blog' 
-      };
-    }
-    
-    console.log('✅ Blog deleted successfully:', result);
-    return { success: true };
-  } catch (error) {
-    console.error('Error in deleteBlog:', error);
-    return { success: false, error: error.message };
-  }
-},
   // Toggle featured status
   toggleFeatured: async (id) => {
     return { success: true };
