@@ -1,7 +1,6 @@
 // src/utils/blogUtils.js
-// Helper functions for working with blogs
+// Helper functions for working with blogs - GitHub only, no fallbacks
 import { decapApi } from '@/services/decapApi';
-import { blogPosts } from '@/data/blogData';
 
 // Cache for blogs to avoid excessive API calls
 let blogsCache = null;
@@ -9,7 +8,6 @@ let cacheTimestamp = null;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export const getPublishedBlogs = async () => {
-  // Try to get from Decap API first
   try {
     // Check cache first
     if (blogsCache && cacheTimestamp && (Date.now() - cacheTimestamp < CACHE_DURATION)) {
@@ -21,46 +19,27 @@ export const getPublishedBlogs = async () => {
       }
     }
     
-    // Fetch from Decap API
+    // Fetch from Decap API (GitHub)
     const apiBlogs = await decapApi.getAllBlogs();
     
-    if (apiBlogs && apiBlogs.length > 0) {
-      // Update cache
-      blogsCache = apiBlogs;
-      cacheTimestamp = Date.now();
+    if (!apiBlogs || apiBlogs.length === 0) {
+      return []; // Return empty array if no blogs found
+    }
+    
+    // Update cache
+    blogsCache = apiBlogs;
+    cacheTimestamp = Date.now();
+    
+    return apiBlogs.filter(blog => blog.status === 'published')
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       
-      return apiBlogs.filter(blog => blog.status === 'published')
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    }
   } catch (error) {
-    console.error('Error loading from Decap API:', error);
+    console.error('Error loading blogs from GitHub:', error);
+    throw new Error('Failed to fetch blogs from GitHub'); // Throw error to be handled by UI
   }
-  
-  // Fallback to localStorage
-  if (typeof window !== 'undefined') {
-    try {
-      const saved = localStorage.getItem('blogs');
-      if (saved) {
-        const allBlogs = JSON.parse(saved);
-        const publishedFromStorage = allBlogs.filter(blog => blog.status === 'published')
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        
-        if (publishedFromStorage.length > 0) {
-          return publishedFromStorage;
-        }
-      }
-    } catch (error) {
-      console.error('Error loading from localStorage:', error);
-    }
-  }
-  
-  // Final fallback to mock data
-  return blogPosts.filter(blog => blog.status === 'published')
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 };
 
 export const getBlogBySlug = async (slug) => {
-  // Try Decap API first
   try {
     // Check cache first
     if (blogsCache) {
@@ -70,67 +49,75 @@ export const getBlogBySlug = async (slug) => {
     
     // Fetch from API
     const blog = await decapApi.getBlogBySlug(slug);
-    if (blog) return blog;
-  } catch (error) {
-    console.error('Error loading from Decap API:', error);
-  }
-  
-  // Fallback to localStorage
-  if (typeof window !== 'undefined') {
-    try {
-      const saved = localStorage.getItem('blogs');
-      if (saved) {
-        const allBlogs = JSON.parse(saved);
-        const blog = allBlogs.find(blog => 
-          blog.slug === slug || blog.id === slug
-        );
-        if (blog) return blog;
-      }
-    } catch (error) {
-      console.error('Error loading from localStorage:', error);
+    
+    if (!blog) {
+      throw new Error(`Blog not found: ${slug}`);
     }
+    
+    return blog;
+    
+  } catch (error) {
+    console.error('Error loading blog from GitHub:', error);
+    throw new Error('Failed to fetch blog from GitHub');
   }
-  
-  // Final fallback to mock data
-  return blogPosts.find(blog => blog.slug === slug || blog.id === slug);
 };
 
 export const getAllCategories = async () => {
-  const blogs = await getPublishedBlogs();
-  const categories = [...new Set(blogs.map(blog => blog.category).filter(Boolean))];
-  return categories.sort();
+  try {
+    const blogs = await getPublishedBlogs();
+    const categories = [...new Set(blogs.map(blog => blog.category).filter(Boolean))];
+    return categories.sort();
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return []; // Return empty array on error
+  }
 };
 
 export const getBlogsByCategory = async (category) => {
-  const blogs = await getPublishedBlogs();
-  if (category === 'all') return blogs;
-  return blogs.filter(blog => blog.category === category);
+  try {
+    const blogs = await getPublishedBlogs();
+    if (category === 'all') return blogs;
+    return blogs.filter(blog => blog.category === category);
+  } catch (error) {
+    console.error('Error filtering blogs by category:', error);
+    return [];
+  }
 };
 
 export const searchBlogs = async (query) => {
-  const blogs = await getPublishedBlogs();
-  if (!query) return blogs;
-  
-  const searchTerm = query.toLowerCase();
-  return blogs.filter(blog => 
-    blog.title?.toLowerCase().includes(searchTerm) ||
-    blog.content?.toLowerCase().includes(searchTerm) ||
-    blog.excerpt?.toLowerCase().includes(searchTerm) ||
-    blog.tags?.some(tag => tag?.toLowerCase().includes(searchTerm))
-  );
+  try {
+    const blogs = await getPublishedBlogs();
+    if (!query) return blogs;
+    
+    const searchTerm = query.toLowerCase();
+    return blogs.filter(blog => 
+      blog.title?.toLowerCase().includes(searchTerm) ||
+      blog.content?.toLowerCase().includes(searchTerm) ||
+      blog.excerpt?.toLowerCase().includes(searchTerm) ||
+      blog.tags?.some(tag => tag?.toLowerCase().includes(searchTerm))
+    );
+  } catch (error) {
+    console.error('Error searching blogs:', error);
+    return [];
+  }
 };
 
 export const getRelatedBlogs = async (currentBlog, limit = 3) => {
-  const blogs = await getPublishedBlogs();
-  
-  const related = blogs.filter(blog => 
-    blog.id !== currentBlog.id && (
-      blog.category === currentBlog.category ||
-      blog.tags?.some(tag => currentBlog.tags?.includes(tag))
-    )
-  );
-  
-  return related.slice(0, limit);
+  try {
+    const blogs = await getPublishedBlogs();
+    
+    const related = blogs.filter(blog => 
+      blog.id !== currentBlog.id && (
+        blog.category === currentBlog.category ||
+        blog.tags?.some(tag => currentBlog.tags?.includes(tag))
+      )
+    );
+    
+    return related.slice(0, limit);
+  } catch (error) {
+    console.error('Error fetching related blogs:', error);
+    return [];
+  }
 };
 
 export const formatDate = (dateString) => {
@@ -145,7 +132,7 @@ export const formatDate = (dateString) => {
   }
 };
 
-// Optional: Function to clear cache (useful after publishing/updating)
+// Function to clear cache (useful after publishing/updating)
 export const clearBlogCache = () => {
   blogsCache = null;
   cacheTimestamp = null;

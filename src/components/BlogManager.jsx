@@ -80,8 +80,12 @@ const MarkdownRenderer = ({ content }) => {
               <img 
                 src={urlMatch[1]} 
                 alt={altMatch ? altMatch[1] : ''} 
-                className="max-w-full rounded-lg shadow-md"
+                className="max-w-full rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                loading="lazy"
               />
+              {altMatch && altMatch[1] && (
+                <p className="text-xs text-gray-500 mt-1 text-center">{altMatch[1]}</p>
+              )}
             </div>
           );
         }
@@ -261,8 +265,8 @@ const LinkModal = ({ isOpen, onClose, onInsert }) => {
   );
 };
 
-// Formatting Toolbar
-const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, fileInputRef, textareaRef }) => {
+// Formatting Toolbar (Single Image Upload)
+const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload, textareaRef }) => {
   const formats = [
     { icon: FiBold, action: 'bold', title: 'Bold' },
     { icon: FiItalic, action: 'italic', title: 'Italic' },
@@ -332,7 +336,7 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, fileInputRef, 
   };
 
   return (
-    <div className="flex items-center gap-1 p-1.5 bg-gray-50 rounded-lg border border-gray-200 mb-4">
+    <div className="flex items-center gap-1 p-1.5 bg-gray-50 rounded-lg border border-gray-200 mb-4 flex-wrap">
       {formats.map(({ icon: Icon, action, title }) => (
         <button
           key={action}
@@ -354,27 +358,181 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, fileInputRef, 
         <FiLink size={16} />
       </button>
       <button
-        onClick={() => fileInputRef.current?.click()}
-        className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
-        title="Upload Image"
-        type="button"
-      >
-        <FiPaperclip size={16} />
-      </button>
-      <button
         onClick={onImageClick}
         className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
-        title="Image URL"
+        title="Insert Image URL"
         type="button"
       >
         <FiImage size={16} />
       </button>
+    
+<div className="relative">
+  <input
+    type="file"
+    accept="image/*"
+    onChange={onImageUpload}
+    className="absolute inset-0 opacity-0 w-full cursor-pointer"
+    title="Upload featured image"
+  />
+  <button
+    className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black flex items-center gap-1"
+    title="Upload featured image"
+    type="button"
+    onClick={(e) => {
+      // This helps trigger the file input
+      e.currentTarget.previousSibling?.click();
+    }}
+  >
+    <FiUpload size={16} />
+  </button>
+</div>
     </div>
   );
 };
 
-// Blog Card
+// Delete Confirmation Modal
+const DeleteConfirmModal = ({ isOpen, blog, onConfirm, onCancel, isLoading }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60]" onClick={onCancel}>
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+            <FiAlertCircle className="text-red-600" size={20} />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">Delete Blog Post</h3>
+        </div>
+        
+        <p className="text-gray-600 mb-2">
+          Are you sure you want to delete <span className="font-semibold">"{blog?.title}"</span>?
+        </p>
+        <p className="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
+        
+        <div className="flex gap-3">
+          <button
+            onClick={onCancel}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {isLoading ? <FiRefreshCw className="animate-spin" size={16} /> : <FiTrash2 size={16} />}
+            Delete
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+// View Modal
+const ViewBlogModal = ({ blog, onClose }) => {
+  if (!blog) return null;
+
+  const getFullImageUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('/images/')) {
+      const fileName = url.split('/').pop();
+      return `https://raw.githubusercontent.com/${process.env.NEXT_PUBLIC_GITHUB_REPO}/main/public/images/${fileName}`;
+    }
+    return url;
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+          <h3 className="font-medium text-gray-900">View Post</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-lg transition-colors">
+            <FiX size={18} />
+          </button>
+        </div>
+        
+        <div className="p-6">
+          {blog.imageUrl && (
+            <img 
+              src={getFullImageUrl(blog.imageUrl)} 
+              alt={blog.title} 
+              className="w-full h-48 object-cover rounded-lg mb-6"
+              onError={(e) => {
+                e.target.src = 'https://via.placeholder.com/400x200?text=Image+Not+Found';
+              }}
+            />
+          )}
+          
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
+            <span className="flex items-center gap-1">
+              <FiCalendar size={14} /> {new Date(blog.createdAt).toLocaleDateString()}
+            </span>
+            <span className="flex items-center gap-1">
+              <FiClock size={14} /> {blog.readTime} min read
+            </span>
+            {blog.category && (
+              <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs">
+                {blog.category}
+              </span>
+            )}
+            {blog.featured && (
+              <span className="bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-full text-xs flex items-center gap-1">
+                <FiStar size={10} /> Featured
+              </span>
+            )}
+          </div>
+          
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{blog.title}</h1>
+          
+          <MarkdownRenderer content={blog.content} />
+          
+          {blog.tags?.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-gray-100">
+              {blog.tags.map(tag => (
+                <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+// Blog Card Component
 const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
+  const getFullImageUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('/images/')) {
+      const fileName = url.split('/').pop();
+      const repo = process.env.NEXT_PUBLIC_GITHUB_REPO;
+      if (!repo) return null;
+      return `https://raw.githubusercontent.com/${repo}/main/public/images/${fileName}`;
+    }
+    return url;
+  };
+
+  const imageUrl = getFullImageUrl(blog.imageUrl);
+
   return (
     <motion.div
       layout
@@ -385,7 +543,14 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
     >
       <div className="relative h-36 bg-gray-100">
         {blog.imageUrl ? (
-          <img src={blog.imageUrl} alt={blog.title} className="w-full h-full object-cover" />
+          <img 
+            src={imageUrl} 
+            alt={blog.title} 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/150?text=No+Image';
+            }}
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <FiImage className="text-gray-300 text-3xl" />
@@ -393,8 +558,8 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
         )}
         <div className="absolute top-2 right-2 flex gap-1">
           {blog.featured && (
-            <span className="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full text-xs font-medium">
-              <FiStar className="inline mr-1" size={10} />
+            <span className="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
+              <FiStar size={10} />
               Featured
             </span>
           )}
@@ -426,13 +591,25 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
         </div>
 
         <div className="flex items-center justify-end gap-1 pt-3 border-t border-gray-100">
-          <button onClick={() => onView(blog)} className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50">
+          <button 
+            onClick={() => onView(blog)} 
+            className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50"
+            title="View"
+          >
             <FiEye size={16} />
           </button>
-          <button onClick={() => onEdit(blog)} className="p-2 text-gray-400 hover:text-gray-900 rounded-lg hover:bg-gray-100">
+          <button 
+            onClick={() => onEdit(blog)} 
+            className="p-2 text-gray-400 hover:text-gray-900 rounded-lg hover:bg-gray-100"
+            title="Edit"
+          >
             <FiEdit size={16} />
           </button>
-          <button onClick={() => onDelete(blog)} className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50">
+          <button 
+            onClick={() => onDelete(blog)} 
+            className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50"
+            title="Delete"
+          >
             <FiTrash2 size={16} />
           </button>
         </div>
@@ -446,10 +623,12 @@ const BlogManager = () => {
   const [blogs, setBlogs] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [activeTab, setActiveTab] = useState('create');
   const [showPreview, setShowPreview] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
   const [viewingBlog, setViewingBlog] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, blog: null });
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [newTag, setNewTag] = useState('');
@@ -496,11 +675,21 @@ const BlogManager = () => {
   };
 
   const handleFormat = (newContent) => {
+    const textarea = textareaRef.current;
+    const cursorPos = textarea?.selectionStart || 0;
+    
     if (editingBlog) {
       setEditingBlog({ ...editingBlog, content: newContent });
     } else {
       setNewBlog({ ...newBlog, content: newContent });
     }
+
+    setTimeout(() => {
+      if (textarea) {
+        textarea.focus();
+        textarea.setSelectionRange(cursorPos, cursorPos);
+      }
+    }, 0);
   };
 
   const handleLinkInsert = (text, url) => {
@@ -549,24 +738,100 @@ const BlogManager = () => {
       addAlert('success', 'Image URL inserted');
     }
   };
+// In BlogManager.jsx - Updated handleImageUpload function
+// In BlogManager.jsx - Enhanced debug version
 
-  const addTag = () => {
+const handleImageUpload = async (e) => {
+  console.log('📁 File input event:', e);
+  console.log('📁 Files:', e.target.files);
+  
+  const file = e.target.files?.[0];
+  
+  if (!file) {
+    console.log('❌ No file selected');
+    addAlert('error', 'Please select a file');
+    return;
+  }
+  
+  console.log('📄 File details:', {
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    lastModified: new Date(file.lastModified).toISOString()
+  });
+  
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    console.log('❌ Invalid file type:', file.type);
+    addAlert('error', 'Please select an image file');
+    return;
+  }
+  
+  // Validate file size (max 5MB)
+  const maxSize = 5 * 1024 * 1024; // 5MB
+  if (file.size > maxSize) {
+    console.log('❌ File too large:', file.size);
+    addAlert('error', 'File size too large (max 5MB)');
+    return;
+  }
+  
+  setUploadingImage(true);
+  
+  // Create FormData and log it
+  const formData = new FormData();
+  formData.append('image', file);
+  
+  // Log FormData contents (can't log directly, so we'll check size)
+  console.log('📦 FormData created with file:', file.name);
+  
+  try {
+    console.log('📤 Sending to /api/github/upload...');
+    
+    const response = await fetch('/api/github/upload', {
+      method: 'POST',
+      body: formData
+      // No Content-Type header - let browser set it
+    });
+    
+    console.log('📥 Response status:', response.status);
+    console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+    
+    const data = await response.json();
+    console.log('📥 Response data:', data);
+    
+    if (response.ok && data.success) {
+      console.log('✅ Upload successful! URL:', data.url);
+      
+      // Store the file reference for later use
+      currentFileRef.current = file;
+      
+      // Set the image URL in the blog
+      if (editingBlog) {
+        setEditingBlog({ ...editingBlog, imageUrl: data.url });
+        console.log('✅ Updated editing blog with image URL');
+      } else {
+        setNewBlog({ ...newBlog, imageUrl: data.url });
+        console.log('✅ Updated new blog with image URL');
+      }
+      addAlert('success', 'Featured image uploaded successfully!');
+    } else {
+      console.error('❌ Upload failed:', data);
+      addAlert('error', data.error || data.details?.message || 'Failed to upload image');
+    }
+  } catch (error) {
+    console.error('❌ Upload error:', error);
+    addAlert('error', 'Error uploading image: ' + error.message);
+  } finally {
+    setUploadingImage(false);
+    // Reset file input
+    e.target.value = '';
+    console.log('🔄 File input reset');
+  }
+};
+ const addTag = () => {
     if (!newTag.trim()) return;
     setNewBlog({ ...newBlog, tags: [...newBlog.tags, newTag.trim()] });
     setNewTag('');
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file?.type.startsWith('image/')) {
-      currentFileRef.current = file;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setNewBlog({ ...newBlog, imageUrl: event.target.result });
-        addAlert('success', 'Image selected');
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const saveBlog = async (status = 'draft') => {
@@ -581,6 +846,7 @@ const BlogManager = () => {
       excerpt: newBlog.excerpt || newBlog.content.substring(0, 150) + '...',
       category: newBlog.category,
       tags: newBlog.tags,
+      imageUrl: newBlog.imageUrl,
       featured: newBlog.featured,
       status,
       author: 'Admin',
@@ -591,19 +857,15 @@ const BlogManager = () => {
 
     setIsLoading(true);
     try {
-      const file = currentFileRef.current;
-      const result = await decapApi.createBlog(blogData, file);
+      const result = await decapApi.createBlog(blogData);
       
       if (result.success) {
         setBlogs(prev => [result.data, ...prev]);
-        setNewBlog({ 
-          title: '', content: '', excerpt: '', category: '', 
-          tags: [], imageUrl: '', featured: false, status: 'draft', 
-          metaDescription: '' 
-        });
-        currentFileRef.current = null;
+        resetForm();
         addAlert('success', status === 'published' ? 'Blog published to Decap CMS!' : 'Saved as draft in Decap CMS');
         setShowPreview(false);
+      } else {
+        addAlert('error', result.error || 'Failed to save blog');
       }
     } catch (error) {
       addAlert('error', 'Failed to save blog to Decap CMS');
@@ -612,75 +874,116 @@ const BlogManager = () => {
       setIsLoading(false);
     }
   };
+// In BlogManager.jsx - Update the updateBlog function
 
-  const updateBlog = async () => {
-    if (!editingBlog) return;
+const updateBlog = async () => {
+  if (!editingBlog) return;
+
+  setIsLoading(true);
+  try {
+    const blogData = {
+      id: editingBlog.id,
+      title: editingBlog.title,
+      content: editingBlog.content,
+      excerpt: editingBlog.excerpt || editingBlog.content.substring(0, 150) + '...',
+      category: editingBlog.category,
+      tags: editingBlog.tags,
+      imageUrl: editingBlog.imageUrl, // This should already be set from the upload
+      featured: editingBlog.featured,
+      status: editingBlog.status,
+      author: editingBlog.author || 'Admin',
+      createdAt: editingBlog.createdAt,
+      readTime: editingBlog.readTime || Math.max(1, Math.ceil(editingBlog.content.split(/\s+/).length / 200)),
+      metaDescription: editingBlog.metaDescription || editingBlog.content.substring(0, 155) + '...',
+      slug: editingBlog.slug || generateSlug(editingBlog.title)
+    };
+
+    console.log('📝 Updating blog with data:', blogData);
+
+    // Don't pass the file here - the image is already uploaded
+    const result = await decapApi.updateBlog(editingBlog.id, blogData, null);
+    
+    if (result.success) {
+      setBlogs(prev => prev.map(b => b.id === editingBlog.id ? result.data : b));
+      cancelEdit();
+      addAlert('success', 'Blog updated successfully in Decap CMS!');
+    } else {
+      addAlert('error', result.error || 'Failed to update blog');
+    }
+  } catch (error) {
+    addAlert('error', 'Failed to update blog in Decap CMS');
+    console.error('Error updating blog:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+  const deleteBlog = async () => {
+    if (!deleteConfirm.blog) return;
 
     setIsLoading(true);
     try {
-      const file = currentFileRef.current;
-      const result = await decapApi.updateBlog(editingBlog.id, editingBlog, file);
+      const slug = deleteConfirm.blog.slug || generateSlug(deleteConfirm.blog.title);
+      
+      const result = await decapApi.deleteBlog(slug);
       
       if (result.success) {
-        setBlogs(prev => prev.map(b => b.id === editingBlog.id ? result.data : b));
-        setEditingBlog(null);
-        currentFileRef.current = null;
-        addAlert('success', 'Blog updated in Decap CMS');
-      }
-    } catch (error) {
-      addAlert('error', 'Failed to update blog in Decap CMS');
-      console.error('Error updating blog:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const deleteBlog = async (blog) => {
-    if (!confirm('Delete this post from Decap CMS?')) return;
-
-    setIsLoading(true);
-    try {
-      const result = await decapApi.deleteBlog(blog.id);
-      if (result.success) {
-        setBlogs(prev => prev.filter(b => b.id !== blog.id));
-        addAlert('success', 'Blog deleted from Decap CMS');
+        setBlogs(prev => prev.filter(b => b.id !== deleteConfirm.blog.id));
+        addAlert('success', `"${deleteConfirm.blog.title}" deleted successfully from Decap CMS`);
+        
+        if (viewingBlog?.id === deleteConfirm.blog.id) {
+          setViewingBlog(null);
+        }
+        if (editingBlog?.id === deleteConfirm.blog.id) {
+          cancelEdit();
+        }
+      } else {
+        addAlert('error', result.error || 'Failed to delete blog');
       }
     } catch (error) {
       addAlert('error', 'Failed to delete blog from Decap CMS');
       console.error('Error deleting blog:', error);
     } finally {
       setIsLoading(false);
+      setDeleteConfirm({ isOpen: false, blog: null });
     }
   };
 
-  const toggleFeatured = async (id) => {
-    setIsLoading(true);
-    try {
-      const result = await decapApi.toggleFeatured(id);
-      if (result.success) {
-        setBlogs(prev => prev.map(blog => blog.id === id ? result.data : blog));
-        addAlert('success', 'Featured status updated');
-      }
-    } catch (error) {
-      addAlert('error', 'Failed to update featured status');
-    } finally {
-      setIsLoading(false);
-    }
+  const handleEditClick = (blog) => {
+    setEditingBlog(blog);
+    setActiveTab('create');
+    setShowPreview(false);
+    setNewBlog({
+      title: blog.title || '',
+      content: blog.content || '',
+      excerpt: blog.excerpt || '',
+      category: blog.category || '',
+      tags: blog.tags || [],
+      imageUrl: blog.imageUrl || '',
+      featured: blog.featured || false,
+      status: blog.status || 'draft',
+      metaDescription: blog.metaDescription || ''
+    });
   };
 
-  const togglePublishStatus = async (id) => {
-    setIsLoading(true);
-    try {
-      const result = await decapApi.togglePublishStatus(id);
-      if (result.success) {
-        setBlogs(prev => prev.map(blog => blog.id === id ? result.data : blog));
-        addAlert('success', 'Publish status updated');
-      }
-    } catch (error) {
-      addAlert('error', 'Failed to update publish status');
-    } finally {
-      setIsLoading(false);
-    }
+  const cancelEdit = () => {
+    setEditingBlog(null);
+    resetForm();
+    currentFileRef.current = null;
+  };
+
+  const resetForm = () => {
+    setNewBlog({ 
+      title: '', content: '', excerpt: '', category: '', 
+      tags: [], imageUrl: '', featured: false, status: 'draft', 
+      metaDescription: '' 
+    });
+  };
+
+  const generateSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
   };
 
   const filteredBlogs = blogs.filter(blog => {
@@ -700,6 +1003,19 @@ const BlogManager = () => {
         isOpen={showLinkModal}
         onClose={() => setShowLinkModal(false)}
         onInsert={handleLinkInsert}
+      />
+
+      <DeleteConfirmModal
+        isOpen={deleteConfirm.isOpen}
+        blog={deleteConfirm.blog}
+        onConfirm={deleteBlog}
+        onCancel={() => setDeleteConfirm({ isOpen: false, blog: null })}
+        isLoading={isLoading}
+      />
+
+      <ViewBlogModal
+        blog={viewingBlog}
+        onClose={() => setViewingBlog(null)}
       />
 
       {/* Header */}
@@ -761,6 +1077,22 @@ const BlogManager = () => {
             {/* Editor */}
             <div className="space-y-4">
               <div className="bg-white rounded-xl border border-gray-200 p-5">
+                {/* Edit Mode Indicator */}
+                {editingBlog && (
+                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-blue-700">
+                      <FiEdit size={14} />
+                      <span>Editing: <span className="font-semibold">{editingBlog.title}</span></span>
+                    </div>
+                    <button
+                      onClick={cancelEdit}
+                      className="text-blue-700 hover:text-blue-900"
+                    >
+                      <FiX size={16} />
+                    </button>
+                  </div>
+                )}
+
                 <input
                   type="text"
                   placeholder="Post title..."
@@ -779,7 +1111,7 @@ const BlogManager = () => {
                   onFormat={handleFormat}
                   onLinkClick={() => setShowLinkModal(true)}
                   onImageClick={handleImageUrlInsert}
-                  fileInputRef={fileInputRef}
+                  onImageUpload={handleImageUpload}
                   textareaRef={textareaRef}
                 />
 
@@ -798,12 +1130,20 @@ const BlogManager = () => {
                   }}
                 />
 
-                {/* Image Preview */}
+                {/* Uploading Indicator */}
+                {uploadingImage && (
+                  <div className="mt-2 text-sm text-gray-500 flex items-center gap-2">
+                    <FiRefreshCw className="animate-spin" size={14} />
+                    Uploading featured image...
+                  </div>
+                )}
+
+                {/* Featured Image Preview */}
                 {(newBlog.imageUrl || editingBlog?.imageUrl) && (
                   <div className="mt-4 relative inline-block">
                     <img 
                       src={editingBlog?.imageUrl || newBlog.imageUrl} 
-                      alt="Preview" 
+                      alt="Featured" 
                       className="h-20 w-auto rounded-lg border border-gray-200"
                     />
                     <button
@@ -816,6 +1156,7 @@ const BlogManager = () => {
                         currentFileRef.current = null;
                       }}
                       className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 shadow-sm"
+                      title="Remove featured image"
                     >
                       <FiX size={12} />
                     </button>
@@ -951,29 +1292,35 @@ const BlogManager = () => {
                   </div>
 
                   <div className="flex gap-2">
-                    <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
-                    
                     {editingBlog ? (
-                      <button 
-                        onClick={updateBlog} 
-                        disabled={isLoading}
-                        className="px-4 py-2 bg-black text-white rounded-lg text-sm hover:bg-gray-800 flex items-center gap-1 disabled:opacity-50"
-                      >
-                        {isLoading ? <FiRefreshCw className="animate-spin" size={14} /> : <FiSave size={14} />}
-                        Update
-                      </button>
+                      <>
+                        <button
+                          onClick={cancelEdit}
+                          className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
+                        >
+                          Cancel
+                        </button>
+                        <button 
+                          onClick={updateBlog} 
+                          disabled={isLoading || uploadingImage}
+                          className="px-4 py-2 bg-black text-white rounded-lg text-sm hover:bg-gray-800 flex items-center gap-1 disabled:opacity-50"
+                        >
+                          {isLoading ? <FiRefreshCw className="animate-spin" size={14} /> : <FiSave size={14} />}
+                          Update
+                        </button>
+                      </>
                     ) : (
                       <>
                         <button 
                           onClick={() => saveBlog('draft')} 
-                          disabled={isLoading}
+                          disabled={isLoading || uploadingImage}
                           className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50"
                         >
                           {isLoading ? 'Saving...' : 'Draft'}
                         </button>
                         <button 
                           onClick={() => saveBlog('published')} 
-                          disabled={isLoading}
+                          disabled={isLoading || uploadingImage}
                           className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 flex items-center gap-1 disabled:opacity-50"
                         >
                           {isLoading ? <FiRefreshCw className="animate-spin" size={14} /> : <FiSend size={14} />}
@@ -997,10 +1344,11 @@ const BlogManager = () => {
                   {(editingBlog?.imageUrl || newBlog.imageUrl) && (
                     <img 
                       src={editingBlog?.imageUrl || newBlog.imageUrl} 
-                      alt="" 
+                      alt="Featured" 
                       className="w-full h-40 object-cover rounded-lg mb-4" 
                     />
                   )}
+
                   <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
                     <span>Just now</span>
                     <span>
@@ -1063,8 +1411,8 @@ const BlogManager = () => {
                     <BlogCard
                       key={blog.id}
                       blog={blog}
-                      onEdit={setEditingBlog}
-                      onDelete={deleteBlog}
+                      onEdit={handleEditClick}
+                      onDelete={(blog) => setDeleteConfirm({ isOpen: true, blog })}
                       onView={setViewingBlog}
                     />
                   ))}
@@ -1081,49 +1429,6 @@ const BlogManager = () => {
           </div>
         )}
       </div>
-
-      {/* View Modal */}
-      <AnimatePresence>
-        {viewingBlog && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setViewingBlog(null)}>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                <h3 className="font-medium text-gray-900">View Post</h3>
-                <button onClick={() => setViewingBlog(null)} className="text-gray-400 hover:text-gray-600">
-                  <FiX size={18} />
-                </button>
-              </div>
-              <div className="p-6">
-                {viewingBlog.imageUrl && (
-                  <img src={viewingBlog.imageUrl} alt="" className="w-full h-48 object-cover rounded-lg mb-6" />
-                )}
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                  <span className="flex items-center gap-1"><FiCalendar size={14} /> {new Date(viewingBlog.createdAt).toLocaleDateString()}</span>
-                  <span className="flex items-center gap-1"><FiClock size={14} /> {viewingBlog.readTime} min read</span>
-                  {viewingBlog.category && (
-                    <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs">{viewingBlog.category}</span>
-                  )}
-                </div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-4">{viewingBlog.title}</h1>
-                <MarkdownRenderer content={viewingBlog.content} />
-                {viewingBlog.tags?.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-gray-100">
-                    {viewingBlog.tags.map(tag => (
-                      <span key={tag} className="px-2 py-1 bg-gray-100 rounded-full text-xs">#{tag}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

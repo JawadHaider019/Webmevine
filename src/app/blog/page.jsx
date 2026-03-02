@@ -222,9 +222,7 @@ export default function BlogPage() {
                     {featuredPost.title}
                   </h2>
                   
-                  <p className="text-gray-300 text-lg mb-6 line-clamp-2">
-                    {featuredPost.excerpt || featuredPost.content?.substring(0, 200)}...
-                  </p>
+               
                   
                   <div className="flex items-center gap-4">
                     <span className="text-white font-medium">Read Article</span>
@@ -335,10 +333,6 @@ export default function BlogPage() {
                           {blog.title}
                         </h3>
 
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                          {blog.excerpt || blog.content?.substring(0, 120)}...
-                        </p>
-
                         {/* Tags */}
                         {blog.tags && blog.tags.length > 0 && (
                           <div className="flex flex-wrap gap-2 mb-4">
@@ -418,10 +412,7 @@ export default function BlogPage() {
                             {blog.title}
                           </h3>
 
-                          <p className="text-gray-600 mb-4 line-clamp-2">
-                            {blog.excerpt || blog.content?.substring(0, 150)}...
-                          </p>
-
+                         
                           {/* Tags */}
                           {blog.tags && blog.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-4">
