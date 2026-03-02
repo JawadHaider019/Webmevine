@@ -11,6 +11,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+    const currentYear = new Date().getFullYear();
 
   // Handle mount state to prevent hydration mismatch
   useEffect(() => {
@@ -399,7 +400,7 @@ export default function Navbar() {
                   transition={{ duration: 0.3, delay: 0.7 }}
                   className="mt-8 text-center"
                 >
-                  <p className="text-[8px] text-gray-400 tracking-[0.3em] uppercase">AHMTECH © 2024</p>
+                  <p className="text-[8px] text-gray-400 tracking-[0.3em] uppercase">© {currentYear} WebMevien</p>
                 </motion.div>
               </div>
             </motion.div>

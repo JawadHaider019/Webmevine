@@ -59,7 +59,7 @@ export default function ValueSection() {
   };
 
   return (
-    <section className="relative py-24 bg-white overflow-hidden">
+    <section className="relative py-16 bg-white overflow-hidden">
       {/* Subtle Background Pattern */}
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
         style={{

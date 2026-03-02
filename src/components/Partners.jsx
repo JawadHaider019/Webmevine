@@ -6,11 +6,9 @@ import { useRef, useEffect, useState } from "react";
 import SectionHeader from "./SectionHeader";
 
 export default function Partners() {
-  const topSliderRef = useRef(null);
-  const bottomSliderRef = useRef(null);
+  const sliderRef = useRef(null);
   const statsRef = useRef(null);
-  const topControls = useAnimation();
-  const bottomControls = useAnimation();
+  const controls = useAnimation();
   const isInView = useInView(statsRef, { once: true, margin: "-100px" });
   
   // State for animated numbers
@@ -27,66 +25,45 @@ export default function Partners() {
     { id: 3, value: 99, suffix: "%", label: "Client Retention Rate", key: "retention" },
   ];
 
-  // Partner logos array - First 6 for top slider
-  const topPartners = [
-    { id: 1, src: "/partner/campuna.png", alt: "Campuna", width: 180, height: 60 },
-    { id: 2, src: "/partner/cdl school.png", alt: "CDL School", width: 180, height: 60 },
-    { id: 3, src: "/partner/eternox.png", alt: "Eternox", width: 180, height: 60 },
-    { id: 4, src: "/partner/fintalio.png", alt: "Fintalio", width: 180, height: 60 },
-    { id: 5, src: "/partner/fivup.png", alt: "Fivup", width: 180, height: 60 },
-    { id: 6, src: "/partner/goodbyemama.png", alt: "Goodbye Mama", width: 180, height: 60 },
-  ];
-
-  // Partner logos array - Next 6 for bottom slider
-  const bottomPartners = [
-    { id: 7, src: "/partner/jocelyn.png", alt: "Jocelyn", width: 180, height: 60 },
-    { id: 8, src: "/partner/magus.png", alt: "Magus", width: 180, height: 60 },
-    { id: 9, src: "/partner/pureclay.png", alt: "Pure Clay", width: 180, height: 60 },
-    { id: 10, src: "/partner/righthire.png", alt: "Right Hire", width: 180, height: 60 },
-    { id: 11, src: "/partner/unitedmercy.png", alt: "United Mercy", width: 180, height: 60 },
-    { id: 12, src: "/partner/zola.png", alt: "Zola", width: 180, height: 60 },
+  // All partner logos combined into one array
+  const allPartners = [
+    { id: 1, src: "/partner/campuna.png", alt: "Campuna", width: 120, height: 40 },
+    { id: 2, src: "/partner/cdl school.png", alt: "CDL School", width: 120, height: 40 },
+    { id: 3, src: "/partner/eternox.png", alt: "Eternox", width: 120, height: 40 },
+    { id: 4, src: "/partner/fintalio.png", alt: "Fintalio", width: 120, height: 40 },
+    { id: 5, src: "/partner/fivup.png", alt: "Fivup", width: 120, height: 40 },
+    { id: 6, src: "/partner/goodbyemama.png", alt: "Goodbye Mama", width: 120, height: 40 },
+    { id: 7, src: "/partner/jocelyn.png", alt: "Jocelyn", width: 120, height: 40 },
+    { id: 8, src: "/partner/magus.png", alt: "Magus", width: 120, height: 40 },
+    { id: 9, src: "/partner/pureclay.png", alt: "Pure Clay", width: 120, height: 40 },
+    { id: 10, src: "/partner/righthire.png", alt: "Right Hire", width: 120, height: 40 },
+    { id: 11, src: "/partner/unitedmercy.png", alt: "United Mercy", width: 120, height: 40 },
+    { id: 12, src: "/partner/zola.png", alt: "Zola", width: 120, height: 40 },
   ];
 
   // Calculate total width for smooth infinite scroll
-  const partnerWidth = 180; // width
-  const gap = 40; // gap-10 = 2.5rem = 40px
-  const topTotalWidth = (partnerWidth + gap) * topPartners.length;
-  const bottomTotalWidth = (partnerWidth + gap) * bottomPartners.length;
+  const partnerWidth = 120; // Smaller width
+  const gap = 32; // gap-8 = 2rem = 32px
+  const totalWidth = (partnerWidth + gap) * allPartners.length;
 
-  // Duplicate partners for infinite scroll effect
-  const duplicatedTopPartners = [...topPartners, ...topPartners, ...topPartners, ...topPartners];
-  const duplicatedBottomPartners = [...bottomPartners, ...bottomPartners, ...bottomPartners, ...bottomPartners];
+  // Duplicate partners for infinite scroll effect (need enough copies for seamless loop)
+  const duplicatedPartners = [...allPartners, ...allPartners, ...allPartners, ...allPartners];
 
   // Start slider animations automatically
   useEffect(() => {
-    topControls.start({
-      x: [0, -topTotalWidth],
+    controls.start({
+      x: [0, -totalWidth],
       transition: {
         x: {
           repeat: Infinity,
           repeatType: "loop",
-          duration: 30,
+          duration: 40,
           ease: "linear",
           repeatDelay: 0,
         },
       },
     });
-  }, [topControls, topTotalWidth]); // Fixed dependency array
-
-  useEffect(() => {
-    bottomControls.start({
-      x: [-bottomTotalWidth, 0],
-      transition: {
-        x: {
-          repeat: Infinity,
-          repeatType: "loop",
-          duration: 30,
-          ease: "linear",
-          repeatDelay: 0,
-        },
-      },
-    });
-  }, [bottomControls, bottomTotalWidth]); // Fixed dependency array
+  }, [controls, totalWidth]);
 
   // Animate numbers when stats come into view
   useEffect(() => {
@@ -119,8 +96,8 @@ export default function Partners() {
   }, [isInView]);
 
   return (
-    <section className="bg-white py-20 border-t border-white/10 overflow-hidden">
-      <div className=" mx-auto px-0">
+    <section className="bg-white py-16 border-t border-white/10 overflow-hidden">
+      <div className="mx-auto px-0">
         {/* Header with fade-in animation */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -139,7 +116,7 @@ export default function Partners() {
           />
         </motion.div>
 
-        {/* First Slider - Top 6 Partners (Left to Right) */}
+        {/* Single Slider - All Partners in One Row */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -152,14 +129,14 @@ export default function Partners() {
           <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
           <motion.div
-            ref={topSliderRef}
-            animate={topControls}
-            className="flex gap-10 items-center"
+            ref={sliderRef}
+            animate={controls}
+            className="flex gap-8 items-center"
             style={{ width: "fit-content", willChange: "transform" }}
           >
-            {duplicatedTopPartners.map((partner, index) => (
+            {duplicatedPartners.map((partner, index) => (
               <motion.div
-                key={`top-${partner.id}-${index}`}
+                key={`partner-${partner.id}-${index}`}
                 className="flex-shrink-0 group cursor-pointer"
                 whileHover={{ 
                   scale: 1.1,
@@ -196,70 +173,13 @@ export default function Partners() {
           </motion.div>
         </motion.div>
 
-        {/* Second Slider - Bottom 6 Partners (Right to Left) */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="relative mt-8"
-        >
-          {/* Gradient fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-          
-          <motion.div
-            ref={bottomSliderRef}
-            animate={bottomControls}
-            className="flex gap-10 items-center"
-            style={{ width: "fit-content", willChange: "transform" }}
-          >
-            {duplicatedBottomPartners.map((partner, index) => (
-              <motion.div
-                key={`bottom-${partner.id}-${index}`}
-                className="flex-shrink-0 group cursor-pointer"
-                whileHover={{ 
-                  scale: 1.1,
-                  transition: { duration: 0.3, ease: "easeOut" }
-                }}
-              >
-                <div className="relative overflow-hidden">
-                  {/* Grayscale filter with smooth transition */}
-                  <motion.div
-                    whileHover={{ filter: "grayscale(0%)" }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
-                    className="grayscale"
-                  >
-                    <Image
-                      src={partner.src}
-                      alt={partner.alt}
-                      width={partner.width}
-                      height={partner.height}
-                      className="object-contain"
-                      priority={index < 10}
-                    />
-                  </motion.div>
-                  
-                  {/* Smooth shine effect on hover */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: "200%" }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
-                  />
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-
         {/* Stats Section with counting numbers */}
         <motion.div
           ref={statsRef}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           className="flex items-center justify-center flex-wrap gap-8 md:gap-16 mt-20 px-4"
         >
           {/* 100+ Projects Delivered */}

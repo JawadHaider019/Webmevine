@@ -275,19 +275,49 @@ export default function CaseStudiesSection() {
                             <p className="font-['Manrope'] text-xs text-gray-600 mb-1">{study.founder.name}</p>
                             <p className="font-['Manrope'] text-[10px] text-gray-400">{study.founder.title}</p>
                           </div>
-
-                          {/* "Read the Story" text indicator */}
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 0.7 }}
-                            transition={{ delay: 0.5 }}
-                            className="flex items-center gap-2 text-red-600/70 text-xs sm:text-sm mt-4"
-                          >
-                            <span>Click anywhere to read the full story</span>
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                            </svg>
-                          </motion.div>
+{/* "Read the Story" text indicator - Enhanced */}
+<motion.div
+  initial={{ opacity: 0, x: -10 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{ delay: 0.5, duration: 0.5 }}
+  whileHover={{ x: 5 }}
+  className="flex items-center gap-2 text-red-600 text-xs sm:text-sm mt-4 group cursor-pointer"
+>
+  <motion.span 
+    className="relative font-medium"
+    whileHover={{ letterSpacing: "0.05em" }}
+    transition={{ duration: 0.3 }}
+  >
+    Read The Story
+    <motion.span 
+      className="absolute -bottom-1 left-0 h-[2px] bg-red-600 rounded-full"
+      initial={{ width: 0 }}
+      whileHover={{ width: "100%" }}
+      transition={{ duration: 0.3 }}
+    />
+  </motion.span>
+  
+  <motion.div
+    animate={{ 
+      x: [0, 3, 0],
+    }}
+    transition={{ 
+      duration: 1.5, 
+      repeat: Infinity,
+      repeatType: "loop",
+      ease: "easeInOut"
+    }}
+    whileHover={{ 
+      scale: 1.2,
+      x: 5,
+      rotate: [0, 10, 0]
+    }}
+  >
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+    </svg>
+  </motion.div>
+</motion.div>
                         </div>
                       </motion.div>
                     ) : (
@@ -297,7 +327,7 @@ export default function CaseStudiesSection() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="relative h-full flex items-center justify-center p-2"
+                        className="relative h-full flex items-center justify-center p-2 group"
                       >
                         {/* Mobile closed view */}
                         {isMobile ? (
@@ -306,45 +336,44 @@ export default function CaseStudiesSection() {
                             <span className="font-['Marcellus'] text-lg font-bold text-gray-400 ml-2">{study.number}</span>
                           </div>
                         ) : (
-                          /* Desktop closed view */
+                          /* Desktop closed view with hover effects */
                           <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
-                            {/* Number at top */}
-                            <div className="absolute top-4 left-1/2 -translate-x-1/2 w-full text-center">
-                              <span className="font-['Marcellus'] text-2xl md:text-3xl lg:text-4xl font-black text-gray-900/20">
+                            {/* Number at top - changes color on hover */}
+                            <motion.div 
+                              className="absolute top-4 left-1/2 -translate-x-1/2 w-full text-center"
+                              whileHover={{ scale: 1.1 }}
+                            >
+                              <span className="font-['Marcellus'] text-5xl font-black transition-colors duration-300 group-hover:text-red-600 text-gray-400">
                                 {study.number}
                               </span>
-                            </div>
+                            </motion.div>
                             
-                            {/* Vertical category in middle */}
+                            {/* Vertical category in middle - changes color on hover */}
                             <div className="flex items-center justify-center h-full">
-                              <span className="font-['Manrope'] text-[10px] md:text-xs font-medium text-gray-400 tracking-wider whitespace-nowrap rotate-90 origin-center uppercase">
+                              <motion.span 
+                                className="font-['Manrope'] text-[10px] md:text-xs font-medium tracking-wider whitespace-nowrap rotate-90 origin-center uppercase transition-colors duration-300 group-hover:text-red-600"
+                                whileHover={{ scale: 1.1 }}
+                              >
                                 {study.category}
-                              </span>
+                              </motion.span>
                             </div>
 
-                            {/* Click to open indicator */}
-                            <motion.div 
-                              className="absolute bottom-4 left-1/2 -translate-x-1/2 text-gray-400/50 text-[8px] uppercase tracking-wider"
-                              animate={{ opacity: [0.3, 0.6, 0.3] }}
-                              transition={{ duration: 2, repeat: Infinity }}
-                            >
-                              Click to open
-                            </motion.div>
+                          
                           </div>
+                        )}
+                        
+                        {/* Hover effect overlay */}
+                        {!isActive && !isMobile && (
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-t from-red-600/10 to-transparent"
+                            initial={{ opacity: 0 }}
+                            whileHover={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                          />
                         )}
                       </motion.div>
                     )}
                   </AnimatePresence>
-
-                  {/* Hover effect for closed slides */}
-                  {!isActive && !isMobile && (
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-t from-red-600/5 to-transparent"
-                      initial={{ opacity: 0 }}
-                      whileHover={{ opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
                 </motion.div>
               );
             })}
@@ -382,7 +411,7 @@ export default function CaseStudiesSection() {
           viewport={{ once: true }}
           className="flex justify-center mt-12"
         >
-          <Link href="/case-studies">
+          <Link href="/casestudies">
             <GlowingButton 
               glowColor="255, 255, 255"
               spreadSize="small"

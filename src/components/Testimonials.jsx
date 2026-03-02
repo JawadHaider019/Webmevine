@@ -27,6 +27,9 @@ export default function Testimonials() {
   const scrollRef = useRef(null);
   const [width, setWidth] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [dragStartX, setDragStartX] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Check if mobile on mount and when window resizes
   useEffect(() => {
@@ -138,7 +141,7 @@ export default function Testimonials() {
 
   // Handle pause (hover on desktop, touch on mobile)
   const handlePause = () => {
-    if (scrollRef.current) {
+    if (scrollRef.current && !isDragging) {
       const transform = window.getComputedStyle(scrollRef.current).transform;
       if (transform !== 'none') {
         const matrix = new DOMMatrix(transform);
@@ -150,18 +153,60 @@ export default function Testimonials() {
 
   // Handle resume
   const handleResume = () => {
-    setIsPaused(false);
+    if (!isDragging) {
+      setIsPaused(false);
+    }
+  };
+
+  // Drag handlers for mobile
+  const handleDragStart = (event, info) => {
+    setDragStartX(info.point.x);
+    setIsDragging(true);
+    handlePause();
+  };
+
+  const handleDrag = (event, info) => {
+    setDragOffset(info.offset.x);
+  };
+
+  const handleDragEnd = (event, info) => {
+    setIsDragging(false);
+    
+    // Update currentX based on drag
+    if (scrollRef.current) {
+      const transform = window.getComputedStyle(scrollRef.current).transform;
+      if (transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        setCurrentX(matrix.m41);
+      }
+    }
+    
+    // Small delay before resuming auto-scroll
+    setTimeout(() => {
+      if (!isPaused) {
+        setIsPaused(false);
+      }
+    }, 100);
   };
 
   // Touch events - only used on mobile
   const touchHandlers = isMobile ? {
-    onTouchStart: handlePause,
-    onTouchEnd: handleResume,
-    onTouchCancel: handleResume,
+    onTouchStart: (e) => {
+      e.preventDefault();
+      handlePause();
+    },
+    onTouchEnd: (e) => {
+      e.preventDefault();
+      handleResume();
+    },
+    onTouchCancel: (e) => {
+      e.preventDefault();
+      handleResume();
+    },
   } : {};
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden">
+    <section className="py-16 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden">
       {/* Luxury Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Subtle pattern */}
@@ -204,12 +249,12 @@ export default function Testimonials() {
           <div className="overflow-hidden">
             <motion.div
               ref={scrollRef}
-              animate={!isPaused ? {
+              animate={!isPaused && !isDragging ? {
                 x: [currentX, currentX - width],
               } : {
-                x: currentX
+                x: currentX + (isDragging ? dragOffset : 0)
               }}
-              transition={!isPaused ? {
+              transition={!isPaused && !isDragging ? {
                 x: {
                   repeat: Infinity,
                   repeatType: "loop",
@@ -218,23 +263,25 @@ export default function Testimonials() {
                   repeatDelay: 0
                 }
               } : {
-                duration: 0.3,
-                ease: "easeOut"
+                duration: 0.1,
+                ease: "linear"
               }}
               // Desktop hover events (always enabled)
               onHoverStart={handlePause}
               onHoverEnd={handleResume}
               // Mobile touch events (only enabled on mobile)
               {...touchHandlers}
-              className={`flex gap-6 ${!isMobile ? 'cursor-grab active:cursor-grabbing' : ''}`}
-              style={{ width: "fit-content" }}
+              className={`flex gap-6 ${isMobile ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'}`}
+              style={{ width: "fit-content", touchAction: isMobile ? "pan-y" : "auto" }}
               // Enable dragging only on mobile
               drag={isMobile ? "x" : false}
-              dragConstraints={scrollRef}
+              dragConstraints={false}
               dragElastic={0.1}
               dragMomentum={false}
-              onDragStart={isMobile ? handlePause : undefined}
-              onDragEnd={isMobile ? handleResume : undefined}
+              onDragStart={handleDragStart}
+              onDrag={handleDrag}
+              onDragEnd={handleDragEnd}
+              whileDrag={{ scale: 1 }}
             >
               {duplicatedTestimonials.map((testimonial, index) => (
                 <motion.div
@@ -307,8 +354,6 @@ export default function Testimonials() {
             </motion.div>
           </div>
         </div>
-
-    
       </div>
     </section>
   );

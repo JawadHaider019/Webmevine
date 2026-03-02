@@ -142,17 +142,18 @@ export default function ServicesPage() {
       />
 
       {/* Services Section */}
-      <section className="w-full bg-white py-24 px-6 md:px-20">
+      <section className="w-full bg-white py-16 px-6 md:px-20">
         {/* Top Header: Split layout */}
-        <div className="flex flex-col md:flex-row justify-between items-center px-6 py-12 text-gray-900 max-w-7xl mx-auto">
-          <h1 className="font-['Marcellus'] text-6xl md:text-7xl lg:text-8xl font-bold uppercase bg-clip-text text-transparent bg-gradient-to-r from-black via-red-600  to-black leading-none text-left mt-8 md:mt-0">
-            WHAT <br />WE <br />
-              BUILD
-          </h1>
-          <p className="font-['Manrope'] text-base md:text-lg text-gray-600 tracking-wide max-w-md">
-            Every service is designed with one goal: getting you to market faster with a product you're proud of. From AI-powered MVPs to full-scale platforms.
-          </p>
-        </div>
+       {/* Top Header: Split layout */}
+<div className="flex flex-col md:flex-row justify-between items-start md:items-center px-6 mb-8 text-gray-900 max-w-7xl mx-auto">
+  <h1 className="font-['Marcellus'] text-6xl md:text-7xl lg:text-8xl font-bold uppercase bg-clip-text text-transparent bg-gradient-to-r from-black via-red-600 to-black leading-none text-left w-full md:w-auto">
+    WHAT <br />WE <br />
+    BUILD
+  </h1>
+  <p className="font-['Manrope'] text-base md:text-lg text-gray-600 tracking-wide max-w-md text-left md:text-left mt-4 md:mt-0">
+    Every service is designed with one goal: getting you to market faster with a product you're proud of. From AI-powered MVPs to full-scale platforms.
+  </p>
+</div>
 
         {/* Service List */}
         <div className="max-w-6xl mx-auto rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden divide-y divide-gray-100">

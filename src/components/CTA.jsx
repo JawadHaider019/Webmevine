@@ -6,20 +6,19 @@ import GlowingButton from "./GlowingButton";
 
 export default function FinalCTA() {
   return (
-    <section className="relative -translate-y-5 md:-translate-y-10 py-12 md:py-16 overflow-hidden px-4">
-      {/* Gradient Background Container - Fully Responsive */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-r from-black via-red-600 to-black rounded-2xl md:rounded-3xl lg:rounded-4xl"
-        style={{ 
-          left: '50%', 
-          transform: 'translateX(-50%)', 
-          width: 'calc(100% - 1rem)', 
-          maxWidth: '1280px',
-          height: 'auto',
-          minHeight: '300px',
-          maxHeight: '400px'
-        }} 
-      />
+    <section className="relative py-12 md:py-16 overflow-hidden px-4">
+      {/* Gradient Background Container - Fixed to show on all devices */}
+      <div className="absolute inset-0 flex justify-center items-start pointer-events-none">
+        <div 
+          className="w-full max-w-6xl mx-auto h-full bg-gradient-to-r from-black via-red-600 to-black rounded-2xl md:rounded-3xl"
+          style={{ 
+            minHeight: '300px',
+            maxHeight: '400px',
+            width: 'calc(100% - 2rem)',
+            margin: '0 auto'
+          }}
+        />
+      </div>
       
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto">
@@ -31,14 +30,14 @@ export default function FinalCTA() {
           className="px-4 md:px-6 lg:px-8"
         >
           <SectionHeader
-            smallHeading="LIMITED AVAILABILITY"
-            heading="Ready to Launch Your Dream Project?"
-            description="Join 100+ founders who launched their MVPs in 4 weeks. Let's build something extraordinary together."
+            smallHeading="LIMITED SPOTS"
+            heading="Ready to Launch?"
+            description="Join 100+ founders who launched in 4 weeks. Let's build something great."
             gradientHeading={true}
             gradientFrom="from-white"
             gradientVia="via-gray-100"
             gradientTo="to-gray-300"
-            smallHeadingColor="text-white"
+            smallHeadingColor="text-white/90"
             descriptionColor="text-gray-200"
           />
         </motion.div>
@@ -53,16 +52,14 @@ export default function FinalCTA() {
         >
          <GlowingButton 
            variant="secondary"
-  glowColor="255, 150, 150"
-  spreadSize="small"
-  speed="slow"
-  waveCount={3}
-          >
+           glowColor="255, 150, 150"
+           spreadSize="small"
+           speed="slow"
+           waveCount={3}
+         >
            Book Free Call
-          </GlowingButton>
+         </GlowingButton>
         </motion.div>
-
-   
       </div>
     </section>
   );

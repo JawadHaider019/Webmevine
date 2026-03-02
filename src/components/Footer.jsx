@@ -161,7 +161,7 @@ export default function Footer() {
                   transition={{ duration: 0.8 }}
                   className="font-['Marcellus'] text-2xl font-bold bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-[length:200%_100%] bg-clip-text text-transparent group-hover:from-red-600 group-hover:via-amber-500 group-hover:to-red-600 transition-all duration-500"
                 >
-                  Ahmtech
+                  WebMevine
                 </motion.span>
               </Link>
             </motion.div>
@@ -336,7 +336,7 @@ export default function Footer() {
               whileHover={{ scale: 1.02 }}
               className="font-['Manrope'] text-xs text-gray-400 order-2 md:order-1"
             >
-              © {currentYear} Ahmtech. All rights reserved.
+              © {currentYear} WebMevien. All rights reserved.
             </motion.p>
 
             {/* Legal Links */}

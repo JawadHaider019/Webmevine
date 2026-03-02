@@ -7,7 +7,7 @@ import GlowingButton from "./GlowingButton";
 
 export default function WebsiteValueSection() {
   return (
-    <section className="w-full bg-white text-black flex flex-col items-center justify-center py-20 px-4 md:px-0 overflow-hidden">
+    <section className="w-full bg-white text-black flex flex-col items-center justify-center py-16 px-4 md:px-0 overflow-hidden">
       <div className="w-full max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 

@@ -203,8 +203,8 @@ export default function HowItWorks() {
                 <motion.div 
                   className={`${
                     isMobile 
-                      ? 'absolute -left-12 top-0' 
-                      : 'absolute left-0 md:left-1/2 md:-translate-x-1/2 -top-2 md:top-1/2 md:-translate-y-1/2 z-10'
+                      ? 'absolute -left-12 top-0 z-10' 
+                      : 'absolute left-0 md:left-1/2 md:-translate-x-1/2 -top-2 md:top-1/2 md:-translate-y-1/2 '
                   }`}
                   variants={numberVariants}
                 >

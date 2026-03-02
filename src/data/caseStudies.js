@@ -59,7 +59,7 @@ export const caseStudies = [
     image: "/casestudy/fivupai.png",
     number: "02",
     gradient: "from-gray-50 to-white",
-    technologies: ["React", "Node.js", "OpenAI API", "Tailwind CSS"],
+    technologies: ["Bubble.io", "No-Code", "API Integrations"],
     features: [
       "AI-Optimized Proposals – Generates persuasive job proposals tailored to specific client requirements.",
       "Gig Description Generator – Crafts compelling Fiverr gig descriptions optimized for higher visibility.",
@@ -138,7 +138,7 @@ export const caseStudies = [
     image: "/casestudy/fintalio.png",
     number: "04",
     gradient: "from-gray-50 to-white",
-    technologies: ["React", "Node.js", "AI/ML", "PostgreSQL", "Redis"],
+    technologies: ["Bubble.io", "No-Code", "API Integrations"],
     features: [
       "AI-Powered Candidate Ranking – Intelligent scoring system highlights top candidates instantly.",
       "250+ Skill-Based Assessments – Covers technical, cognitive, and behavioral skills across industries.",

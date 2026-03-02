@@ -82,10 +82,9 @@ export default function ProcessPage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <HeroSection
-        badge="✦ OUR PROCESS ✦"
         heading="From Idea to"
         headingAccent="Launch"
-        subheading="We turn your vision into a live product in just 30 days — with complete transparency every step of the way."
+        subheading="We turn your vision into a live product in just 21 days with complete transparency every step of the way."
         ctaText="Start Your Journey"
         ctaLink="/contact"
         gradientFrom="from-black"

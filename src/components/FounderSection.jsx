@@ -164,7 +164,7 @@ My approach blends minimalist, user-centric design with robust technical archite
                 
                 <div className="relative w-full h-full rounded-xl overflow-hidden">
                   <Image
-                    src="/Ahmad.png"
+                    src="/Ahmad.jpeg"
                     alt="Muhammad Ahmad - Founder & CEO"
                     fill
                     className={`object-cover transition-all duration-700 ${

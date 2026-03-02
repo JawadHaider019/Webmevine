@@ -6,12 +6,13 @@ import GlowingButton from "./GlowingButton";
 // Reusable Hero Section Component
 export default function HeroSection({
   // Content Props
-  badge = "✦ Launch your app in 19 days — few spots left! ✦",
+
   heading = "Who we are",
   headingAccent = "",
   subheading = "We're a leader in No Code digital transformation",
   ctaText = "Book a Free Call",
   ctaLink = "/contact",
+  onCtaClick,
   
   // Styling Props
   gradientFrom = "from-black",
@@ -63,6 +64,28 @@ export default function HeroSection({
     }
   };
 
+  const handleCtaClick = (e) => {
+    if (onCtaClick) {
+      onCtaClick(e); // Use custom click handler if provided
+    } else if (ctaLink) {
+      // If it's an anchor link, do smooth scroll
+      if (ctaLink.startsWith('#')) {
+        e.preventDefault();
+        const element = document.querySelector(ctaLink);
+        if (element) {
+          const yOffset = -80;
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({
+            top: y,
+            behavior: 'smooth'
+          });
+        }
+      } else {
+        window.location.href = ctaLink;
+      }
+    }
+  };
+
   return (
     <section className={`relative ${height} ${paddingTop} overflow-hidden bg-gradient-to-br ${gradientFrom} ${gradientVia} ${gradientTo} ${className}`}>
       {/* Background Pattern */}
@@ -80,7 +103,7 @@ export default function HeroSection({
           initial="hidden"
           animate="visible"
         >
-     
+        
 
           {/* Heading */}
           <motion.h1
@@ -116,7 +139,7 @@ export default function HeroSection({
                 speed="medium"
                 waveCount={3}
                 variant="secondary"
-                onClick={() => window.location.href = ctaLink} // Fixed: ctaLink instead of buttonLink
+                onClick={handleCtaClick}
               >
                 {ctaText}
               </GlowingButton>
