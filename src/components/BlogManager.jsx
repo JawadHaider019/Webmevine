@@ -11,7 +11,7 @@ import {
   FiSearch, FiGlobe, FiHelpCircle, FiPaperclip, FiRefreshCw
 } from 'react-icons/fi';
 import { LuSparkles } from 'react-icons/lu';
-import { decapApi } from '@/services/decapApi';
+import { blogService } from '@/services/blogService';
 
 // Custom Alert Component
 const Alert = ({ type, message, onClose }) => {
@@ -152,17 +152,17 @@ const MarkdownRenderer = ({ content }) => {
 const SEOHelper = ({ blog }) => {
   const tips = [];
   
-  if (!blog.title) tips.push({ type: 'error', msg: 'Title is missing' });
+  if (!blog?.title) tips.push({ type: 'error', msg: 'Title is missing' });
   else if (blog.title.length < 30) tips.push({ type: 'warning', msg: 'Title too short' });
   else if (blog.title.length > 60) tips.push({ type: 'warning', msg: 'Title too long' });
   else tips.push({ type: 'success', msg: 'Title length good' });
 
-  if (!blog.content) tips.push({ type: 'error', msg: 'Content is empty' });
+  if (!blog?.content) tips.push({ type: 'error', msg: 'Content is empty' });
   else if (blog.content.length < 300) tips.push({ type: 'warning', msg: 'Content too short' });
 
-  if (!blog.category) tips.push({ type: 'error', msg: 'Category not selected' });
-  if (blog.tags.length === 0) tips.push({ type: 'warning', msg: 'Add tags for SEO' });
-  if (!blog.imageUrl) tips.push({ type: 'info', msg: 'Add featured image' });
+  if (!blog?.category) tips.push({ type: 'error', msg: 'Category not selected' });
+  if (!blog?.tags || blog.tags.length === 0) tips.push({ type: 'warning', msg: 'Add tags for SEO' });
+  if (!blog?.imageUrl) tips.push({ type: 'info', msg: 'Add featured image' });
 
   return (
     <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
@@ -366,26 +366,25 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload,
         <FiImage size={16} />
       </button>
     
-<div className="relative">
-  <input
-    type="file"
-    accept="image/*"
-    onChange={onImageUpload}
-    className="absolute inset-0 opacity-0 w-full cursor-pointer"
-    title="Upload featured image"
-  />
-  <button
-    className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black flex items-center gap-1"
-    title="Upload featured image"
-    type="button"
-    onClick={(e) => {
-      // This helps trigger the file input
-      e.currentTarget.previousSibling?.click();
-    }}
-  >
-    <FiUpload size={16} />
-  </button>
-</div>
+      <div className="relative">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={onImageUpload}
+          className="absolute inset-0 opacity-0 w-full cursor-pointer"
+          title="Upload featured image"
+        />
+        <button
+          className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black flex items-center gap-1"
+          title="Upload featured image"
+          type="button"
+          onClick={(e) => {
+            e.currentTarget.previousSibling?.click();
+          }}
+        >
+          <FiUpload size={16} />
+        </button>
+      </div>
     </div>
   );
 };
@@ -411,7 +410,7 @@ const DeleteConfirmModal = ({ isOpen, blog, onConfirm, onCancel, isLoading }) =>
         </div>
         
         <p className="text-gray-600 mb-2">
-          Are you sure you want to delete <span className="font-semibold">"{blog?.title}"</span>?
+          Are you sure you want to delete <span className="font-semibold">"{blog?.title || 'this post'}"</span>?
         </p>
         <p className="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
         
@@ -441,16 +440,6 @@ const DeleteConfirmModal = ({ isOpen, blog, onConfirm, onCancel, isLoading }) =>
 const ViewBlogModal = ({ blog, onClose }) => {
   if (!blog) return null;
 
-  const getFullImageUrl = (url) => {
-    if (!url) return null;
-    if (url.startsWith('http')) return url;
-    if (url.startsWith('/images/')) {
-      const fileName = url.split('/').pop();
-      return `https://raw.githubusercontent.com/${process.env.NEXT_PUBLIC_GITHUB_REPO}/main/public/images/${fileName}`;
-    }
-    return url;
-  };
-
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
       <motion.div
@@ -470,8 +459,8 @@ const ViewBlogModal = ({ blog, onClose }) => {
         <div className="p-6">
           {blog.imageUrl && (
             <img 
-              src={getFullImageUrl(blog.imageUrl)} 
-              alt={blog.title} 
+              src={blog.imageUrl} 
+              alt={blog.title || 'Blog post'} 
               className="w-full h-48 object-cover rounded-lg mb-6"
               onError={(e) => {
                 e.target.src = 'https://via.placeholder.com/400x200?text=Image+Not+Found';
@@ -481,10 +470,10 @@ const ViewBlogModal = ({ blog, onClose }) => {
           
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
             <span className="flex items-center gap-1">
-              <FiCalendar size={14} /> {new Date(blog.createdAt).toLocaleDateString()}
+              <FiCalendar size={14} /> {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'No date'}
             </span>
             <span className="flex items-center gap-1">
-              <FiClock size={14} /> {blog.readTime} min read
+              <FiClock size={14} /> {blog.readTime || '1'} min read
             </span>
             {blog.category && (
               <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs">
@@ -498,7 +487,7 @@ const ViewBlogModal = ({ blog, onClose }) => {
             )}
           </div>
           
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">{blog.title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{blog.title || 'Untitled'}</h1>
           
           <MarkdownRenderer content={blog.content} />
           
@@ -517,22 +506,11 @@ const ViewBlogModal = ({ blog, onClose }) => {
   );
 };
 
-// Blog Card Component
+// Blog Card Component with safe rendering
 const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
-  const getFullImageUrl = (url) => {
-    if (!url) return null;
-    if (url.startsWith('http')) return url;
-    if (url.startsWith('/images/')) {
-      const fileName = url.split('/').pop();
-      const repo = process.env.NEXT_PUBLIC_GITHUB_REPO;
-      if (!repo) return null;
-      return `https://raw.githubusercontent.com/${repo}/main/public/images/${fileName}`;
-    }
-    return url;
-  };
-
-  const imageUrl = getFullImageUrl(blog.imageUrl);
-
+  // Don't render if blog is undefined
+  if (!blog) return null;
+  
   return (
     <motion.div
       layout
@@ -544,8 +522,8 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
       <div className="relative h-36 bg-gray-100">
         {blog.imageUrl ? (
           <img 
-            src={imageUrl} 
-            alt={blog.title} 
+            src={blog.imageUrl} 
+            alt={blog.title || 'Blog post'} 
             className="w-full h-full object-cover"
             onError={(e) => {
               e.target.src = 'https://via.placeholder.com/150?text=No+Image';
@@ -566,22 +544,24 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
             blog.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
           }`}>
-            {blog.status}
+            {blog.status || 'draft'}
           </span>
         </div>
       </div>
 
       <div className="p-4">
-        <h3 className="font-medium text-gray-900 mb-2 line-clamp-2">{blog.title}</h3>
+        <h3 className="font-medium text-gray-900 mb-2 line-clamp-2">
+          {blog.title || 'Untitled'}
+        </h3>
         
         <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
           <span className="flex items-center gap-1">
             <FiCalendar size={12} />
-            {new Date(blog.createdAt).toLocaleDateString()}
+            {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'No date'}
           </span>
           <span className="flex items-center gap-1">
             <FiClock size={12} />
-            {blog.readTime}m
+            {blog.readTime || '1'}m
           </span>
           {blog.category && (
             <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs">
@@ -618,6 +598,14 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
   );
 };
 
+// Helper function to generate slug
+const generateSlug = (title) => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+};
+
 // Main BlogManager Component
 const BlogManager = () => {
   const [blogs, setBlogs] = useState([]);
@@ -650,7 +638,7 @@ const BlogManager = () => {
   const textareaRef = useRef(null);
   const currentFileRef = useRef(null);
 
-  // Load blogs from Decap API on mount
+  // Load blogs from MongoDB on mount
   useEffect(() => {
     loadBlogs();
   }, []);
@@ -658,11 +646,14 @@ const BlogManager = () => {
   const loadBlogs = async () => {
     setIsLoading(true);
     try {
-      const data = await decapApi.getAllBlogs();
-      setBlogs(data);
+      // Get all blogs (including drafts for admin)
+      const data = await blogService.getAllBlogsAdmin();
+      // Ensure data is an array
+      setBlogs(Array.isArray(data) ? data : []);
     } catch (error) {
-      addAlert('error', 'Failed to load blogs from Decap CMS');
+      addAlert('error', 'Failed to load blogs from MongoDB');
       console.error('Error loading blogs:', error);
+      setBlogs([]);
     } finally {
       setIsLoading(false);
     }
@@ -738,97 +729,93 @@ const BlogManager = () => {
       addAlert('success', 'Image URL inserted');
     }
   };
-// In BlogManager.jsx - Updated handleImageUpload function
-// In BlogManager.jsx - Enhanced debug version
 
-const handleImageUpload = async (e) => {
-  console.log('📁 File input event:', e);
-  console.log('📁 Files:', e.target.files);
-  
-  const file = e.target.files?.[0];
-  
-  if (!file) {
-    console.log('❌ No file selected');
-    addAlert('error', 'Please select a file');
-    return;
-  }
-  
-  console.log('📄 File details:', {
-    name: file.name,
-    type: file.type,
-    size: file.size,
-    lastModified: new Date(file.lastModified).toISOString()
-  });
-  
-  // Validate file type
-  if (!file.type.startsWith('image/')) {
-    console.log('❌ Invalid file type:', file.type);
-    addAlert('error', 'Please select an image file');
-    return;
-  }
-  
-  // Validate file size (max 5MB)
-  const maxSize = 5 * 1024 * 1024; // 5MB
-  if (file.size > maxSize) {
-    console.log('❌ File too large:', file.size);
-    addAlert('error', 'File size too large (max 5MB)');
-    return;
-  }
-  
-  setUploadingImage(true);
-  
-  // Create FormData and log it
-  const formData = new FormData();
-  formData.append('image', file);
-  
-  // Log FormData contents (can't log directly, so we'll check size)
-  console.log('📦 FormData created with file:', file.name);
-  
-  try {
-    console.log('📤 Sending to /api/github/upload...');
+  const handleImageUpload = async (e) => {
+    console.log('📁 File input event:', e);
+    console.log('📁 Files:', e.target.files);
     
-    const response = await fetch('/api/github/upload', {
-      method: 'POST',
-      body: formData
-      // No Content-Type header - let browser set it
+    const file = e.target.files?.[0];
+    
+    if (!file) {
+      console.log('❌ No file selected');
+      addAlert('error', 'Please select a file');
+      return;
+    }
+    
+    console.log('📄 File details:', {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      lastModified: new Date(file.lastModified).toISOString()
     });
     
-    console.log('📥 Response status:', response.status);
-    console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
-    
-    const data = await response.json();
-    console.log('📥 Response data:', data);
-    
-    if (response.ok && data.success) {
-      console.log('✅ Upload successful! URL:', data.url);
-      
-      // Store the file reference for later use
-      currentFileRef.current = file;
-      
-      // Set the image URL in the blog
-      if (editingBlog) {
-        setEditingBlog({ ...editingBlog, imageUrl: data.url });
-        console.log('✅ Updated editing blog with image URL');
-      } else {
-        setNewBlog({ ...newBlog, imageUrl: data.url });
-        console.log('✅ Updated new blog with image URL');
-      }
-      addAlert('success', 'Featured image uploaded successfully!');
-    } else {
-      console.error('❌ Upload failed:', data);
-      addAlert('error', data.error || data.details?.message || 'Failed to upload image');
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      console.log('❌ Invalid file type:', file.type);
+      addAlert('error', 'Please select an image file');
+      return;
     }
-  } catch (error) {
-    console.error('❌ Upload error:', error);
-    addAlert('error', 'Error uploading image: ' + error.message);
-  } finally {
-    setUploadingImage(false);
-    // Reset file input
-    e.target.value = '';
-    console.log('🔄 File input reset');
-  }
-};
- const addTag = () => {
+    
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      console.log('❌ File too large:', file.size);
+      addAlert('error', 'File size too large (max 5MB)');
+      return;
+    }
+    
+    setUploadingImage(true);
+    
+    // Create FormData and log it
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    console.log('📦 FormData created with file:', file.name);
+    
+    try {
+      console.log('📤 Sending to /api/upload...');
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      console.log('📥 Response status:', response.status);
+      
+      const data = await response.json();
+      console.log('📥 Response data:', data);
+      
+      if (response.ok && data.success) {
+        console.log('✅ Upload successful! URL:', data.url);
+        
+        // Store the file reference for later use
+        currentFileRef.current = file;
+        
+        // Set the image URL in the blog
+        if (editingBlog) {
+          setEditingBlog({ ...editingBlog, imageUrl: data.url });
+          console.log('✅ Updated editing blog with image URL');
+        } else {
+          setNewBlog({ ...newBlog, imageUrl: data.url });
+          console.log('✅ Updated new blog with image URL');
+        }
+        addAlert('success', 'Featured image uploaded successfully!');
+      } else {
+        console.error('❌ Upload failed:', data);
+        addAlert('error', data.error || 'Failed to upload image');
+      }
+    } catch (error) {
+      console.error('❌ Upload error:', error);
+      addAlert('error', 'Error uploading image: ' + error.message);
+    } finally {
+      setUploadingImage(false);
+      // Reset file input
+      e.target.value = '';
+      console.log('🔄 File input reset');
+    }
+  };
+
+  const addTag = () => {
     if (!newTag.trim()) return;
     setNewBlog({ ...newBlog, tags: [...newBlog.tags, newTag.trim()] });
     setNewTag('');
@@ -850,25 +837,24 @@ const handleImageUpload = async (e) => {
       featured: newBlog.featured,
       status,
       author: 'Admin',
-      createdAt: new Date().toISOString(),
       readTime: Math.max(1, Math.ceil(newBlog.content.split(/\s+/).length / 200)),
       metaDescription: newBlog.metaDescription || newBlog.content.substring(0, 155) + '...'
     };
 
     setIsLoading(true);
     try {
-      const result = await decapApi.createBlog(blogData);
+      const result = await blogService.createBlog(blogData);
       
       if (result.success) {
         setBlogs(prev => [result.data, ...prev]);
         resetForm();
-        addAlert('success', status === 'published' ? 'Blog published to Decap CMS!' : 'Saved as draft in Decap CMS');
+        addAlert('success', status === 'published' ? 'Blog published to MongoDB!' : 'Saved as draft in MongoDB');
         setShowPreview(false);
       } else {
         addAlert('error', result.error || 'Failed to save blog');
       }
     } catch (error) {
-      addAlert('error', 'Failed to save blog to Decap CMS');
+      addAlert('error', 'Failed to save blog to MongoDB');
       console.error('Error saving blog:', error);
     } finally {
       setIsLoading(false);
@@ -882,53 +868,54 @@ const updateBlog = async () => {
   setIsLoading(true);
   try {
     const blogData = {
-      id: editingBlog.id,
       title: editingBlog.title,
       content: editingBlog.content,
       excerpt: editingBlog.excerpt || editingBlog.content.substring(0, 150) + '...',
       category: editingBlog.category,
       tags: editingBlog.tags,
-      imageUrl: editingBlog.imageUrl, // This should already be set from the upload
+      imageUrl: editingBlog.imageUrl,
       featured: editingBlog.featured,
       status: editingBlog.status,
       author: editingBlog.author || 'Admin',
-      createdAt: editingBlog.createdAt,
       readTime: editingBlog.readTime || Math.max(1, Math.ceil(editingBlog.content.split(/\s+/).length / 200)),
-      metaDescription: editingBlog.metaDescription || editingBlog.content.substring(0, 155) + '...',
-      slug: editingBlog.slug || generateSlug(editingBlog.title)
+      metaDescription: editingBlog.metaDescription || editingBlog.content.substring(0, 155) + '...'
     };
 
-    console.log('📝 Updating blog with data:', blogData);
+    console.log('📝 Updating blog with ID:', editingBlog.id);
+    console.log('📝 Blog data:', blogData);
 
-    // Don't pass the file here - the image is already uploaded
-    const result = await decapApi.updateBlog(editingBlog.id, blogData, null);
+    const result = await blogService.updateBlog(editingBlog.id, blogData);
     
     if (result.success) {
-      setBlogs(prev => prev.map(b => b.id === editingBlog.id ? result.data : b));
+      // Update the blog in the local state
+      setBlogs(prev => prev.map(b => 
+        b.id === editingBlog.id ? { ...b, ...blogData, id: editingBlog.id } : b
+      ));
+      
       cancelEdit();
-      addAlert('success', 'Blog updated successfully in Decap CMS!');
+      addAlert('success', 'Blog updated successfully in MongoDB!');
     } else {
       addAlert('error', result.error || 'Failed to update blog');
+      console.error('Update failed:', result.error);
     }
   } catch (error) {
-    addAlert('error', 'Failed to update blog in Decap CMS');
+    addAlert('error', 'Failed to update blog in MongoDB');
     console.error('Error updating blog:', error);
   } finally {
     setIsLoading(false);
   }
 };
+
   const deleteBlog = async () => {
     if (!deleteConfirm.blog) return;
 
     setIsLoading(true);
     try {
-      const slug = deleteConfirm.blog.slug || generateSlug(deleteConfirm.blog.title);
-      
-      const result = await decapApi.deleteBlog(slug);
+      const result = await blogService.deleteBlog(deleteConfirm.blog.id);
       
       if (result.success) {
         setBlogs(prev => prev.filter(b => b.id !== deleteConfirm.blog.id));
-        addAlert('success', `"${deleteConfirm.blog.title}" deleted successfully from Decap CMS`);
+        addAlert('success', `"${deleteConfirm.blog.title}" deleted successfully from MongoDB`);
         
         if (viewingBlog?.id === deleteConfirm.blog.id) {
           setViewingBlog(null);
@@ -940,7 +927,7 @@ const updateBlog = async () => {
         addAlert('error', result.error || 'Failed to delete blog');
       }
     } catch (error) {
-      addAlert('error', 'Failed to delete blog from Decap CMS');
+      addAlert('error', 'Failed to delete blog from MongoDB');
       console.error('Error deleting blog:', error);
     } finally {
       setIsLoading(false);
@@ -949,6 +936,8 @@ const updateBlog = async () => {
   };
 
   const handleEditClick = (blog) => {
+    if (!blog) return;
+    
     setEditingBlog(blog);
     setActiveTab('create');
     setShowPreview(false);
@@ -979,16 +968,17 @@ const updateBlog = async () => {
     });
   };
 
-  const generateSlug = (title) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-  };
-
+  // Safe filter function with null checks
   const filteredBlogs = blogs.filter(blog => {
-    return blog.title?.toLowerCase().includes(searchTerm.toLowerCase()) &&
-           (filterStatus === 'all' || blog.status === filterStatus);
+    if (!blog) return false;
+    
+    const title = blog.title || '';
+    const matchesSearch = searchTerm === '' || 
+      title.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = filterStatus === 'all' || blog.status === filterStatus;
+    
+    return matchesSearch && matchesStatus;
   });
 
   return (
@@ -1024,13 +1014,13 @@ const updateBlog = async () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <LuSparkles className="text-red-600 text-2xl" />
-              <h1 className="font-semibold text-gray-900">Blog Manager (Decap CMS)</h1>
+              <h1 className="font-semibold text-gray-900">Blog Manager (MongoDB)</h1>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-500">
               <button
                 onClick={loadBlogs}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Refresh from Decap CMS"
+                title="Refresh from MongoDB"
               >
                 <FiRefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
               </button>
@@ -1399,7 +1389,7 @@ const updateBlog = async () => {
             {isLoading && (
               <div className="text-center py-12">
                 <FiRefreshCw className="animate-spin text-gray-400 text-3xl mx-auto mb-3" />
-                <p className="text-gray-500">Loading from Decap CMS...</p>
+                <p className="text-gray-500">Loading from MongoDB...</p>
               </div>
             )}
 
@@ -1407,23 +1397,25 @@ const updateBlog = async () => {
             {!isLoading && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <AnimatePresence>
-                  {filteredBlogs.map(blog => (
-                    <BlogCard
-                      key={blog.id}
-                      blog={blog}
-                      onEdit={handleEditClick}
-                      onDelete={(blog) => setDeleteConfirm({ isOpen: true, blog })}
-                      onView={setViewingBlog}
-                    />
-                  ))}
+                  {filteredBlogs.length > 0 ? (
+                    filteredBlogs.map(blog => (
+                      blog && (
+                        <BlogCard
+                          key={blog.id}
+                          blog={blog}
+                          onEdit={handleEditClick}
+                          onDelete={(blog) => setDeleteConfirm({ isOpen: true, blog })}
+                          onView={setViewingBlog}
+                        />
+                      )
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                      <FiEdit className="mx-auto text-gray-300 text-4xl mb-3" />
+                      <p className="text-gray-500">No posts found in MongoDB</p>
+                    </div>
+                  )}
                 </AnimatePresence>
-              </div>
-            )}
-
-            {!isLoading && filteredBlogs.length === 0 && (
-              <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-                <FiEdit className="mx-auto text-gray-300 text-4xl mb-3" />
-                <p className="text-gray-500">No posts found in Decap CMS</p>
               </div>
             )}
           </div>

@@ -26,6 +26,26 @@ export default function BlogPage() {
   
   const postsPerPage = 9;
 
+  // Function to strip markdown for excerpts
+  const stripMarkdown = (text) => {
+    if (!text) return '';
+    
+    return text
+      .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/__(.*?)__/g, '$1')
+      .replace(/_(.*?)_/g, '$1')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/!\[.*?\]\(.*?\)/g, '')
+      .replace(/#{1,6}\s/g, '')
+      .replace(/`{3}[\s\S]*?`{3}/g, '')
+      .replace(/`(.*?)`/g, '$1')
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
   // Load blogs on mount
   useEffect(() => {
     loadBlogs();
@@ -92,19 +112,18 @@ export default function BlogPage() {
     <div className="min-h-screen bg-white">
    
     
-           {/* Hero Section */}
-              <HeroSection
-                heading="Insights &"
-                headingAccent="Stories"
-                subheading="Discover the latest trends, tips, and stories from our team"
-                ctaText="Start Your Journey"
-                ctaLink="/contact"
-                gradientFrom="from-black"
-                gradientVia="via-red-700"
-                gradientTo="to-black"
-              />
-        
-     
+      {/* Hero Section */}
+      <HeroSection
+        heading="Insights &"
+        headingAccent="Stories"
+        subheading="Discover the latest trends, tips, and stories from our team"
+        ctaText="Start Your Journey"
+        ctaLink="/contact"
+        gradientFrom="from-black"
+        gradientVia="via-red-700"
+        gradientTo="to-black"
+      />
+      
       {/* Search and Filter Bar */}
       <section className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-10 py-4">
         <div className="max-w-7xl mx-auto px-4">
@@ -154,7 +173,7 @@ export default function BlogPage() {
                 onClick={() => loadBlogs(true)}
                 disabled={isRefreshing}
                 className="p-2 text-gray-500 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
-                title="Refresh from Decap CMS"
+                title="Refresh from MongoDB"
               >
                 <FiRefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
               </button>
@@ -222,7 +241,9 @@ export default function BlogPage() {
                     {featuredPost.title}
                   </h2>
                   
-               
+                  <p className="text-gray-300 text-lg mb-6 line-clamp-2">
+                    {featuredPost.excerpt || stripMarkdown(featuredPost.content?.substring(0, 200))}...
+                  </p>
                   
                   <div className="flex items-center gap-4">
                     <span className="text-white font-medium">Read Article</span>
@@ -333,6 +354,10 @@ export default function BlogPage() {
                           {blog.title}
                         </h3>
 
+                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          {blog.excerpt || stripMarkdown(blog.content?.substring(0, 120))}...
+                        </p>
+
                         {/* Tags */}
                         {blog.tags && blog.tags.length > 0 && (
                           <div className="flex flex-wrap gap-2 mb-4">
@@ -412,7 +437,10 @@ export default function BlogPage() {
                             {blog.title}
                           </h3>
 
-                         
+                          <p className="text-gray-600 mb-4 line-clamp-2">
+                            {blog.excerpt || stripMarkdown(blog.content?.substring(0, 150))}...
+                          </p>
+
                           {/* Tags */}
                           {blog.tags && blog.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-4">
@@ -476,8 +504,6 @@ export default function BlogPage() {
           </div>
         )}
       </section>
-
-     
     </div>
   );
 }

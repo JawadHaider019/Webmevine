@@ -1,6 +1,6 @@
 // src/utils/blogUtils.js
-// Helper functions for working with blogs - GitHub only, no fallbacks
-import { decapApi } from '@/services/decapApi';
+// Helper functions for working with blogs - MongoDB only
+import { blogService } from '@/services/blogService';
 
 // Cache for blogs to avoid excessive API calls
 let blogsCache = null;
@@ -19,8 +19,8 @@ export const getPublishedBlogs = async () => {
       }
     }
     
-    // Fetch from Decap API (GitHub)
-    const apiBlogs = await decapApi.getAllBlogs();
+    // Fetch from MongoDB
+    const apiBlogs = await blogService.getAllBlogs();
     
     if (!apiBlogs || apiBlogs.length === 0) {
       return []; // Return empty array if no blogs found
@@ -34,8 +34,8 @@ export const getPublishedBlogs = async () => {
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       
   } catch (error) {
-    console.error('Error loading blogs from GitHub:', error);
-    throw new Error('Failed to fetch blogs from GitHub'); // Throw error to be handled by UI
+    console.error('Error loading blogs from MongoDB:', error);
+    throw new Error('Failed to fetch blogs from MongoDB');
   }
 };
 
@@ -47,8 +47,8 @@ export const getBlogBySlug = async (slug) => {
       if (cached) return cached;
     }
     
-    // Fetch from API
-    const blog = await decapApi.getBlogBySlug(slug);
+    // Fetch from MongoDB
+    const blog = await blogService.getBlogBySlug(slug);
     
     if (!blog) {
       throw new Error(`Blog not found: ${slug}`);
@@ -57,16 +57,16 @@ export const getBlogBySlug = async (slug) => {
     return blog;
     
   } catch (error) {
-    console.error('Error loading blog from GitHub:', error);
-    throw new Error('Failed to fetch blog from GitHub');
+    console.error('Error loading blog from MongoDB:', error);
+    throw new Error('Failed to fetch blog from MongoDB');
   }
 };
 
 export const getAllCategories = async () => {
   try {
-    const blogs = await getPublishedBlogs();
-    const categories = [...new Set(blogs.map(blog => blog.category).filter(Boolean))];
-    return categories.sort();
+    // Use the service method that's optimized for this
+    const categories = await blogService.getAllCategories();
+    return categories;
   } catch (error) {
     console.error('Error fetching categories:', error);
     return []; // Return empty array on error
@@ -86,16 +86,9 @@ export const getBlogsByCategory = async (category) => {
 
 export const searchBlogs = async (query) => {
   try {
-    const blogs = await getPublishedBlogs();
-    if (!query) return blogs;
-    
-    const searchTerm = query.toLowerCase();
-    return blogs.filter(blog => 
-      blog.title?.toLowerCase().includes(searchTerm) ||
-      blog.content?.toLowerCase().includes(searchTerm) ||
-      blog.excerpt?.toLowerCase().includes(searchTerm) ||
-      blog.tags?.some(tag => tag?.toLowerCase().includes(searchTerm))
-    );
+    // Use the service's search method for better performance
+    const results = await blogService.searchBlogs(query);
+    return results;
   } catch (error) {
     console.error('Error searching blogs:', error);
     return [];
@@ -104,16 +97,9 @@ export const searchBlogs = async (query) => {
 
 export const getRelatedBlogs = async (currentBlog, limit = 3) => {
   try {
-    const blogs = await getPublishedBlogs();
-    
-    const related = blogs.filter(blog => 
-      blog.id !== currentBlog.id && (
-        blog.category === currentBlog.category ||
-        blog.tags?.some(tag => currentBlog.tags?.includes(tag))
-      )
-    );
-    
-    return related.slice(0, limit);
+    // Use the service's optimized method
+    const related = await blogService.getRelatedBlogs(currentBlog, limit);
+    return related;
   } catch (error) {
     console.error('Error fetching related blogs:', error);
     return [];

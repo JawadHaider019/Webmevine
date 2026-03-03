@@ -7,10 +7,31 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { 
   FiCalendar, FiClock, FiUser, FiTag, FiArrowLeft,
-  FiTwitter, FiFacebook, FiLinkedin, FiLink, FiCheck, FiRefreshCw
+  FiTwitter, FiFacebook, FiLinkedin, FiLink, FiCheck, FiRefreshCw,
+  FiAlertCircle
 } from 'react-icons/fi';
 import { LuSparkles } from 'react-icons/lu';
 import { getBlogBySlug, getRelatedBlogs, formatDate } from '@/utils/blogUtils';
+
+// Function to strip markdown for excerpts
+const stripMarkdown = (text) => {
+  if (!text) return '';
+  
+  return text
+    .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/__(.*?)__/g, '$1')
+    .replace(/_(.*?)_/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/#{1,6}\s/g, '')
+    .replace(/`{3}[\s\S]*?`{3}/g, '')
+    .replace(/`(.*?)`/g, '$1')
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
 
 // Markdown Renderer
 const MarkdownRenderer = ({ content }) => {
@@ -42,6 +63,9 @@ const MarkdownRenderer = ({ content }) => {
                 src={urlMatch[1]} 
                 alt={altMatch ? altMatch[1] : ''} 
                 className="w-full rounded-xl shadow-lg"
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/800x400?text=Image+Not+Found';
+                }}
               />
             </div>
           );
@@ -99,7 +123,7 @@ const MarkdownRenderer = ({ content }) => {
   };
 
   return (
-    <div className="prose max-w-none">
+    <div className="prose prose-lg max-w-none">
       {renderFormattedContent(content)}
     </div>
   );
@@ -122,17 +146,20 @@ export default function BlogPostPage() {
     setError(null);
     
     try {
+      console.log('🔍 Looking for blog with slug:', params.slug);
       const post = await getBlogBySlug(params.slug);
       
       if (post) {
+        console.log('✅ Blog found:', post.title);
         setBlog(post);
         const related = await getRelatedBlogs(post);
         setRelatedPosts(related);
       } else {
+        console.error('❌ Blog not found for slug:', params.slug);
         setError('Blog post not found');
       }
     } catch (error) {
-      console.error('Error loading blog:', error);
+      console.error('❌ Error loading blog:', error);
       setError('Failed to load blog post');
     } finally {
       setIsLoading(false);
@@ -159,7 +186,7 @@ export default function BlogPostPage() {
         headings.push({ level: 3, text: line.substring(4) });
       }
     });
-    return headings.slice(0, 5); // Limit to 5 headings
+    return headings.slice(0, 5);
   };
 
   const headings = extractHeadings(blog?.content);
@@ -179,7 +206,8 @@ export default function BlogPostPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-4">
+          <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-4 flex items-center gap-2">
+            <FiAlertCircle size={20} />
             <p className="font-medium">{error || 'Post not found'}</p>
           </div>
           <Link href="/blog" className="inline-flex items-center gap-2 text-red-600 hover:text-red-700 font-medium">
@@ -211,6 +239,9 @@ export default function BlogPostPage() {
               src={blog.imageUrl}
               alt={blog.title}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
             />
           )}
         </div>
@@ -369,6 +400,9 @@ export default function BlogPostPage() {
                         src={post.imageUrl}
                         alt={post.title}
                         className="w-full h-40 object-cover"
+                        onError={(e) => {
+                          e.target.src = 'https://via.placeholder.com/400x200?text=No+Image';
+                        }}
                       />
                     )}
                     <div className="p-4">
@@ -376,7 +410,7 @@ export default function BlogPostPage() {
                         {post.title}
                       </h3>
                       <p className="text-sm text-gray-600 line-clamp-2">
-                        {post.excerpt || post.content?.substring(0, 100)}...
+                        {post.excerpt || stripMarkdown(post.content?.substring(0, 150))}...
                       </p>
                     </div>
                   </motion.div>
