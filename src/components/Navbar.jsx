@@ -207,7 +207,7 @@ export default function Navbar() {
                 >
                   {/* Desktop & Tablet: Text button */}
                   <Link
-                    href="/book-meeting"
+                    href="/contact"
                     className="relative group/btn hidden sm:block"
                   >
                     <button className="btn-primary px-3 py-1 text-[9px] sm:text-[10px] whitespace-nowrap tracking-wider">
@@ -217,7 +217,7 @@ export default function Navbar() {
 
                   {/* Mobile: Icon button */}
                   <Link
-                    href="/book-meeting"
+                    href="/contact"
                     className="relative group/btn sm:hidden"
                   >
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600 to-red-800 rounded-full opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 blur-sm" />
@@ -376,7 +376,7 @@ export default function Navbar() {
                   exit="exit"
                 >
                   <Link
-                    href="/book-meeting"
+                    href="/contact"
                     onClick={() => setIsOpen(false)}
                     className="sm:hidden block"
                   >

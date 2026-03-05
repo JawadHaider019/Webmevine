@@ -28,12 +28,14 @@ export const metadata = {
     shortcut: "/fav.png",
     apple: "/fav.png",
   },
-};
+}; 
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${marcellus.variable} ${manrope.variable}`}>
       <head>
+        <link rel="preconnect" href="https://assets.calendly.com" />
+<link rel="dns-prefetch" href="https://assets.calendly.com" />
         <link rel="icon" href="/fav.png" type="image/png" />
         <link rel="shortcut icon" href="/fav.png" type="image/png" />
         <link rel="apple-touch-icon" href="/fav.png" />
