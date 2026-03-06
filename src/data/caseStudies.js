@@ -135,7 +135,7 @@ export const caseStudies = [
       name: "James Wilson",
       title: "CEO, Fintalio"
     },
-    image: "/casestudy/fintalio.png",
+    image: "/casestudy/1.jpg",
     number: "04",
     gradient: "from-gray-50 to-white",
     technologies: ["Bubble.io", "No-Code", "API Integrations"],

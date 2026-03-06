@@ -102,7 +102,7 @@ export default function Navbar() {
   <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
     <Image 
       src="/logo.png" 
-      alt="AHMTECH Logo"
+      alt="Web Mavein Logo"
       width={140}
       height={140}
       className="object-contain w-full h-auto"
@@ -400,7 +400,7 @@ export default function Navbar() {
                   transition={{ duration: 0.3, delay: 0.7 }}
                   className="mt-8 text-center"
                 >
-                  <p className="text-[8px] text-gray-400 tracking-[0.3em] uppercase">© {currentYear} WebMevien</p>
+                  <p className="text-[8px] text-gray-400 tracking-[0.3em] uppercase">© {currentYear} WebMavein</p>
                 </motion.div>
               </div>
             </motion.div>
