@@ -10,6 +10,7 @@ import HeroSection from '@/components/HeroSection'
 export default function CaseStudiesPage() {
   const [mounted, setMounted] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
+  const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
     setMounted(true);
@@ -47,6 +48,33 @@ export default function CaseStudiesPage() {
     }
   };
 
+  const handleImageError = (studyId, imageType, index) => {
+    setImageErrors(prev => {
+      if (imageType === 'main') {
+        return { ...prev, [`${studyId}-main`]: true };
+      } else if (imageType === 'gallery' && index !== undefined) {
+        return { ...prev, [`${studyId}-gallery-${index}`]: true };
+      }
+      return prev;
+    });
+  };
+
+  const getImageSource = (study, type, index) => {
+    if (type === 'main') {
+      if (imageErrors[`${study.id}-main`]) {
+        // Return a placeholder or fallback image
+        return `https://placehold.co/1200x800/1a1a1a/ffffff?text=${encodeURIComponent(study.title)}`;
+      }
+      return study.images.main;
+    } else if (type === 'gallery' && index !== undefined) {
+      if (imageErrors[`${study.id}-gallery-${index}`]) {
+        return `https://placehold.co/800x600/1a1a1a/ffffff?text=${encodeURIComponent(study.title)}+${index + 1}`;
+      }
+      return study.images.gallery[index];
+    }
+    return '';
+  };
+
   if (!mounted) return null;
 
   return (
@@ -63,36 +91,7 @@ export default function CaseStudiesPage() {
         gradientTo="to-black"
       />
 
-      {/* Filter Bar - Responsive */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 md:mt-12">
-        <div className="flex flex-wrap justify-center gap-2 md:gap-3">
-          {categories.map((category, index) => (
-            <motion.button
-              key={category}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              onClick={() => setActiveFilter(category)}
-              className={`relative px-3 py-1.5 md:px-5 md:py-2.5 rounded-full text-xs md:text-sm font-['Manrope'] font-medium transition-all duration-300 overflow-hidden group ${
-                activeFilter === category
-                  ? 'text-white'
-                  : 'text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200'
-              }`}
-            >
-              {activeFilter === category && (
-                <motion.div 
-                  layoutId="activeFilter"
-                  className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-500"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
-              <span className="relative z-10 whitespace-nowrap">
-                {category === "all" ? "All Projects" : category}
-              </span>
-            </motion.button>
-          ))}
-        </div>
-      </div>
+  
       
       {/* Premium Case Studies - Fully Responsive */}
       <section className="py-12 md:py-16 lg:py-20 px-4">
@@ -116,12 +115,15 @@ export default function CaseStudiesPage() {
                 >
                   <div className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-0`}>
                     {/* Image Side - Responsive heights */}
-                    <div className="relative lg:w-1/2 h-[250px] sm:h-[300px] md:h-[350px] lg:h-[450px] xl:h-[500px] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                    <div className="relative lg:w-1/2 h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px] xl:h-[550px] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
                       <Image
-                        src={study.image}
+                        src={getImageSource(study, 'main')}
                         alt={study.title}
                         fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px"
+                        className="object-cover object-top group-hover:scale-110 transition-transform duration-700"
+                        onError={() => handleImageError(study.id, 'main')}
+                        priority={index < 2}
                       />
                       
                       {/* Gradient Overlay - Hidden on mobile, visible on hover */}
@@ -151,7 +153,7 @@ export default function CaseStudiesPage() {
                       
                       {/* Description */}
                       <p className="font-['Manrope'] text-gray-600 text-sm sm:text-base md:text-lg mb-4 sm:mb-5 md:mb-6 leading-relaxed">
-                        {study.description}
+                        {study.shortDescription || study.description}
                       </p>
 
                       {/* Stats Grid - Responsive grid */}
@@ -190,7 +192,7 @@ export default function CaseStudiesPage() {
                       <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-4 sm:mb-6 md:mb-8">
                         <div className="flex items-center gap-1 sm:gap-2">
                           <FiTag className="text-red-600 w-3 h-3 sm:w-4 sm:h-4" />
-                          <span className="text-[10px] sm:text-xs md:text-sm font-['Manrope'] text-gray-500">
+                          <span className="text-[10px] sm:text-xs md:text-sm font-['Manrope'] text-gray-500 capitalize">
                             {study.industry || study.category}
                           </span>
                         </div>
@@ -232,6 +234,7 @@ export default function CaseStudiesPage() {
                           </div>
                         </div>
                       </div>
+
                     </div>
                   </div>
                 </motion.div>

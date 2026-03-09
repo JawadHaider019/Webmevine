@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { FiArrowLeft, FiCheckCircle, FiCalendar, FiTag, FiCode, FiUsers, FiStar, FiExternalLink } from "react-icons/fi";
+import { FiArrowLeft, FiCheckCircle, FiCalendar, FiTag, FiCode, FiUsers, FiStar, FiExternalLink, FiX } from "react-icons/fi";
 import GlowingButton from "@/components/GlowingButton";
 import { caseStudies } from "@/data/caseStudies";
 import SectionHeader from "@/components/SectionHeader";
@@ -16,6 +16,8 @@ export default function CaseStudyDetail() {
   const [mounted, setMounted] = useState(false);
   const [relatedStudies, setRelatedStudies] = useState([]);
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageErrors, setImageErrors] = useState({});
   const [farmerAnimation, setFarmerAnimation] = useState({
     walking: false,
     wave: false,
@@ -49,6 +51,37 @@ export default function CaseStudyDetail() {
     }
   }, [study]);
 
+  const handleImageError = (imageKey) => {
+    setImageErrors(prev => ({ ...prev, [imageKey]: true }));
+  };
+
+  const getImageSource = (imagePath, fallbackTitle) => {
+    // Return null if no image path provided
+    if (!imagePath) return null;
+    
+    // Return placeholder if image failed to load
+    if (imageErrors[imagePath]) {
+      return `https://placehold.co/800x600/1a1a1a/ffffff?text=${encodeURIComponent(fallbackTitle || 'Image')}`;
+    }
+    return imagePath;
+  };
+
+  const hasValidImages = () => {
+    if (!study || !study.images) return false;
+    
+    const mainImage = study.image || study.images.main;
+    const galleryImages = study.images.gallery || [];
+    
+    return mainImage || galleryImages.length > 0;
+  };
+
+  const getValidGalleryImages = () => {
+    if (!study || !study.images || !study.images.gallery) return [];
+    
+    // Filter out any null/undefined images
+    return study.images.gallery.filter(img => img && typeof img === 'string' && img.trim() !== '');
+  };
+
   if (!mounted) return null;
 
   if (!study) {
@@ -63,6 +96,11 @@ export default function CaseStudyDetail() {
       </div>
     );
   }
+
+  // Get main image with fallback
+  const mainImage = study.image || study.images?.main || null;
+  const galleryImages = getValidGalleryImages();
+  const totalImages = (mainImage ? 1 : 0) + galleryImages.length;
 
   // Farmer SVG Animation Component
   const FarmerAnimation = () => (
@@ -171,19 +209,63 @@ export default function CaseStudyDetail() {
     </motion.div>
   );
 
+  // Image Gallery Modal
+  const ImageModal = ({ image, onClose }) => {
+    if (!image) return null;
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0.8 }}
+          className="relative max-w-5xl w-full h-[80vh]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={onClose}
+            className="absolute -top-12 right-0 text-white hover:text-red-500 transition-colors"
+          >
+            <FiX className="w-8 h-8" />
+          </button>
+          <div className="relative w-full h-full">
+            <Image
+              src={image}
+              alt={`${study.title} gallery image`}
+              fill
+              className="object-contain"
+              onError={() => handleImageError(image)}
+            />
+          </div>
+        </motion.div>
+      </motion.div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-white relative overflow-x-hidden">
-      {/* Farmer Animation */}
-      {study.category.toLowerCase().includes('agriculture') || 
-       study.category.toLowerCase().includes('farm') || 
-       study.category.toLowerCase().includes('agri') ? (
-        <FarmerAnimation />
-      ) : null}
+      {/* Image Modal */}
+      <ImageModal 
+        image={selectedImage} 
+        onClose={() => setSelectedImage(null)} 
+      />
+
+      {/* Farmer Animation - Only show for agriculture-related categories */}
+      {study.category && (
+        study.category.toLowerCase().includes('agriculture') || 
+        study.category.toLowerCase().includes('farm') || 
+        study.category.toLowerCase().includes('agri')
+      ) && <FarmerAnimation />}
 
       {/* Back Navigation with enhanced hover */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24">
         <motion.div
-        
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
           <Link href="/casestudies" className="inline-flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-red-600 transition-colors font-['Manrope'] text-xs sm:text-sm group">
@@ -205,7 +287,6 @@ export default function CaseStudyDetail() {
               className="order-2 lg:order-1"
             >
               <motion.div
-              
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 className="inline-block mb-3 sm:mb-4"
               >
@@ -216,7 +297,6 @@ export default function CaseStudyDetail() {
               
               <motion.h1 
                 className="font-['Marcellus'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-gray-900 mb-4 sm:mb-6 leading-tight"
-              
                 transition={{ type: "spring", stiffness: 300, damping: 10 }}
               >
                 {study.title}
@@ -274,37 +354,41 @@ export default function CaseStudyDetail() {
               </div>
             </motion.div>
 
-            {/* Right Image with enhanced hover */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              whileHover={{ scale: 1.02, rotateY: 5 }}
-              className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[450px] xl:h-[500px] rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 shadow-xl order-1 lg:order-2 group cursor-pointer"
-            >
+            {/* Right Image with enhanced hover - Only render if mainImage exists */}
+            {mainImage && (
               <motion.div
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.5 }}
-                className="w-full h-full"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                whileHover={{ scale: 1.02, rotateY: 5 }}
+                className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[450px] xl:h-[500px] rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 shadow-xl order-1 lg:order-2 group cursor-pointer"
+                onClick={() => setSelectedImage(mainImage)}
               >
-                <Image
-                  src={study.image}
-                  alt={study.title}
-                  fill
-                  className="object-cover"
-                />
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ duration: 0.5 }}
+                  className="w-full h-full"
+                >
+                  <Image
+                    src={getImageSource(mainImage, study.title)}
+                    alt={study.title}
+                    fill
+                    className="object-cover"
+                    onError={() => handleImageError(mainImage)}
+                  />
+                </motion.div>
+                
+                {/* Number Badge with hover effect */}
+                <motion.div 
+                  className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 hidden sm:block"
+                  whileHover={{ scale: 1.2, rotate: 5 }}
+                >
+                  <span className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-['Marcellus'] font-black text-black/10 group-hover:text-red-600/20 transition-colors">
+                    {study.number}
+                  </span>
+                </motion.div>
               </motion.div>
-              
-              {/* Number Badge with hover effect */}
-              <motion.div 
-                className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 hidden sm:block"
-                whileHover={{ scale: 1.2, rotate: 5 }}
-              >
-                <span className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-['Marcellus'] font-black text-black/10 group-hover:text-red-600/20 transition-colors">
-                  {study.number}
-                </span>
-              </motion.div>
-            </motion.div>
+            )}
           </div>
         </div>
       </section>
@@ -322,7 +406,6 @@ export default function CaseStudyDetail() {
                   whileHover={{ 
                     y: -8,
                     boxShadow: "0 25px 30px -12px rgba(220, 38, 38, 0.25)"
-
                   }}
                   className="bg-white p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-lg transition-all duration-300 border-2 border-transparent group"
                 >
@@ -347,7 +430,6 @@ export default function CaseStudyDetail() {
                   whileHover={{ 
                     y: -8,
                     boxShadow: "0 25px 30px -12px rgba(220, 38, 38, 0.25)"
-          
                   }}
                   className="bg-white p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-lg transition-all duration-300 border-2 border-transparent group"
                 >
@@ -400,7 +482,6 @@ export default function CaseStudyDetail() {
                 >
                   <motion.div
                     animate={{ 
-                  
                       scale: hoveredCard === `feature-${index}` ? 1.2 : 1
                     }}
                     transition={{ duration: 0.3 }}
@@ -444,7 +525,7 @@ export default function CaseStudyDetail() {
                     y: -5,
                     backgroundColor: "#DC2626",
                     color: "#FFFFFF"
-                                    }}
+                  }}
                   className="px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 bg-white rounded-full shadow-sm sm:shadow-md font-['Manrope'] text-[10px] sm:text-xs text-gray-700 border border-gray-200 transition-all duration-300 cursor-default"
                 >
                   <motion.span
@@ -473,7 +554,6 @@ export default function CaseStudyDetail() {
                   whileHover={{ 
                     scale: 1.02,
                     boxShadow: "0 25px 30px -12px rgba(220, 38, 38, 0.3)"
-                 
                   }}
                   className="bg-gradient-to-br from-red-600/5 to-red-500/5 p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border-2 border-red-600/10 transition-all duration-300 group"
                 >
@@ -498,7 +578,6 @@ export default function CaseStudyDetail() {
                   whileHover={{ 
                     scale: 1.02,
                     boxShadow: "0 25px 30px -12px rgba(220, 38, 38, 0.3)"
- 
                   }}
                   className="bg-gradient-to-br from-red-600/5 to-red-500/5 p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border-2 border-red-600/10 transition-all duration-300 group"
                 >
@@ -541,7 +620,6 @@ export default function CaseStudyDetail() {
                 "Working with WebMavine was a game-changer. They understood our vision and delivered beyond expectations."
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
-                
                 <div className="text-center sm:text-left">
                   <p className="font-['Marcellus'] text-base sm:text-lg font-bold text-gray-900 group-hover:text-red-600 transition-colors">
                     {study.founder.name}
@@ -556,9 +634,86 @@ export default function CaseStudyDetail() {
         </section>
       )}
 
+      {/* Image Gallery Section - Only render if there are images */}
+      {totalImages > 0 && (
+        <section className="py-12 sm:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              heading="Project Gallery"
+              subheading="Explore the full story through these snapshots"
+              gradientHeading={true}
+              gradientFrom="from-black"
+              gradientVia="via-red-600"
+              gradientTo="to-gray-900"
+              alignment="center"
+              descriptionColor="text-gray-600"
+            />
+            
+            <div className={`grid ${totalImages === 1 ? 'grid-cols-1' : totalImages === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-3'} gap-4 sm:gap-6 mt-8 sm:mt-12`}>
+              {/* Main Image - Only render if exists */}
+              {mainImage && (
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  whileHover={{ 
+                    y: -10,
+                    scale: 1.02,
+                    boxShadow: "0 30px 35px -12px rgba(220, 38, 38, 0.3)"
+                  }}
+                  className="relative h-64 sm:h-72 md:h-80 rounded-xl overflow-hidden bg-gray-100 shadow-lg group cursor-pointer"
+                  onClick={() => setSelectedImage(mainImage)}
+                >
+                  <Image
+                    src={getImageSource(mainImage, `${study.title} Main`)}
+                    alt={`${study.title} main view`}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    onError={() => handleImageError(mainImage)}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4">
+                    <span className="text-white font-['Manrope'] text-sm">Main View</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Gallery Images - Only render if they exist */}
+              {galleryImages.map((image, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: (index + 1) * 0.1 }}
+                  whileHover={{ 
+                    y: -10,
+                    scale: 1.02,
+                    boxShadow: "0 30px 35px -12px rgba(220, 38, 38, 0.3)"
+                  }}
+                  className="relative h-64 sm:h-72 md:h-80  rounded-xl overflow-hidden bg-gray-100 shadow-lg group cursor-pointer"
+                  onClick={() => setSelectedImage(image)}
+                >
+                  <Image
+                    src={getImageSource(image, `${study.title} Gallery ${index + 1}`)}
+                    alt={`${study.title} gallery image ${index + 1}`}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    onError={() => handleImageError(image)}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4">
+                    <span className="text-white font-['Manrope'] text-sm">View {index + 2}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+          </div>
+        </section>
+      )}
+
       {/* Related Case Studies with enhanced hover */}
       {relatedStudies.length > 0 && (
-        <section className="py-12 sm:py-16">
+        <section className="py-12 sm:py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <SectionHeader
               smallHeading="More Success Stories"
@@ -601,10 +756,11 @@ export default function CaseStudyDetail() {
                       className="w-full h-full"
                     >
                       <Image
-                        src={study.image}
+                        src={getImageSource(study.image, study.title)}
                         alt={study.title}
                         fill
                         className="object-contain p-3 sm:p-4"
+                        onError={() => handleImageError(study.image)}
                       />
                     </motion.div>
                     
@@ -666,7 +822,6 @@ export default function CaseStudyDetail() {
         </section>
       )}
 
-    
-    </div>
+      </div>
   );
 }

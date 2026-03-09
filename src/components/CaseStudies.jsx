@@ -40,7 +40,7 @@ export default function CaseStudiesSection() {
 
   const handleOpenSlideClick = (slug) => {
     // Navigate to case study detail page when clicking on open slide
-    window.location.href = `/case-studies/${slug}`;
+    window.location.href = `/casestudies/${slug}`;
   };
 
   // Responsive widths
@@ -215,9 +215,9 @@ export default function CaseStudiesSection() {
                         <div className="relative w-full lg:w-[45%] h-48 sm:h-56 md:h-64 lg:h-[80%] flex flex-col">
                           {/* Image */}
                           <div className="relative w-full bg-[#1c1c1c] h-full rounded-xl md:rounded-2xl overflow-hidden shadow-md md:shadow-xl mb-3 md:mb-4">
-                            {study.image ? (
+                            {study.images.main ? (
                               <Image
-                                src={study.image}
+                                src={study.images.main}
                                 alt={study.category}
                                 fill
                                 className="object-contain transition-transform duration-700"

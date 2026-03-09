@@ -18,7 +18,13 @@ export const caseStudies = [
       name: "David Ramos",
       title: "Founder & CEO"
     },
-    image: "/casestudy/zola.png",
+    images: {
+      main: "/casestudy/zola 1.png",
+      gallery: [
+        "/casestudy/zola 2.png",
+        "/casestudy/zola 3.png"
+      ]
+    },
     number: "01",
     gradient: "from-gray-50 to-white",
     technologies: ["Bubble.io", "No-Code", "API Integrations"],
@@ -56,7 +62,13 @@ export const caseStudies = [
       name: "Michael Roberts",
       title: "CEO, FivUp AI"
     },
-    image: "/casestudy/fivupai.png",
+    images: {
+      main: "/casestudy/Fivup Ai 1.png",
+      gallery: [
+        "/casestudy/Fivup Ai 2.png",
+        "/casestudy/Fivup Ai 3.png"
+      ]
+    },
     number: "02",
     gradient: "from-gray-50 to-white",
     technologies: ["Bubble.io", "No-Code", "API Integrations"],
@@ -94,7 +106,14 @@ export const caseStudies = [
       name: "Sarah Chen",
       title: "Founder, Pure Clay"
     },
-    image: "/casestudy/pureclay.png",
+    images: {
+      main: "/casestudy/pure clay 1.png",
+      gallery: [
+        "/casestudy/pure clay 2.png",
+        "/casestudy/pure clay 3.png"
+       
+      ]
+    },
     number: "03",
     gradient: "from-gray-50 to-white",
     technologies: ["React", "Node.js", "Express", "Tailwind CSS", "MongoDB"],
@@ -135,7 +154,14 @@ export const caseStudies = [
       name: "James Wilson",
       title: "CEO, Fintalio"
     },
-    image: "/casestudy/1.jpg",
+    images: {
+      main: "/casestudy/Fintalio 1.png",
+      gallery: [
+        "/casestudy/Fintalio 2.png",
+        "/casestudy/Fintalio 3.png"
+     
+      ]
+    },
     number: "04",
     gradient: "from-gray-50 to-white",
     technologies: ["Bubble.io", "No-Code", "API Integrations"],
