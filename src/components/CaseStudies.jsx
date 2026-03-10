@@ -13,6 +13,9 @@ export default function CaseStudiesSection() {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Get only the first 4 case studies
+  const featuredCaseStudies = caseStudies.slice(0, 4);
+
   // Check if mobile on mount and when window resizes
   useEffect(() => {
     setMounted(true);
@@ -71,7 +74,7 @@ export default function CaseStudiesSection() {
 
   // Mobile navigation
   const nextSlide = () => {
-    if (activeIndex < caseStudies.length - 1) {
+    if (activeIndex < featuredCaseStudies.length - 1) {
       setActiveIndex(activeIndex + 1);
     }
   };
@@ -139,9 +142,9 @@ export default function CaseStudiesSection() {
               whileTap={{ scale: 0.9 }}
               onClick={nextSlide}
               className={`w-10 h-10 rounded-full bg-white/10 flex items-center justify-center ${
-                activeIndex === caseStudies.length - 1 ? 'opacity-50 cursor-not-allowed' : ''
+                activeIndex === featuredCaseStudies.length - 1 ? 'opacity-50 cursor-not-allowed' : ''
               }`}
-              disabled={activeIndex === caseStudies.length - 1}
+              disabled={activeIndex === featuredCaseStudies.length - 1}
             >
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -153,7 +156,7 @@ export default function CaseStudiesSection() {
         {/* Slides Container - No scrollbar */}
         <div className={`relative w-full ${isMobile ? 'h-auto' : 'h-[400px] md:h-[500px] lg:h-[600px]'}`}>
           <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 h-full no-scrollbar`}>
-            {caseStudies.map((study, index) => {
+            {featuredCaseStudies.map((study, index) => {
               const isActive = index === activeIndex;
               const width = getSlideWidth(index);
               const height = getSlideHeight(index);
@@ -252,7 +255,7 @@ export default function CaseStudiesSection() {
 
                           {/* Description */}
                           <p className="font-['Manrope'] text-gray-900 text-sm sm:text-base md:text-lg lg:text-xl font-medium mb-2 md:mb-4">
-                            {study.description}
+                            {study.shortDescription || study.description}
                           </p>
                           
                           {/* Achievement */}
@@ -275,49 +278,50 @@ export default function CaseStudiesSection() {
                             <p className="font-['Manrope'] text-xs text-gray-600 mb-1">{study.founder.name}</p>
                             <p className="font-['Manrope'] text-[10px] text-gray-400">{study.founder.title}</p>
                           </div>
-{/* "Read the Story" text indicator - Enhanced */}
-<motion.div
-  initial={{ opacity: 0, x: -10 }}
-  animate={{ opacity: 1, x: 0 }}
-  transition={{ delay: 0.5, duration: 0.5 }}
-  whileHover={{ x: 5 }}
-  className="flex items-center gap-2 text-red-600 text-xs sm:text-sm mt-4 group cursor-pointer"
->
-  <motion.span 
-    className="relative font-medium"
-    whileHover={{ letterSpacing: "0.05em" }}
-    transition={{ duration: 0.3 }}
-  >
-    Read The Story
-    <motion.span 
-      className="absolute -bottom-1 left-0 h-[2px] bg-red-600 rounded-full"
-      initial={{ width: 0 }}
-      whileHover={{ width: "100%" }}
-      transition={{ duration: 0.3 }}
-    />
-  </motion.span>
-  
-  <motion.div
-    animate={{ 
-      x: [0, 3, 0],
-    }}
-    transition={{ 
-      duration: 1.5, 
-      repeat: Infinity,
-      repeatType: "loop",
-      ease: "easeInOut"
-    }}
-    whileHover={{ 
-      scale: 1.2,
-      x: 5,
-      rotate: [0, 10, 0]
-    }}
-  >
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-    </svg>
-  </motion.div>
-</motion.div>
+
+                          {/* "Read the Story" text indicator - Enhanced */}
+                          <motion.div
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.5, duration: 0.5 }}
+                            whileHover={{ x: 5 }}
+                            className="flex items-center gap-2 text-red-600 text-xs sm:text-sm mt-4 group cursor-pointer"
+                          >
+                            <motion.span 
+                              className="relative font-medium"
+                              whileHover={{ letterSpacing: "0.05em" }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              Read The Story
+                              <motion.span 
+                                className="absolute -bottom-1 left-0 h-[2px] bg-red-600 rounded-full"
+                                initial={{ width: 0 }}
+                                whileHover={{ width: "100%" }}
+                                transition={{ duration: 0.3 }}
+                              />
+                            </motion.span>
+                            
+                            <motion.div
+                              animate={{ 
+                                x: [0, 3, 0],
+                              }}
+                              transition={{ 
+                                duration: 1.5, 
+                                repeat: Infinity,
+                                repeatType: "loop",
+                                ease: "easeInOut"
+                              }}
+                              whileHover={{ 
+                                scale: 1.2,
+                                x: 5,
+                                rotate: [0, 10, 0]
+                              }}
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                              </svg>
+                            </motion.div>
+                          </motion.div>
                         </div>
                       </motion.div>
                     ) : (
@@ -357,8 +361,6 @@ export default function CaseStudiesSection() {
                                 {study.category}
                               </motion.span>
                             </div>
-
-                          
                           </div>
                         )}
                         
@@ -382,7 +384,7 @@ export default function CaseStudiesSection() {
 
         {/* Navigation Dots */}
         <div className="flex justify-center gap-3 mt-8 md:mt-10">
-          {caseStudies.map((_, index) => (
+          {featuredCaseStudies.map((_, index) => (
             <motion.button
               key={index}
               className={`relative h-2 rounded-full transition-all ${

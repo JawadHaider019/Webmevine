@@ -18,6 +18,12 @@ export const caseStudies = [
       name: "David Ramos",
       title: "Founder & CEO"
     },
+    testimonial: {
+      name: "David Ramos",
+      role: "Founder & CEO",
+      content: "Working with WebMavine on Zola was exceptional. They understood our vision for a unified business management platform and delivered a powerful Bubble.io solution in just 4 weeks. The automated review management and smart scheduling features have completely transformed how our beta users operate their businesses.",
+      rating: 5
+    },
     images: {
       main: "/casestudy/zola 1.png",
       gallery: [
@@ -62,6 +68,12 @@ export const caseStudies = [
       name: "Michael Roberts",
       title: "CEO, FivUp AI"
     },
+    testimonial: {
+      name: "Michael Roberts",
+      role: "CEO, FivUp AI",
+      content: "WebMavine brought our AI-powered freelancing tool to life in record time. The platform they built generates high-converting proposals that actually work—our users are seeing 85% success rates. Their expertise in Bubble.io and AI integration made all the difference.",
+      rating: 5
+    },
     images: {
       main: "/casestudy/Fivup Ai 1.png",
       gallery: [
@@ -105,6 +117,12 @@ export const caseStudies = [
     founder: {
       name: "Sarah Chen",
       title: "Founder, Pure Clay"
+    },
+    testimonial: {
+      name: "Sarah Chen",
+      role: "Founder, Pure Clay",
+      content: "Before WebMavine, I was manually handling orders through Instagram. They built a beautiful e-commerce platform that automated everything. Now my customers love the seamless shopping experience, and I've finally escaped the chaos of social media order management.",
+      rating: 5
     },
     images: {
       main: "/casestudy/pure clay 1.png",
@@ -154,6 +172,12 @@ export const caseStudies = [
       name: "James Wilson",
       title: "CEO, Fintalio"
     },
+    testimonial: {
+      name: "James Wilson",
+      role: "CEO, Fintalio",
+      content: "WebMavine delivered exactly what they promised—a comprehensive skill assessment platform with 250+ tests and AI-powered candidate ranking. The platform has 94% hiring accuracy, and our clients love how it eliminates bias from their recruitment process. Exceptional work delivered in just 4 weeks.",
+      rating: 5
+    },
     images: {
       main: "/casestudy/Fintalio 1.png",
       gallery: [
@@ -180,5 +204,55 @@ export const caseStudies = [
     role: "Web Developer, AI Integration Specialist",
     service: "Web Development, Automation Implementation",
     industry: "HR & Recruitment, Enterprise SaaS"
+  },
+  {
+    id: 5,
+    slug: "united-mercy",
+    category: "Nonprofit & Crowdfunding",
+    title: "United Mercy",
+    shortDescription: "A nonprofit crowdfunding platform making fundraising effortless, transparent, and impactful.",
+    fullDescription: "United Mercy is a nonprofit crowdfunding platform built on Bubble.io, making fundraising effortless, transparent, and impactful. It enables individuals and organizations to launch campaigns, receive direct donations, and engage with their communities. Whether for medical aid, education, or disaster relief, United Mercy connects donors with those in need, ensuring every contribution counts.",
+    challenge: "Traditional fundraising methods are often slow, complex, and lack transparency, making it difficult for individuals and organizations to secure the financial support they need. Many crowdfunding platforms also come with hidden fees, delayed fund transfers, and limited customization, restricting their effectiveness.",
+    solution: "United Mercy was built to change that. With direct digital wallet deposits, an intuitive campaign creation system, and built-in community engagement tools, it enables fundraisers to connect with donors seamlessly while ensuring transparency and trust. The platform's automated donation tracking and impact-driven storytelling features enhance credibility, helping campaigners raise funds faster and more efficiently.",
+    achievement: "We built a transparent crowdfunding platform with instant digital wallet transfers, community engagement tools, and impact-driven storytelling—delivered in just 4 weeks.",
+    stats: [
+      { label: "Campaigns Launched", value: "50+" },
+      { label: "Funds Raised", value: "$250K+" }
+    ],
+    founder: {
+      name: "Rebecca Johnson",
+      title: "Founder, United Mercy"
+    },
+    testimonial: {
+      name: "Rebecca Johnson",
+      role: "Founder, United Mercy",
+      content: "United Mercy exists to make fundraising transparent and accessible. WebMavine understood this mission perfectly and built a platform with instant wallet transfers and community engagement tools that have helped raise over $250K for worthy causes. Campaigners tell us they've never experienced such fast donation delivery.",
+      rating: 5
+    },
+    images: {
+      main: "/casestudy/united mercy 1.png",
+      gallery: [
+        "/casestudy/united mercy 3.png",
+        "/casestudy/united mercy 4.png"
+      ]
+    },
+    number: "05",
+    gradient: "from-gray-50 to-white",
+    technologies: ["Bubble.io", "No-Code", "API Integrations", "Digital Wallet Integration"],
+    features: [
+      "Instant Digital Wallet Transfers – Donations go directly to the recipient's digital wallet without delays.",
+      "Effortless Campaign Creation – Users can launch fundraisers in minutes with a simple, guided setup.",
+      "Community Engagement Tools – Campaigners can share updates, interact with supporters, and build trust.",
+      "Secure & Transparent Transactions – Every donation is tracked, ensuring accountability and credibility.",
+      "Customizable Fundraising Goals – Flexible options allow fundraisers to set and manage their targets easily.",
+      "Impact-Driven Storytelling – Personalized campaign pages help inspire and attract more donors.",
+      "Scalable No-Code Platform – Built on Bubble.io, making it adaptable to growing needs."
+    ],
+    mission: "United Mercy's mission is to democratize fundraising by providing a transparent, fee-free, and efficient platform where anyone can raise funds for meaningful causes. By leveraging no-code technology, it eliminates technical barriers, making fundraising accessible to everyone—whether an individual in need or an established nonprofit.",
+    impact: "United Mercy has transformed the crowdfunding landscape by offering a trust-based, community-driven, and tech-enabled fundraising solution. Campaigners experience faster donations, stronger engagement, and greater visibility, while donors contribute with confidence, knowing their funds are reaching the right people without unnecessary delays or intermediaries. With a seamless donation flow, automated tracking, and built-in community engagement, United Mercy empowers fundraising efforts to create real, lasting change.",
+    date: "Nov. 2024 - Jan. 2025",
+    role: "Bubble Developer, No-Code Expert",
+    service: "No-Code Development, API Integration",
+    industry: "Nonprofit & Charity, Crowdfunding"
   }
 ];
