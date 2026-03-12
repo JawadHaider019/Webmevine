@@ -86,7 +86,7 @@ export default function CaseStudiesSection() {
   };
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-r from-black via-red-600 to-black pt-16 pb-20 overflow-hidden">
+    <section className="relative min-h-screen bg-gradient-to-r from-black via-red-600 to-black pt-16 pb-20 overflow-hidden" id="case">
       {/* Remove scrollbar completely with global style */}
       <style dangerouslySetInnerHTML={{
         __html: `

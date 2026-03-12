@@ -2,8 +2,8 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 
-const DB_NAME = 'blog';
-const COLLECTION = 'posts';
+const DB_NAME = 'webmavien';
+const COLLECTION = 'blogs';
 
 // GET blog by slug
 export async function GET(request, { params }) {
@@ -11,6 +11,7 @@ export async function GET(request, { params }) {
     const { slug } = await params;
     
     console.log('📡 Fetching blog by slug:', slug);
+    console.log(`🔍 Using database: ${DB_NAME}, collection: ${COLLECTION}`);
     
     const client = await clientPromise;
     const db = client.db(DB_NAME);

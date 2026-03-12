@@ -2,12 +2,13 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 
-const DB_NAME = 'blog';
-const COLLECTION = 'posts';
+const DB_NAME = 'webmavien';
+const COLLECTION = 'blogs';
 
 export async function GET() {
   try {
     console.log('📡 Categories API called');
+    console.log(`🔍 Using database: ${DB_NAME}, collection: ${COLLECTION}`);
     
     const client = await clientPromise;
     const db = client.db(DB_NAME);
@@ -15,7 +16,7 @@ export async function GET() {
     // Get distinct categories from published posts
     const categories = await db
       .collection(COLLECTION)
-      .distinct('category', { status: 'published' });
+      .distinct('category', { published: true });  // Changed from 'status' to 'published'
     
     console.log('Raw categories from DB:', categories);
     

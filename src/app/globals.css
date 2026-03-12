@@ -26,7 +26,9 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-
+.bg-gradient{
+  background: linear-gradient(135deg, #ff0000 0%, #000000 100%);
+}
 .btn-primary {
   position: relative;
   padding: 18px 20px;

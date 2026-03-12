@@ -18,10 +18,10 @@ export default function Footer() {
 
   const footerLinks = {
     product: [
-      { name: "Why Choose Us", href: "/why-choose-us" },
-      { name: "How It Works", href: "/how-it-works" },
-      { name: "Case Studies", href: "/case-studies" },
-      { name: "FAQ", href: "/faq" }
+      { name: "Why Choose Us", href: "#whyus" },
+      { name: "How It Works", href: "#howwork" },
+      { name: "Case Studies", href: "#case" },
+      { name: "FAQ", href: "#faq" }
     ],
     company: [
       { name: "About", href: "/about" },
@@ -31,10 +31,31 @@ export default function Footer() {
       { name: "Blogs", href: "/blog" }
     ],
     legal: [
-      { name: "Privacy", href: "/privacy" },
-      { name: "Terms", href: "/terms" },
-      { name: "Cookies", href: "/cookies" }
+      { name: "Privacy", href: "/" },
+      { name: "Terms", href: "/" },
+      { name: "Cookies", href: "/" }
     ]
+  };
+
+  // Smooth scroll function for hash links
+  const handleSmoothScroll = (e, href) => {
+    // Check if it's a hash link (starts with #)
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      
+      const targetId = href.substring(1); // Remove the #
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+        
+        // Optional: Update URL without page jump
+        window.history.pushState(null, '', href);
+      }
+    }
   };
 
   // Handle Get In Touch click based on current page
@@ -322,7 +343,6 @@ export default function Footer() {
               {/* Contact Info */}
               <motion.div variants={itemVariants} className="space-y-3">
                 <motion.div
-                
                   className="flex items-center gap-3 group cursor-pointer"
                 >
                   <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-black rounded-full flex items-center justify-center group-hover:from-black group-hover:to-red-600 transition-all duration-300 border border-transparent group-hover:scale-110">
@@ -336,19 +356,17 @@ export default function Footer() {
                   </div>
                 </motion.div>
                 
-                <a 
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <div 
                   className="flex items-center gap-3 group cursor-pointer"
                 >
-                 <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-black rounded-full flex items-center justify-center group-hover:from-black group-hover:to-red-600 transition-all duration-300 border border-transparent group-hover:scale-110">
+                  <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-black rounded-full flex items-center justify-center group-hover:from-black group-hover:to-red-600 transition-all duration-300 border border-transparent group-hover:scale-110">
                     <FiPhone className="text-white text-sm transition-all duration-300" />
                   </div>
                   <div>
                     <p className="text-gray-500 text-xs">Contact us</p>
                     <p className="text-gray-900 font-medium text-sm hover:text-red-600 transition-colors"> +44 7424 672943</p>
                   </div>
-                </a>
+                </div>
               </motion.div>
             </motion.div>
 
@@ -376,6 +394,7 @@ export default function Footer() {
                       >
                         <Link 
                           href={link.href}
+                          onClick={(e) => handleSmoothScroll(e, link.href)}
                           className="font-['Manrope'] text-sm text-gray-500 hover:text-red-600 transition-colors inline-block hover:translate-x-1 transform duration-200"
                         >
                           {link.name}
@@ -422,12 +441,14 @@ export default function Footer() {
                     className="flex gap-3"
                   >
                     {[
-                      { icon: FiLinkedin, href: '#', label: 'LinkedIn' },
-                      { icon: FiInstagram, href: '#', label: 'Instagram' },
+                      { icon: FiLinkedin, href: 'https://www.linkedin.com/company/web-mavien', label: 'LinkedIn' },
+                      { icon: FiInstagram, href: 'https://www.instagram.com/webmevine', label: 'Instagram' },
                     ].map((social, i) => (
                       <motion.a
                         key={social.label}
                         href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         custom={i}
                         variants={socialVariants}
                         initial="hidden"

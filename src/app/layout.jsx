@@ -16,7 +16,7 @@ const manrope = Manrope({
 });
 
 export const metadata = {
-  title: "WebMavein",
+  title: "WebMavien",
   description: "Web Development",
   icons: {
     icon: [

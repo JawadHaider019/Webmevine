@@ -506,7 +506,7 @@ const ViewBlogModal = ({ blog, onClose }) => {
   );
 };
 
-// Blog Card Component with safe rendering
+// Blog Card Component - UPDATED to use 'published' instead of 'status'
 const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
   // Don't render if blog is undefined
   if (!blog) return null;
@@ -542,9 +542,9 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
             </span>
           )}
           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-            blog.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+            blog.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
           }`}>
-            {blog.status || 'draft'}
+            {blog.published ? 'published' : 'draft'}
           </span>
         </div>
       </div>
@@ -630,7 +630,7 @@ const BlogManager = () => {
     tags: [],
     imageUrl: '',
     featured: false,
-    status: 'draft',
+    published: false, // Changed from 'status' to 'published' boolean
     metaDescription: ''
   });
 
@@ -821,7 +821,8 @@ const BlogManager = () => {
     setNewTag('');
   };
 
-  const saveBlog = async (status = 'draft') => {
+  // UPDATED: Use 'published' boolean instead of 'status' string
+  const saveBlog = async (publishStatus = false) => {
     if (!newBlog.content.trim()) {
       addAlert('error', 'Please add some content');
       return;
@@ -835,7 +836,7 @@ const BlogManager = () => {
       tags: newBlog.tags,
       imageUrl: newBlog.imageUrl,
       featured: newBlog.featured,
-      status,
+      published: publishStatus, // Use boolean instead of string
       author: 'Admin',
       readTime: Math.max(1, Math.ceil(newBlog.content.split(/\s+/).length / 200)),
       metaDescription: newBlog.metaDescription || newBlog.content.substring(0, 155) + '...'
@@ -848,7 +849,7 @@ const BlogManager = () => {
       if (result.success) {
         setBlogs(prev => [result.data, ...prev]);
         resetForm();
-        addAlert('success', status === 'published' ? 'Blog published to MongoDB!' : 'Saved as draft in MongoDB');
+        addAlert('success', publishStatus ? 'Blog published to MongoDB!' : 'Saved as draft in MongoDB');
         setShowPreview(false);
       } else {
         addAlert('error', result.error || 'Failed to save blog');
@@ -860,51 +861,51 @@ const BlogManager = () => {
       setIsLoading(false);
     }
   };
-// In BlogManager.jsx - Update the updateBlog function
 
-const updateBlog = async () => {
-  if (!editingBlog) return;
+  // UPDATED: Use 'published' boolean instead of 'status' string
+  const updateBlog = async () => {
+    if (!editingBlog) return;
 
-  setIsLoading(true);
-  try {
-    const blogData = {
-      title: editingBlog.title,
-      content: editingBlog.content,
-      excerpt: editingBlog.excerpt || editingBlog.content.substring(0, 150) + '...',
-      category: editingBlog.category,
-      tags: editingBlog.tags,
-      imageUrl: editingBlog.imageUrl,
-      featured: editingBlog.featured,
-      status: editingBlog.status,
-      author: editingBlog.author || 'Admin',
-      readTime: editingBlog.readTime || Math.max(1, Math.ceil(editingBlog.content.split(/\s+/).length / 200)),
-      metaDescription: editingBlog.metaDescription || editingBlog.content.substring(0, 155) + '...'
-    };
+    setIsLoading(true);
+    try {
+      const blogData = {
+        title: editingBlog.title,
+        content: editingBlog.content,
+        excerpt: editingBlog.excerpt || editingBlog.content.substring(0, 150) + '...',
+        category: editingBlog.category,
+        tags: editingBlog.tags,
+        imageUrl: editingBlog.imageUrl,
+        featured: editingBlog.featured,
+        published: editingBlog.published, // Use boolean
+        author: editingBlog.author || 'Admin',
+        readTime: editingBlog.readTime || Math.max(1, Math.ceil(editingBlog.content.split(/\s+/).length / 200)),
+        metaDescription: editingBlog.metaDescription || editingBlog.content.substring(0, 155) + '...'
+      };
 
-    console.log('📝 Updating blog with ID:', editingBlog.id);
-    console.log('📝 Blog data:', blogData);
+      console.log('📝 Updating blog with ID:', editingBlog.id);
+      console.log('📝 Blog data:', blogData);
 
-    const result = await blogService.updateBlog(editingBlog.id, blogData);
-    
-    if (result.success) {
-      // Update the blog in the local state
-      setBlogs(prev => prev.map(b => 
-        b.id === editingBlog.id ? { ...b, ...blogData, id: editingBlog.id } : b
-      ));
+      const result = await blogService.updateBlog(editingBlog.id, blogData);
       
-      cancelEdit();
-      addAlert('success', 'Blog updated successfully in MongoDB!');
-    } else {
-      addAlert('error', result.error || 'Failed to update blog');
-      console.error('Update failed:', result.error);
+      if (result.success) {
+        // Update the blog in the local state
+        setBlogs(prev => prev.map(b => 
+          b.id === editingBlog.id ? { ...b, ...blogData, id: editingBlog.id } : b
+        ));
+        
+        cancelEdit();
+        addAlert('success', 'Blog updated successfully in MongoDB!');
+      } else {
+        addAlert('error', result.error || 'Failed to update blog');
+        console.error('Update failed:', result.error);
+      }
+    } catch (error) {
+      addAlert('error', 'Failed to update blog in MongoDB');
+      console.error('Error updating blog:', error);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    addAlert('error', 'Failed to update blog in MongoDB');
-    console.error('Error updating blog:', error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   const deleteBlog = async () => {
     if (!deleteConfirm.blog) return;
@@ -949,7 +950,7 @@ const updateBlog = async () => {
       tags: blog.tags || [],
       imageUrl: blog.imageUrl || '',
       featured: blog.featured || false,
-      status: blog.status || 'draft',
+      published: blog.published || false, // Changed from 'status' to 'published'
       metaDescription: blog.metaDescription || ''
     });
   };
@@ -962,13 +963,19 @@ const updateBlog = async () => {
 
   const resetForm = () => {
     setNewBlog({ 
-      title: '', content: '', excerpt: '', category: '', 
-      tags: [], imageUrl: '', featured: false, status: 'draft', 
+      title: '', 
+      content: '', 
+      excerpt: '', 
+      category: '', 
+      tags: [], 
+      imageUrl: '', 
+      featured: false, 
+      published: false, // Changed from 'status' to 'published'
       metaDescription: '' 
     });
   };
 
-  // Safe filter function with null checks
+  // UPDATED: Filter function using 'published' boolean
   const filteredBlogs = blogs.filter(blog => {
     if (!blog) return false;
     
@@ -976,7 +983,10 @@ const updateBlog = async () => {
     const matchesSearch = searchTerm === '' || 
       title.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = filterStatus === 'all' || blog.status === filterStatus;
+    // Use published boolean for filtering
+    const matchesStatus = filterStatus === 'all' || 
+      (filterStatus === 'published' && blog.published === true) ||
+      (filterStatus === 'draft' && blog.published === false);
     
     return matchesSearch && matchesStatus;
   });
@@ -1253,9 +1263,26 @@ const updateBlog = async () => {
                   <SEOHelper blog={editingBlog || newBlog} />
                 </div>
 
-                {/* Actions */}
+                {/* Actions - UPDATED with published checkbox */}
                 <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-1.5 text-sm text-gray-600">
+                      <input
+                        type="checkbox"
+                        checked={editingBlog?.published || newBlog.published}
+                        onChange={(e) => {
+                          if (editingBlog) {
+                            setEditingBlog({ ...editingBlog, published: e.target.checked });
+                          } else {
+                            setNewBlog({ ...newBlog, published: e.target.checked });
+                          }
+                        }}
+                        className="rounded border-gray-300"
+                      />
+                      <FiSend className="text-green-500" size={14} />
+                      Published
+                    </label>
+                    
                     <label className="flex items-center gap-1.5 text-sm text-gray-600">
                       <input
                         type="checkbox"
@@ -1272,6 +1299,7 @@ const updateBlog = async () => {
                       <FiStar className="text-yellow-500" size={14} />
                       Featured
                     </label>
+                    
                     <button
                       onClick={() => setShowPreview(!showPreview)}
                       className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
@@ -1302,14 +1330,14 @@ const updateBlog = async () => {
                     ) : (
                       <>
                         <button 
-                          onClick={() => saveBlog('draft')} 
+                          onClick={() => saveBlog(false)} 
                           disabled={isLoading || uploadingImage}
                           className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50"
                         >
-                          {isLoading ? 'Saving...' : 'Draft'}
+                          {isLoading ? 'Saving...' : 'Save Draft'}
                         </button>
                         <button 
-                          onClick={() => saveBlog('published')} 
+                          onClick={() => saveBlog(true)} 
                           disabled={isLoading || uploadingImage}
                           className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 flex items-center gap-1 disabled:opacity-50"
                         >
@@ -1362,7 +1390,7 @@ const updateBlog = async () => {
 
         {activeTab === 'manage' && (
           <div>
-            {/* Search & Filter */}
+            {/* Search & Filter - UPDATED filter options remain the same */}
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <div className="flex-1 relative">
                 <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />

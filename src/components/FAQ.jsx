@@ -60,7 +60,7 @@ export default function FAQ() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden">
+    <section className="py-16 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden" id="faq">
       {/* Luxury Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-to-l from-red-600/5 via-amber-200/5 to-transparent rounded-full blur-3xl" />

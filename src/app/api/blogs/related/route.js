@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-const DB_NAME = 'blog';
-const COLLECTION = 'posts';
+const DB_NAME = 'webmavien';
+const COLLECTION = 'blogs';
 
 export async function POST(request) {
   try {
@@ -17,7 +17,7 @@ export async function POST(request) {
     
     // Build the query
     const query = {
-      status: 'published'
+      published: true  // Changed from 'status' to 'published'
     };
     
     // Exclude current blog if blogId is provided

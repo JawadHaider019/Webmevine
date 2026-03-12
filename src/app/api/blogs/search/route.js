@@ -2,8 +2,8 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 
-const DB_NAME = 'blog';
-const COLLECTION = 'posts';
+const DB_NAME = 'webmavien';
+const COLLECTION = 'blogs';
 
 export async function GET(request) {
   try {
@@ -22,7 +22,7 @@ export async function GET(request) {
     const blogs = await db
       .collection(COLLECTION)
       .find({
-        status: 'published',
+        published: true,  // Changed from 'status' to 'published'
         $or: [
           { title: { $regex: query, $options: 'i' } },
           { content: { $regex: query, $options: 'i' } },

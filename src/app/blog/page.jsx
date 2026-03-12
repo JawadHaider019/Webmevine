@@ -1,28 +1,31 @@
 // src/app/blog/page.jsx
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import HeroSection from '@/components/HeroSection'
+import HeroSection from '@/components/HeroSection';
 import { 
-  FiSearch, FiCalendar, FiClock, FiTag, FiArrowRight,
-  FiGrid, FiList, FiChevronLeft, FiChevronRight, FiRefreshCw
+  FiSearch, FiCalendar, FiClock, FiArrowRight,
+  FiGrid, FiList, FiChevronLeft, FiChevronRight, FiRefreshCw,
+  FiMessageCircle
 } from 'react-icons/fi';
-import { LuSparkles } from 'react-icons/lu';
 import { getPublishedBlogs, getAllCategories, searchBlogs, formatDate, clearBlogCache } from '@/utils/blogUtils';
 
 export default function BlogPage() {
   const [blogs, setBlogs] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Refs for animations
+  const rowsRef = useRef([]);
   
   const postsPerPage = 9;
 
@@ -46,6 +49,15 @@ export default function BlogPage() {
       .trim();
   };
 
+  // Format date to show day, month, year
+  const formatReadableDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'short' });
+    const year = date.getFullYear();
+    return { day, month, year };
+  };
+
   // Load blogs on mount
   useEffect(() => {
     loadBlogs();
@@ -54,7 +66,7 @@ export default function BlogPage() {
   const loadBlogs = async (refresh = false) => {
     if (refresh) {
       setIsRefreshing(true);
-      clearBlogCache(); // Clear cache to force fresh data
+      clearBlogCache();
     } else {
       setIsLoading(true);
     }
@@ -65,7 +77,7 @@ export default function BlogPage() {
       setFilteredBlogs(publishedBlogs);
       
       const cats = await getAllCategories();
-      setCategories(cats);
+      setCategories(['All', ...cats]);
     } catch (error) {
       console.error('Error loading blogs:', error);
     } finally {
@@ -80,14 +92,14 @@ export default function BlogPage() {
       let results = blogs;
       
       // Apply category filter
-      if (selectedCategory !== 'all') {
+      if (selectedCategory !== 'All') {
         results = results.filter(blog => blog.category === selectedCategory);
       }
       
       // Apply search
       if (searchQuery) {
         results = await searchBlogs(searchQuery);
-        if (selectedCategory !== 'all') {
+        if (selectedCategory !== 'All') {
           results = results.filter(blog => blog.category === selectedCategory);
         }
       }
@@ -108,10 +120,19 @@ export default function BlogPage() {
   // Featured post (first published blog)
   const featuredPost = blogs[0];
 
+  // Group posts into rows for animation (3 per row)
+  const getRows = (posts) => {
+    const rows = [];
+    for (let i = 0; i < posts.length; i += 3) {
+      rows.push(posts.slice(i, i + 3));
+    }
+    return rows;
+  };
+
+  const rows = getRows(currentPosts);
+
   return (
     <div className="min-h-screen bg-white">
-   
-    
       {/* Hero Section */}
       <HeroSection
         heading="Insights &"
@@ -128,6 +149,33 @@ export default function BlogPage() {
       <section className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-10 py-4">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            {/* Categories */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 w-full sm:w-auto">
+              <button
+                onClick={() => setSelectedCategory('All')}
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                  selectedCategory === 'All'
+                    ? 'bg-gradient-to-r from-black via-red-600 to-black text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                All 
+              </button>
+              {categories.filter(c => c !== 'All').map(category => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    selectedCategory === category
+                      ? 'bg-gradient-to-r from-black via-red-600 to-black text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+            
             {/* Search */}
             <div className="relative w-full sm:w-96">
               <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -138,33 +186,6 @@ export default function BlogPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-            </div>
-
-            {/* Categories */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 w-full sm:w-auto">
-              <button
-                onClick={() => setSelectedCategory('all')}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                  selectedCategory === 'all'
-                    ? 'bg-red-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                All Posts
-              </button>
-              {categories.map(category => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                    selectedCategory === category
-                      ? 'bg-red-600 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
             </div>
 
             {/* View Toggle & Refresh */}
@@ -201,8 +222,8 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* Featured Post */}
-      {featuredPost && selectedCategory === 'all' && !searchQuery && !isLoading && (
+      {/* Featured Post Section - ADD THIS BACK */}
+      {featuredPost && selectedCategory === 'All' && !searchQuery && !isLoading && (
         <section className="max-w-7xl mx-auto px-4 py-12">
           <Link href={`/blog/${featuredPost.slug || featuredPost.id}`}>
             <motion.div
@@ -299,27 +320,32 @@ export default function BlogPage() {
           </motion.div>
         )}
 
-        {/* Grid View */}
+        {/* Grid View with the exact card design from example */}
         {!isLoading && !isRefreshing && viewMode === 'grid' && filteredBlogs.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence mode="wait">
-              {currentPosts.map((blog, index) => (
-                <motion.div
-                  key={blog.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link href={`/blog/${blog.slug || blog.id}`}>
-                    <div className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                      {/* Image */}
-                      <div className="relative h-48 overflow-hidden bg-gray-100">
+          <div className="space-y-8 mt-8">
+            {rows.map((row, rowIndex) => (
+              <div 
+                key={rowIndex}
+                ref={el => rowsRef.current[rowIndex] = el}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
+                {row.map((blog) => {
+                  const { day, month, year } = formatReadableDate(blog.createdAt);
+                  
+                  return (
+                    <Link
+                      href={`/blog/${blog.slug || blog.id}`}
+                      key={blog.id}
+                      className="group bg-white rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:border-gray-400"
+                    >
+                      {/* Featured Image */}
+                      <div className="relative h-48 w-full overflow-hidden bg-gray-100">
                         {blog.imageUrl ? (
-                          <img
+                          <Image
                             src={blog.imageUrl}
                             alt={blog.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
@@ -327,10 +353,10 @@ export default function BlogPage() {
                           </div>
                         )}
                         
-                        {/* Category Tag */}
+                        {/* Category Overlay */}
                         {blog.category && (
-                          <div className="absolute top-3 left-3">
-                            <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                          <div className="absolute top-4 left-4">
+                            <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-manrope font-semibold uppercase tracking-wider rounded-full shadow-lg">
                               {blog.category}
                             </span>
                           </div>
@@ -338,50 +364,62 @@ export default function BlogPage() {
                       </div>
 
                       {/* Content */}
-                      <div className="p-5">
-                        <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
-                          <span className="flex items-center gap-1">
-                            <FiCalendar size={12} />
-                            {formatDate(blog.createdAt)}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <FiClock size={12} />
-                            {blog.readTime} min
-                          </span>
+                      <div className="p-6">
+                        {/* Date and Comments */}
+                        <div className="flex items-center gap-4 mb-3 text-gray-500">
+                          <div className="flex items-center gap-1">
+                            <FiCalendar className="w-4 h-4" />
+                            <span className="text-sm font-manrope">{day} {month}, {year}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <FiMessageCircle className="w-4 h-4" />
+                            <span className="text-sm font-manrope">0 Comments</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <FiClock className="w-4 h-4" />
+                            <span className="text-sm font-manrope">{blog.readTime} min</span>
+                          </div>
                         </div>
 
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2">
+                        {/* Title */}
+                        <h3 className="font-marcellus text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors duration-300">
                           {blog.title}
                         </h3>
 
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {/* Excerpt */}
+                        <p className="font-instrument text-gray-600 text-sm mb-4 line-clamp-2">
                           {blog.excerpt || stripMarkdown(blog.content?.substring(0, 120))}...
                         </p>
 
-                        {/* Tags */}
-                        {blog.tags && blog.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {blog.tags.slice(0, 3).map(tag => (
-                              <span
-                                key={tag}
-                                className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
-                              >
-                                #{tag}
-                              </span>
-                            ))}
+                        {/* Author and Read More */}
+                        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                          <div className="flex items-center gap-2">
+                            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200">
+                              {blog.authorImage ? (
+                                <Image
+                                  src={blog.authorImage}
+                                  alt={blog.author}
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gray-300 rounded-full" />
+                              )}
+                            </div>
+                            <span className="font-manrope text-sm font-medium text-gray-700">{blog.author}</span>
                           </div>
-                        )}
-
-                        <div className="flex items-center text-red-600 text-sm font-medium group-hover:gap-2 transition-all">
-                          Read More
-                          <FiArrowRight className="ml-1 group-hover:ml-2 transition-all" size={14} />
+                          
+                          <div className="flex items-center gap-1 text-gray-600 group-hover:text-red-600 transition-colors duration-300">
+                            <span className="font-manrope text-sm font-medium">Read More</span>
+                            <FiArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         )}
 
@@ -401,12 +439,13 @@ export default function BlogPage() {
                     <div className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1">
                       <div className="flex flex-col md:flex-row">
                         {/* Image */}
-                        <div className="md:w-64 h-48 bg-gray-100">
+                        <div className="md:w-64 h-48 bg-gray-100 relative">
                           {blog.imageUrl ? (
-                            <img
+                            <Image
                               src={blog.imageUrl}
                               alt={blog.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">

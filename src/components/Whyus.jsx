@@ -90,7 +90,7 @@ export default function Whyus() {
   ];
 
   return (
-    <section className="py-16 relative overflow-hidden bg-white">
+    <section className="py-16 relative overflow-hidden bg-white" id="whyus">
       {/* Explicit white background for the entire section */}
       <div className="absolute inset-0 bg-white" />
       

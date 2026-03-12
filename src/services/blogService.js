@@ -121,7 +121,12 @@ export const blogService = {
       }
       
       console.log('✅ Blog created successfully:', data);
-      return data;
+      
+      // Ensure consistent return structure
+      return { 
+        success: true, 
+        data: data.data || data  // Handle both response formats
+      };
     } catch (error) {
       console.error('Error creating blog:', error);
       return { success: false, error: error.message };
@@ -148,6 +153,8 @@ export const blogService = {
       }
       
       console.log('✅ Blog updated successfully');
+      
+      // Ensure consistent return structure
       return { 
         success: true, 
         data: { ...blogData, id } 
@@ -182,27 +189,27 @@ export const blogService = {
     }
   },
 
-// In blogService.js - around line 180-200
-getAllCategories: async () => {
-  try {
-    console.log('📡 Fetching categories from /api/categories...');
-    const res = await fetch('/api/categories');  // Make sure this is correct
-    
-    if (!res.ok) {
-      console.error('Categories API responded with status:', res.status);
-      const errorText = await res.text();
-      console.error('Error response:', errorText);
+  // Get all categories
+  getAllCategories: async () => {
+    try {
+      console.log('📡 Fetching categories from /api/categories...');
+      const res = await fetch('/api/categories');
+      
+      if (!res.ok) {
+        console.error('Categories API responded with status:', res.status);
+        const errorText = await res.text();
+        console.error('Error response:', errorText);
+        return [];
+      }
+      
+      const data = await res.json();
+      console.log(`✅ Fetched ${data.length} categories:`, data);
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      console.error('Error fetching categories:', error);
       return [];
     }
-    
-    const data = await res.json();
-    console.log(`✅ Fetched ${data.length} categories:`, data);
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-    return [];
-  }
-},
+  },
 
   // Search blogs
   searchBlogs: async (query) => {
