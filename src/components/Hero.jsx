@@ -63,7 +63,7 @@ export default function Hero() {
       ref={sectionRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative flex items-center justify-center min-h-screen bg-[#000000] overflow-hidden cursor-none md:cursor-auto py-10 md:py-0"
+      className="relative flex items-center justify-center min-h-screen bg-[#000000] overflow-hidden cursor-none md:cursor-auto py-16"
     >
       <div className="absolute inset-0 z-0">
         <InteractiveGradient />
@@ -90,7 +90,7 @@ export default function Hero() {
           <motion.h1 
             variants={textVariants}
             transition={{ duration: 0.6 }}
-            className="boldonse-regular text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-white mb-4 uppercase font-bold"
+            className="boldonse-regular text-4xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-white mb-4 uppercase font-bold"
             style={{
               lineHeight: '1.3',
               textShadow: '0 4px 20px rgba(220, 38, 38, 0.15)',
@@ -139,7 +139,7 @@ export default function Hero() {
           <motion.p 
             variants={textVariants}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-base sm:text-lg lg:text-base xl:text-lg text-[#f3f4f6] mb-6 lg:mb-8 max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed tracking-wide px-2 sm:px-0"
+            className="text-base text-md lg:text-base  text-[#f3f4f6] mb-6 lg:mb-8 max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed tracking-wide px-2 sm:px-0"
             style={{ fontFamily: 'var(--font-manrope)' }}
           >
             WebMavine builds high-performance React JS, Node.js, and Bubble.io websites for small businesses, e-commerce brands, and SaaS founders, fast, scalable, and conversion-focused.
