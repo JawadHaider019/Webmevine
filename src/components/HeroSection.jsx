@@ -6,7 +6,6 @@ import GlowingButton from "./GlowingButton";
 // Reusable Hero Section Component
 export default function HeroSection({
   // Content Props
-
   heading = "Who we are",
   headingAccent = "",
   subheading = "We're a leader in No Code digital transformation",
@@ -19,15 +18,7 @@ export default function HeroSection({
   gradientVia = "via-red-700",
   gradientTo = "to-black",
   textColor = "text-white",
-  badgeColor = "text-amber-400",
-  ctaBgColor = "bg-white",
-  ctaTextColor = "text-black",
   patternOpacity = "opacity-30",
-  
-  // Layout Props
-  height = "h-[60vh]",
-  paddingTop = "pt-30",
-  maxWidth = "max-w-7xl",
   
   // Animation Props
   animationDuration = 0.8,
@@ -66,9 +57,8 @@ export default function HeroSection({
 
   const handleCtaClick = (e) => {
     if (onCtaClick) {
-      onCtaClick(e); // Use custom click handler if provided
+      onCtaClick(e);
     } else if (ctaLink) {
-      // If it's an anchor link, do smooth scroll
       if (ctaLink.startsWith('#')) {
         e.preventDefault();
         const element = document.querySelector(ctaLink);
@@ -87,7 +77,7 @@ export default function HeroSection({
   };
 
   return (
-    <section className={`relative ${height} ${paddingTop} overflow-hidden bg-gradient-to-br ${gradientFrom} ${gradientVia} ${gradientTo} ${className}`}>
+    <section className={`relative overflow-hidden bg-gradient-to-br ${gradientFrom} ${gradientVia} ${gradientTo} ${className}`}>
       {/* Background Pattern */}
       <div 
         className={`absolute inset-0 ${patternOpacity}`}
@@ -97,14 +87,14 @@ export default function HeroSection({
         }}
       />
       
-      <div className={`relative z-10 ${maxWidth} mx-auto px-4 sm:px-6 lg:px-8 text-center`}>
+      {/* Content Container */}
+      <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-10">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
+          className="max-w-4xl mx-auto"
         >
-        
-
           {/* Heading */}
           <motion.h1
             variants={itemVariants}

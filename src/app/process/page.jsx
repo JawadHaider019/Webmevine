@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import SectionHeader from "@/components/SectionHeader";
+import Link from "next/link";
 import { 
   FiCheckCircle, 
   FiUsers, 
@@ -224,24 +225,25 @@ export default function ProcessPage() {
               );
             })}
           </motion.div>
-
-          {/* CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="text-center mt-8"
-          >
-            <GlowingButton 
-              glowColor="255, 150, 150"
-              spreadSize="small"
-              speed="medium"
-              waveCount={5} 
-            >
-              Book Your Free Strategy Call
-            </GlowingButton>
-          </motion.div>
+{/* CTA Button */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.5, delay: 0.4 }}
+  viewport={{ once: true }}
+  className="text-center mt-8"
+>
+  <Link href="/contact">
+    <GlowingButton 
+      glowColor="255, 150, 150"
+      spreadSize="small"
+      speed="medium"
+      waveCount={5} 
+    >
+      Book Your Free Strategy Call
+    </GlowingButton>
+  </Link>
+</motion.div>
         </div>
       </section>
 

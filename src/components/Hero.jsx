@@ -139,7 +139,7 @@ export default function Hero() {
           <motion.p 
             variants={textVariants}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-base text-md lg:text-base  text-[#f3f4f6] mb-6 lg:mb-8 max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed tracking-wide px-2 sm:px-0"
+            className="text-sm lg:text-lg  text-[#f3f4f6] mb-6 lg:mb-8 max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed tracking-wide px-2 sm:px-0"
             style={{ fontFamily: 'var(--font-manrope)' }}
           >
             WebMavine builds high-performance React JS, Node.js, and Bubble.io websites for small businesses, e-commerce brands, and SaaS founders, fast, scalable, and conversion-focused.

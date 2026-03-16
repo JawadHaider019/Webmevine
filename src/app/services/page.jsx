@@ -7,6 +7,7 @@ import HeroSection from "@/components/HeroSection";
 import Partners from "@/components/Partners";
 import Testimonials from "@/components/Testimonials";
 import GlowingButton from "@/components/GlowingButton";
+import Link from "next/link";
 
 const SERVICES = [
   {
@@ -250,21 +251,23 @@ export default function ServicesPage() {
             );
           })}
         </div>
+{/* Bottom CTA */}
+<div className="text-center mt-16">
+  <p className="font-['Manrope'] text-gray-500 mb-6">
+    Not sure which service you need? Let's talk about your project.
+  </p>
+  <Link href="/contact">
+    <GlowingButton 
+      glowColor="200, 0, 0"
+      spreadSize="small"
+      speed="medium"
+      waveCount={3} 
+    >
+      Book Your Free Strategy Call
+    </GlowingButton>
+  </Link>
+</div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-16">
-          <p className="font-['Manrope'] text-gray-500 mb-6">
-            Not sure which service you need? Let's talk about your project.
-          </p>
-         <GlowingButton 
-    glowColor="200, 0, 0"
-    spreadSize="small"
-    speed="medium"
-     waveCount={3} 
-  >
-    Book Your Free Strategy Call
-  </GlowingButton>
-        </div>
       </section>
       
           <Partners/>

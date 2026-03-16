@@ -156,7 +156,7 @@ My approach blends minimalist, user-centric design with robust technical archite
             variants={imageVariants}
             className="w-full lg:w-1/2 flex justify-center items-center order-1 lg:order-2"
           >
-            <div className="relative group w-[350px] sm:w-[450px] md:w-[450px] lg:w-[480px] xl:w-[500px] h-[350px] sm:h-[450px] md:h-[450px] lg:h-[480px] xl:h-[500px]">
+            <div className="relative group w-[320px] h-[320px] sm:w-[450px] sm:h-[450px] ">
              
               {/* Main Card */}
               <div className="relative w-full h-full bg-gradient-to-br from-gray-900 to-black rounded-2xl p-2 overflow-hidden">
@@ -167,7 +167,7 @@ My approach blends minimalist, user-centric design with robust technical archite
                     src="/Founder image.png"
                     alt="Muhammad Ahmad - Founder & CEO"
                     fill
-                    className={`object-cover transition-all duration-700 ${
+                    className={`object-contain transition-all duration-700 ${
                       imageLoaded ? 'scale-100 blur-0' : 'scale-105 blur-sm'
                     } group-hover:scale-105`}
                     onLoad={() => setImageLoaded(true)}

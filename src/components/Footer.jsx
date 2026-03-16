@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation"; // Add useRouter
 import { 
   FiLinkedin, 
   FiInstagram, 
@@ -14,14 +14,15 @@ import {
 
 export default function Footer() {
   const pathname = usePathname();
+  const router = useRouter(); // Add router
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
     product: [
-      { name: "Why Choose Us", href: "#whyus" },
-      { name: "How It Works", href: "#howwork" },
-      { name: "Case Studies", href: "#case" },
-      { name: "FAQ", href: "#faq" }
+      { name: "Why Choose Us", href: "/about" },
+      { name: "How It Works", href: "/process" },
+      { name: "Case Studies", href: "/casestudies" },
+      { name: "FAQ", href: "/#faq" }
     ],
     company: [
       { name: "About", href: "/about" },
@@ -37,7 +38,32 @@ export default function Footer() {
     ]
   };
 
-  // Smooth scroll function for hash links
+  // Handle FAQ navigation with smooth scroll
+  const handleFAQClick = (e, href) => {
+    e.preventDefault();
+    
+    if (href.includes('#')) {
+      const [path, hash] = href.split('#');
+      
+      if (pathname === path || (path === '/' && pathname === '/')) {
+        // Already on home page, just scroll
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+          });
+          // Update URL without page reload
+          window.history.pushState(null, '', href);
+        }
+      } else {
+        // Navigate to home page then scroll after navigation
+        router.push(href);
+      }
+    }
+  };
+
+  // Smooth scroll function for hash links on same page
   const handleSmoothScroll = (e, href) => {
     // Check if it's a hash link (starts with #)
     if (href.startsWith('#')) {
@@ -75,7 +101,7 @@ export default function Footer() {
       }
     } else {
       // On other pages - navigate to contact
-      window.location.href = '/contact';
+      router.push('/contact'); // Use router.push instead of window.location
     }
   };
 
@@ -200,7 +226,7 @@ export default function Footer() {
   return (
     <>
       {/* Collaboration Section - Reduced height on mobile */}
-      <section className="overflow-x-hidden border-b border-white/10 relative flex items-center justify-center flex-col gap-3 md:gap-8 text-center bg-gradient-to-r from-black via-red-600 to-black min-h-[50vh] md:min-h-screen py-12 md:py-0 px-4">
+      <section className="overflow-hidden border-b border-white/10 relative flex items-center justify-center flex-col gap-3 md:gap-8 text-center bg-gradient-to-br from-black via-red-600 to-black min-h-[30vh] md:min-h-screen py-0 md:py-0 px-4">
         {/* Animated background elements - smaller on mobile */}
         <div className="absolute bottom-20 left-4 sm:left-10 w-32 h-32 sm:w-72 sm:h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute top-20 right-4 sm:right-10 w-32 h-32 sm:w-72 sm:h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
@@ -225,12 +251,12 @@ export default function Footer() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="text-sm md:text-2xl font-bold text-white"
+          className="text-md md:text-2xl font-bold text-white"
         >
           LET'S COLLABORATE
         </motion.h1>
         
-        <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[12rem] font-bold leading-tight md:leading-none px-2 text-white">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[12rem] font-bold leading-tight md:leading-none px-2 text-white">
           <motion.span 
             variants={slideInLeft}
             initial="hidden"
@@ -374,14 +400,14 @@ export default function Footer() {
               {/* Links Grid */}
               <motion.div 
                 variants={itemVariants}
-                className="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 pb-8 mb-8"
+                className="lg:col-span-6 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8"
               >
                 {/* Product */}
-                <div className="md:border-r md:border-gray-200 md:pr-6 pb-6 md:pb-0 border-b border-gray-200 md:border-b-0">
+                <div className="pl-5 md:border-r md:border-gray-200 md:pr-6 pb-6 md:pb-0 border-b border-gray-200 md:border-b-0">
                   <h3 className="font-['Marcellus'] text-gray-900 text-lg font-bold mb-6 pb-2 inline-block border-b-2 border-red-600">
                     Product
                   </h3>
-                  <ul className="space-y-3">
+                  <ul className="space-y-3 ">
                     {footerLinks.product.map((link, i) => (
                       <motion.li 
                         key={link.name}
@@ -392,20 +418,30 @@ export default function Footer() {
                         whileHover="hover"
                         viewport={{ once: true }}
                       >
-                        <Link 
-                          href={link.href}
-                          onClick={(e) => handleSmoothScroll(e, link.href)}
-                          className="font-['Manrope'] text-sm text-gray-500 hover:text-red-600 transition-colors inline-block hover:translate-x-1 transform duration-200"
-                        >
-                          {link.name}
-                        </Link>
+                        {link.name === "FAQ" ? (
+                          <a
+                            href={link.href}
+                            onClick={(e) => handleFAQClick(e, link.href)}
+                            className="font-['Manrope'] text-sm text-gray-500 hover:text-red-600 transition-colors inline-block hover:translate-x-1 transform duration-200 cursor-pointer"
+                          >
+                            {link.name}
+                          </a>
+                        ) : (
+                          <Link 
+                            href={link.href}
+                            onClick={(e) => handleSmoothScroll(e, link.href)}
+                            className="font-['Manrope'] text-sm text-gray-500 hover:text-red-600 transition-colors inline-block hover:translate-x-1 transform duration-200"
+                          >
+                            {link.name}
+                          </Link>
+                        )}
                       </motion.li>
                     ))}
                   </ul>
                 </div>
 
                 {/* Company */}
-                <div className="md:border-r md:border-gray-200 md:pr-6 pb-6 md:pb-0 border-b border-gray-200 md:border-b-0">
+                <div className="md:border-r pl-5 md:border-gray-200 md:pr-6 pb-6 md:pb-0 border-b border-gray-200 md:border-b-0">
                   <h3 className="font-['Marcellus'] text-gray-900 text-lg font-bold mb-6 pb-2 inline-block border-b-2 border-red-600">
                     Company
                   </h3>
@@ -432,8 +468,8 @@ export default function Footer() {
                 </div>
 
                 {/* Connect */}
-                <div>
-                  <h3 className="font-['Marcellus'] text-gray-900 text-lg font-bold mb-6 pb-2 inline-block border-b-2 border-red-600">
+                <div className="pl-5"> 
+                  <h3 className="font-['Marcellus']  text-gray-900 text-lg font-bold mb-6 pb-2 inline-block border-b-2 border-red-600">
                     Connect
                   </h3>
                   <motion.div 

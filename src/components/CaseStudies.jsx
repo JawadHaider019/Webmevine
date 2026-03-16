@@ -35,10 +35,8 @@ export default function CaseStudiesSection() {
   }
 
   const handleSlideClick = (index) => {
-    // On desktop, clicking a closed slide opens it
-    if (!isMobile) {
-      setActiveIndex(index);
-    }
+    // On both mobile and desktop, clicking a slide opens it
+    setActiveIndex(index);
   };
 
   const handleOpenSlideClick = (slug) => {
@@ -86,7 +84,7 @@ export default function CaseStudiesSection() {
   };
 
   return (
-    <section className="relative min-h-screen bg-gradient-to-r from-black via-red-600 to-black pt-16 pb-20 overflow-hidden" id="case">
+    <section className="relative min-h-screen bg-gradient-to-br from-black via-red-600 to-black pt-16 pb-20 overflow-hidden" id="case">
       {/* Remove scrollbar completely with global style */}
       <style dangerouslySetInnerHTML={{
         __html: `

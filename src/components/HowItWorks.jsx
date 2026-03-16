@@ -305,24 +305,24 @@ export default function HowItWorks() {
             );
           })}
         </motion.div>
-
-        {/* CTA Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mt-8 md:mt-16"
-        >
-         <GlowingButton 
-            glowColor="255, 150, 150"
-            spreadSize="small"
-            speed="medium"
-            waveCount={5} 
-          >
-            Get Your Custom Roadmap
-          </GlowingButton>
-        </motion.div>
+{/* CTA Button */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.5, delay: 0.6 }}
+  viewport={{ once: true }}
+  className="text-center mt-8 md:mt-16"
+>
+  <GlowingButton 
+    glowColor="255, 150, 150"
+    spreadSize="small"
+    speed="medium"
+    waveCount={5}
+    onClick={() => window.location.href = '/contact'}
+  >
+    Get Your Custom Roadmap
+  </GlowingButton>
+</motion.div>
       </div>
     </section>
   );
