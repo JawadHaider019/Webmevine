@@ -129,7 +129,7 @@ export default function WebsiteValueSection() {
             >
               <div className="relative h-[400px] md:h-[500px] w-full rounded-xl overflow-hidden">
                 <Image
-                  src="/value.jpg"
+                  src="/valuee.png"
                   alt="Website as digital asset"
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-105"

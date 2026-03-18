@@ -3,18 +3,20 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation"; // Add useRouter
+import { usePathname, useRouter } from "next/navigation";
 import { 
   FiLinkedin, 
   FiInstagram, 
   FiMail,
   FiPhone,
-  FiArrowRight
+  FiArrowRight,
+  
 } from "react-icons/fi";
+import { FaWhatsapp } from "react-icons/fa"; 
 
 export default function Footer() {
   const pathname = usePathname();
-  const router = useRouter(); // Add router
+  const router = useRouter();
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
@@ -38,6 +40,17 @@ export default function Footer() {
     ]
   };
 
+  // WhatsApp configuration
+  const whatsappNumber = "+447424672943";
+  const whatsappMessage = "Hi! I'm interested in discussing a project with WebMavein.";
+
+  const handleWhatsAppClick = (e) => {
+    e.preventDefault();
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\+/g, '')}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   // Handle FAQ navigation with smooth scroll
   const handleFAQClick = (e, href) => {
     e.preventDefault();
@@ -53,23 +66,29 @@ export default function Footer() {
             behavior: 'smooth', 
             block: 'start',
           });
-          // Update URL without page reload
           window.history.pushState(null, '', href);
         }
       } else {
         // Navigate to home page then scroll after navigation
         router.push(href);
+        // Scroll to top after navigation
+        setTimeout(() => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        }, 100);
       }
     }
   };
 
-  // Smooth scroll function for hash links on same page
-  const handleSmoothScroll = (e, href) => {
+  // Handle regular navigation with scroll to top
+  const handleNavigation = (e, href) => {
     // Check if it's a hash link (starts with #)
     if (href.startsWith('#')) {
       e.preventDefault();
       
-      const targetId = href.substring(1); // Remove the #
+      const targetId = href.substring(1);
       const targetElement = document.getElementById(targetId);
       
       if (targetElement) {
@@ -77,10 +96,19 @@ export default function Footer() {
           behavior: 'smooth',
           block: 'start',
         });
-        
-        // Optional: Update URL without page jump
         window.history.pushState(null, '', href);
       }
+    } else {
+      // For regular links, use router.push and scroll to top
+      e.preventDefault();
+      router.push(href);
+      // Scroll to top after navigation
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }, 100);
     }
   };
 
@@ -101,11 +129,23 @@ export default function Footer() {
       }
     } else {
       // On other pages - navigate to contact
-      router.push('/contact'); // Use router.push instead of window.location
+      router.push('/contact');
+      // Scroll to top after navigation
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }, 100);
     }
   };
 
-  // Animation variants
+  // Handle phone click
+  const handlePhoneClick = () => {
+    window.location.href = 'tel:+447424672943';
+  };
+
+  // Animation variants (keep your existing variants)
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -225,13 +265,13 @@ export default function Footer() {
 
   return (
     <>
-      {/* Collaboration Section - Reduced height on mobile */}
+      {/* Collaboration Section */}
       <section className="overflow-hidden border-b border-white/10 relative flex items-center justify-center flex-col gap-3 md:gap-8 text-center bg-gradient-to-br from-black via-red-600 to-black min-h-[30vh] md:min-h-screen py-0 md:py-0 px-4">
-        {/* Animated background elements - smaller on mobile */}
+        {/* Animated background elements */}
         <div className="absolute bottom-20 left-4 sm:left-10 w-32 h-32 sm:w-72 sm:h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute top-20 right-4 sm:right-10 w-32 h-32 sm:w-72 sm:h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
 
-        {/* Circle Button - Get In Touch with conditional navigation */}
+        {/* Circle Button - Get In Touch */}
         <button onClick={handleGetInTouch}>
           <motion.div 
             variants={scaleUp}
@@ -287,7 +327,7 @@ export default function Footer() {
         transition={{ duration: 0.8 }}
         className="relative bg-white overflow-hidden"
       >
-        {/* Animated Premium Background Elements - Subtle for white bg */}
+        {/* Animated Premium Background Elements */}
         <div className="absolute inset-0 pointer-events-none">
           <motion.div 
             variants={backgroundOrbVariants}
@@ -301,7 +341,6 @@ export default function Footer() {
             className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-red-600/5 to-transparent rounded-full blur-3xl"
           />
           
-          {/* Additional animated circles */}
           <motion.div
             animate={{
               scale: [1, 1.3, 1],
@@ -347,7 +386,7 @@ export default function Footer() {
                 transition={{ type: "spring", stiffness: 300 }}
                 className="mb-2"
               >
-                <Link href="/" className="inline-block">
+                <Link href="/" className="inline-block" onClick={(e) => handleNavigation(e, '/')}>
                   <Image 
                     src="/logo.png" 
                     alt="WebMavein Logo" 
@@ -382,17 +421,18 @@ export default function Footer() {
                   </div>
                 </motion.div>
                 
-                <div 
+                <motion.div 
                   className="flex items-center gap-3 group cursor-pointer"
+                  onClick={handlePhoneClick}
                 >
                   <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-black rounded-full flex items-center justify-center group-hover:from-black group-hover:to-red-600 transition-all duration-300 border border-transparent group-hover:scale-110">
                     <FiPhone className="text-white text-sm transition-all duration-300" />
                   </div>
                   <div>
-                    <p className="text-gray-500 text-xs">Contact us</p>
-                    <p className="text-gray-900 font-medium text-sm hover:text-red-600 transition-colors"> +44 7424 672943</p>
+                    <p className="text-gray-500 text-xs">Call us</p>
+                    <p className="text-gray-900 font-medium text-sm hover:text-red-600 transition-colors">+44 7424 672943</p>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             </motion.div>
 
@@ -427,13 +467,13 @@ export default function Footer() {
                             {link.name}
                           </a>
                         ) : (
-                          <Link 
+                          <a
                             href={link.href}
-                            onClick={(e) => handleSmoothScroll(e, link.href)}
-                            className="font-['Manrope'] text-sm text-gray-500 hover:text-red-600 transition-colors inline-block hover:translate-x-1 transform duration-200"
+                            onClick={(e) => handleNavigation(e, link.href)}
+                            className="font-['Manrope'] text-sm text-gray-500 hover:text-red-600 transition-colors inline-block hover:translate-x-1 transform duration-200 cursor-pointer"
                           >
                             {link.name}
-                          </Link>
+                          </a>
                         )}
                       </motion.li>
                     ))}
@@ -456,12 +496,13 @@ export default function Footer() {
                         whileHover="hover"
                         viewport={{ once: true }}
                       >
-                        <Link 
+                        <a
                           href={link.href}
-                          className="font-['Manrope'] text-sm text-gray-500 hover:text-red-600 transition-colors inline-block hover:translate-x-1 transform duration-200"
+                          onClick={(e) => handleNavigation(e, link.href)}
+                          className="font-['Manrope'] text-sm text-gray-500 hover:text-red-600 transition-colors inline-block hover:translate-x-1 transform duration-200 cursor-pointer"
                         >
                           {link.name}
-                        </Link>
+                        </a>
                       </motion.li>
                     ))}
                   </ul>
@@ -478,20 +519,22 @@ export default function Footer() {
                   >
                     {[
                       { icon: FiLinkedin, href: 'https://www.linkedin.com/company/web-mavien', label: 'LinkedIn' },
-                      { icon: FiInstagram, href: 'https://www.instagram.com/webmevine', label: 'Instagram' },
+                      { icon: FiInstagram, href: 'https://www.instagram.com/webmevine', label: 'Instagram'},
+                      { icon: FaWhatsapp, href: '#', label: 'WhatsApp', onClick: handleWhatsAppClick },
                     ].map((social, i) => (
                       <motion.a
                         key={social.label}
                         href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        onClick={social.onClick ? social.onClick : undefined}
+                        target={social.href !== '#' ? "_blank" : undefined}
+                        rel={social.href !== '#' ? "noopener noreferrer" : undefined}
                         custom={i}
                         variants={socialVariants}
                         initial="hidden"
                         whileInView="visible"
                         whileHover="hover"
                         viewport={{ once: true }}
-                        className="w-12 h-12 bg-gradient-to-br from-red-600 to-black rounded-full flex items-center justify-center text-white hover:from-black hover:to-red-600 shadow-md hover:shadow-red-600/30 transition-all duration-300"
+                        className={`w-12 h-12 bg-gradient-to-br ${social.color || 'from-red-600 to-black'} rounded-full flex items-center justify-center text-white hover:from-black hover:to-red-600 shadow-md hover:shadow-red-600/30 transition-all duration-300 cursor-pointer`}
                         aria-label={social.label}
                       >
                         <social.icon className="w-5 h-5" />
@@ -508,7 +551,7 @@ export default function Footer() {
             variants={itemVariants}
             className="pt-8 mt-8 border-t border-gray-200"
           >
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex flex-col md:flex-row justify-center items-center gap-4">
               {/* Copyright */}
               <motion.p 
                 whileHover={{ scale: 1.02 }}
@@ -517,32 +560,7 @@ export default function Footer() {
                 © {currentYear} WebMavein. All rights reserved.
               </motion.p>
 
-              {/* Legal Links */}
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 order-1 md:order-2">
-                {footerLinks.legal.map((link, index) => (
-                  <motion.div
-                    key={link.name}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 + index * 0.1 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -2 }}
-                  >
-                    <Link
-                      href={link.href}
-                      className="font-['Manrope'] text-xs text-gray-400 hover:text-red-600 transition-colors relative group"
-                    >
-                      {link.name}
-                      <motion.span 
-                        className="absolute -bottom-1 left-0 h-px bg-red-600"
-                        initial={{ width: 0 }}
-                        whileHover={{ width: "100%" }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
+             
             </div>
           </motion.div>
         </motion.div>

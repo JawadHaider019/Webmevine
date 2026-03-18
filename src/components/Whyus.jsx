@@ -4,6 +4,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useState } from "react";
 import SectionHeader from "./SectionHeader";
 import GlowingButton from "./GlowingButton";
+import Link from "next/link"; 
 
 // Font Awesome imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -217,14 +218,16 @@ export default function Whyus() {
           viewport={{ once: true }}
           className="text-center mt-16"
         >
-          <GlowingButton 
-            glowColor="255, 0, 0"
-            spreadSize="small"
-            speed="medium"
-            waveCount={3} 
-          >
-            Talk to an Expert
-          </GlowingButton>
+             <Link href="/contact"> 
+              <GlowingButton 
+                glowColor="255, 255, 255"
+                spreadSize="small"
+                speed="medium"
+                waveCount={3}
+              >
+             Talk to an Expert
+              </GlowingButton>
+            </Link>
         </motion.div>
       </div>
     </section>

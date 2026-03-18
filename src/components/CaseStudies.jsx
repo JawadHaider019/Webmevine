@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Add this import
 import Image from "next/image";
 import Link from "next/link";
 import SectionHeader from "./SectionHeader";
@@ -9,6 +10,7 @@ import GlowingButton from "./GlowingButton";
 import { caseStudies } from "@/data/caseStudies";
 
 export default function CaseStudiesSection() {
+  const router = useRouter(); // Add this
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -40,8 +42,27 @@ export default function CaseStudiesSection() {
   };
 
   const handleOpenSlideClick = (slug) => {
-    // Navigate to case study detail page when clicking on open slide
-    window.location.href = `/casestudies/${slug}`;
+    // Navigate to case study detail page and scroll to top
+    router.push(`/casestudies/${slug}`);
+    // Use requestAnimationFrame for smoother scroll
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  };
+
+  const handleViewAllClick = (e) => {
+    e.preventDefault(); // Prevent default Link behavior
+    router.push('/casestudies');
+    // Scroll to top with smooth behavior
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
   };
 
   // Responsive widths
@@ -284,6 +305,10 @@ export default function CaseStudiesSection() {
                             transition={{ delay: 0.5, duration: 0.5 }}
                             whileHover={{ x: 5 }}
                             className="flex items-center gap-2 text-red-600 text-xs sm:text-sm mt-4 group cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenSlideClick(study.slug);
+                            }}
                           >
                             <motion.span 
                               className="relative font-medium"
@@ -411,7 +436,7 @@ export default function CaseStudiesSection() {
           viewport={{ once: true }}
           className="flex justify-center mt-12"
         >
-          <Link href="/casestudies">
+          <Link href="/casestudies" onClick={handleViewAllClick} passHref>
             <GlowingButton 
               glowColor="255, 255, 255"
               spreadSize="small"

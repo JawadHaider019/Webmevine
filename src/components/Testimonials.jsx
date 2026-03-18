@@ -47,14 +47,14 @@ export default function Testimonials() {
     {
       id: 1,
       quote: "Great experience! He worked quickly, responded fast, and understood exactly what was needed. Highly recommend!",
-      author: "alex_octa12",
+      author: "alex_octa",
       rating: 5,
       location: "Romania"
     },
     {
       id: 2,
       quote: "I've worked with many freelancers before, but Muhammad genuinely stands out. His workflow was smooth, his communication was clear, and every delivery was spot-on. What impressed me most was his ability to think ahead and suggest smarter ways to approach the task. He's a rare combination of skill, strategy, and reliability. Working with him gave me total peace of mind. Highly recommended.",
-      author: "thomas5542",
+      author: "thomas",
       rating: 5,
       location: "United States"
     },
@@ -68,7 +68,7 @@ export default function Testimonials() {
     {
       id: 4,
       quote: "Always a pleasure working with mo, he is always professional and has a great ethic of work",
-      author: "dianarobinso282",
+      author: "dianarobinso",
       rating: 5,
       location: "United Kingdom"
     },
@@ -117,7 +117,7 @@ export default function Testimonials() {
     {
       id: 11,
       quote: "I came back to him for a second project, and that honestly says everything. His attention to detail is on another level, and what I value most is the peace of mind. I never have to second-guess anything — he thinks ahead, catches issues early, and makes smart improvements that truly elevate the product. If you want someone who treats your project like a real business, not just a gig, he's the right choice. Reliable, professional, and genuinely comfortable to work with. I wouldn't hesitate to hire him again.",
-      author: "thomas5542",
+      author: "thomas",
       rating: 5,
       location: "United States"
     }
