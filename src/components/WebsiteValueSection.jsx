@@ -18,7 +18,7 @@ export default function WebsiteValueSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -27,16 +27,16 @@ export default function WebsiteValueSection() {
               BEYOND DESIGN
             </motion.span>
 
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               className="font-['Marcellus'] text-4xl md:text-5xl text-gray-900 mb-6 font-semibold leading-tight"
-            > 
+            >
               This Is Not{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-black via-red-600 to-red-900">
                 “Just a Website”
-              </span> 
+              </span>
             </motion.h2>
 
             {/* Value Props - Condensed */}
@@ -61,7 +61,7 @@ export default function WebsiteValueSection() {
             </div>
 
             {/* Warning Box - More Compact */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
@@ -73,7 +73,7 @@ export default function WebsiteValueSection() {
             </motion.div>
 
             {/* Value Proposition - Single Line */}
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
@@ -84,7 +84,7 @@ export default function WebsiteValueSection() {
             </motion.p>
 
             {/* Closing Statement - Brief */}
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
@@ -118,10 +118,10 @@ export default function WebsiteValueSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              whileHover={{ 
+              whileHover={{
                 boxShadow: "0 30px 60px rgba(239,68,68,0.15)",
               }}
               transition={{ delay: 0.2 }}
@@ -129,16 +129,16 @@ export default function WebsiteValueSection() {
             >
               <div className="relative h-[400px] md:h-[500px] w-full rounded-xl overflow-hidden">
                 <Image
-                  src="/valuee.png"
+                  src="/valuee.jpg"
                   alt="Website as digital asset"
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-105"
                 />
-                    
+
               </div>
             </motion.div>
 
-           
+
           </motion.div>
 
         </div>
