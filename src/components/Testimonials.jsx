@@ -7,8 +7,8 @@ import Image from "next/image";
 
 // Font Awesome imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-  faQuoteRight, 
+import {
+  faQuoteRight,
   faStar
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -36,10 +36,10 @@ export default function Testimonials() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -47,63 +47,63 @@ export default function Testimonials() {
     {
       id: 1,
       quote: "Great experience! He worked quickly, responded fast, and understood exactly what was needed. Highly recommend!",
-      author: "alex_octa",
+      author: "Alex Octa",
       rating: 5,
       location: "Romania"
     },
     {
       id: 2,
       quote: "I've worked with many freelancers before, but Muhammad genuinely stands out. His workflow was smooth, his communication was clear, and every delivery was spot-on. What impressed me most was his ability to think ahead and suggest smarter ways to approach the task. He's a rare combination of skill, strategy, and reliability. Working with him gave me total peace of mind. Highly recommended.",
-      author: "thomas",
+      author: "Thomas",
       rating: 5,
       location: "United States"
     },
     {
       id: 3,
       quote: "Working with Muhammad was an outstanding experience from start to finish. He immediately grasped what I needed, even things I hadn't fully explained, and translated them into clean, professional, high-quality work. He was highly responsive, proactive with suggestions, and delivered ahead of schedule. It's rare to find someone who combines technical expertise, clear communication, and genuine care for the final result like Muhammad does. He exceeded expectations, and I'll absolutely work with him again.",
-      author: "fanninmathew",
+      author: "Fannin Mathew",
       rating: 5,
       location: "United States"
     },
     {
       id: 4,
       quote: "Always a pleasure working with mo, he is always professional and has a great ethic of work",
-      author: "dianarobinso",
+      author: "Diana Robinson",
       rating: 5,
       location: "United Kingdom"
     },
     {
       id: 5,
       quote: "Working with Muhammad Ahmad was an absolute pleasure! His code expertise and attention to detail truly SHINE, and his professionalism elevated the entire project. Plus, his quick responsiveness and cooperation made the process a BREEZE",
-      author: "martinez_cole",
+      author: "Martinez Cole",
       rating: 5,
       location: "United Kingdom"
     },
     {
       id: 6,
       quote: "i asking for more work and my second order, Is very good delivery on coding quality and timing. i likes to collaborate for my next order👍",
-      author: "paolosili",
+      author: "Paolo Sili",
       rating: 5,
       location: "Italy"
     },
     {
       id: 7,
       quote: "very fast and with good feel to code quality and delivery time.",
-      author: "paolosili",
+      author: "Paolo Sili",
       rating: 5,
       location: "Italy"
     },
     {
       id: 8,
       quote: "Great sense of understanding the platform and understands our need and over delivers",
-      author: "unitedmercy",
+      author: "United Mercy",
       rating: 5,
       location: "India"
     },
     {
       id: 9,
       quote: "It is great working with Ahmad. He is very good at his job and goes beyond the work to be done and always available to support wherever required",
-      author: "unitedmercy",
+      author: "United Mercy",
       rating: 5,
       location: "India"
     },
@@ -117,7 +117,7 @@ export default function Testimonials() {
     {
       id: 11,
       quote: "I came back to him for a second project, and that honestly says everything. His attention to detail is on another level, and what I value most is the peace of mind. I never have to second-guess anything — he thinks ahead, catches issues early, and makes smart improvements that truly elevate the product. If you want someone who treats your project like a real business, not just a gig, he's the right choice. Reliable, professional, and genuinely comfortable to work with. I wouldn't hesitate to hire him again.",
-      author: "thomas",
+      author: "Thomas",
       rating: 5,
       location: "United States"
     }
@@ -125,11 +125,11 @@ export default function Testimonials() {
 
   // Duplicate testimonials for infinite scroll effect (6x for seamless loop)
   const duplicatedTestimonials = [
-    ...testimonials, 
-    ...testimonials, 
     ...testimonials,
-    ...testimonials, 
-    ...testimonials, 
+    ...testimonials,
+    ...testimonials,
+    ...testimonials,
+    ...testimonials,
     ...testimonials
   ];
 
@@ -171,7 +171,7 @@ export default function Testimonials() {
 
   const handleDragEnd = (event, info) => {
     setIsDragging(false);
-    
+
     // Update currentX based on drag
     if (scrollRef.current) {
       const transform = window.getComputedStyle(scrollRef.current).transform;
@@ -180,7 +180,7 @@ export default function Testimonials() {
         setCurrentX(matrix.m41);
       }
     }
-    
+
     // Small delay before resuming auto-scroll
     setTimeout(() => {
       if (!isPaused) {
@@ -210,7 +210,7 @@ export default function Testimonials() {
       {/* Luxury Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Subtle pattern */}
-        <div className="absolute inset-0 opacity-[0.02]" 
+        <div className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: `radial-gradient(circle at 1px 1px, #000 1px, transparent 0)`,
             backgroundSize: '40px 40px'
@@ -293,11 +293,11 @@ export default function Testimonials() {
                   <div className="relative h-[280px] my-5">
                     {/* Card */}
                     <div className="relative h-full bg-white/90 backdrop-blur-sm p-8 rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
-                      
+
                       {/* Large Quote Icon */}
                       <div className="absolute top-4 right-4">
-                        <FontAwesomeIcon 
-                          icon={faQuoteRight} 
+                        <FontAwesomeIcon
+                          icon={faQuoteRight}
                           className="w-20 h-20 text-red-600/15"
                         />
                       </div>
@@ -305,14 +305,13 @@ export default function Testimonials() {
                       {/* Rating stars */}
                       <div className="flex gap-1 mb-4 relative z-10">
                         {[...Array(5)].map((_, i) => (
-                          <FontAwesomeIcon 
+                          <FontAwesomeIcon
                             key={i}
-                            icon={faStar} 
-                            className={`w-4 h-4 ${
-                              i < testimonial.rating
+                            icon={faStar}
+                            className={`w-4 h-4 ${i < testimonial.rating
                                 ? 'text-yellow-400'
                                 : 'text-gray-200'
-                            }`}
+                              }`}
                           />
                         ))}
                       </div>
