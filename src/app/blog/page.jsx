@@ -182,7 +182,7 @@ export default function BlogPage() {
               <input
                 type="text"
                 placeholder="Search articles..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all text-gray-900"
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all text-black"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -227,7 +227,7 @@ export default function BlogPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="group relative bg-gradient-to-br from-gray-900 to-black rounded-2xl overflow-hidden cursor-pointer"
+              className="group relative bg-gradient-to-br from-black to-black rounded-2xl overflow-hidden cursor-pointer"
             >
               <div className="absolute inset-0 opacity-50">
                 {featuredPost.imageUrl && (
@@ -279,8 +279,8 @@ export default function BlogPage() {
         {!isLoading && !isRefreshing && (
           <div className="flex items-center justify-between mb-6">
             <p className="text-gray-600">
-              Showing <span className="font-semibold text-gray-900">{currentPosts.length}</span> of{' '}
-              <span className="font-semibold text-gray-900">{filteredBlogs.length}</span> articles
+              Showing <span className="font-semibold text-black">{currentPosts.length}</span> of{' '}
+              <span className="font-semibold text-black">{filteredBlogs.length}</span> articles
             </p>
           </div>
         )}
@@ -311,7 +311,7 @@ export default function BlogPage() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
               <FiSearch className="text-gray-400" size={32} />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No articles found</h3>
+            <h3 className="text-xl font-semibold text-black mb-2">No articles found</h3>
             <p className="text-gray-600">Try adjusting your search or filter</p>
           </motion.div>
         )}
@@ -352,7 +352,7 @@ export default function BlogPage() {
                         {/* Category Overlay */}
                         {blog.category && (
                           <div className="absolute top-4 left-4">
-                            <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-manrope font-semibold uppercase tracking-wider rounded-full shadow-lg">
+                            <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-black text-xs font-manrope font-semibold uppercase tracking-wider rounded-full shadow-lg">
                               {blog.category}
                             </span>
                           </div>
@@ -375,7 +375,7 @@ export default function BlogPage() {
                         </div>
 
                         {/* Title */}
-                        <h3 className="font-marcellus text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors duration-300">
+                        <h3 className="font-marcellus text-xl font-bold text-black mb-3 line-clamp-2 group-hover:text-red-600 transition-colors duration-300">
                           {blog.title}
                         </h3>
 
@@ -449,7 +449,7 @@ export default function BlogPage() {
                             </span>
                           </div>
 
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-red-600 transition-colors">
+                          <h3 className="text-xl font-semibold text-black mb-2 group-hover:text-red-600 transition-colors">
                             {blog.title}
                           </h3>
 

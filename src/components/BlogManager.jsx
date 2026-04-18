@@ -133,7 +133,7 @@ const MarkdownRenderer = ({ content }) => {
                 <thead className="bg-gray-50">
                   <tr>
                     {headers.map((header, idx) => (
-                      <th key={idx} className="px-6 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                      <th key={idx} className="px-6 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider">
                         <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(header) }} />
                       </th>
                     ))}
@@ -160,7 +160,7 @@ const MarkdownRenderer = ({ content }) => {
 
       // Headers
       if (line.startsWith('# ')) {
-        result.push(<h1 key={i} className="text-2xl font-bold text-gray-900 mt-6 mb-4"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(2)) }} /></h1>);
+        result.push(<h1 key={i} className="text-2xl font-bold text-black mt-6 mb-4"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(2)) }} /></h1>);
       } else if (line.startsWith('## ')) {
         result.push(<h2 key={i} className="text-xl font-bold text-gray-800 mt-5 mb-3"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(3)) }} /></h2>);
       } else if (line.startsWith('### ')) {
@@ -191,19 +191,19 @@ const MarkdownRenderer = ({ content }) => {
       else if (line.trim()) {
         if (line.startsWith('- ')) {
           result.push(
-            <li key={i} className="ml-6 list-disc text-gray-900 mb-1">
+            <li key={i} className="ml-6 list-disc text-black mb-1">
               <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(2)) }} />
             </li>
           );
         } else if (/^\d+\.\s/.test(line)) {
           result.push(
-            <li key={i} className="ml-6 list-decimal text-gray-900 mb-1">
+            <li key={i} className="ml-6 list-decimal text-black mb-1">
               <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.replace(/^\d+\.\s/, '')) }} />
             </li>
           );
         } else {
           result.push(
-            <p key={i} className="mb-4 text-gray-900">
+            <p key={i} className="mb-4 text-black">
               <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line) }} />
             </p>
           );
@@ -217,7 +217,7 @@ const MarkdownRenderer = ({ content }) => {
   };
 
   return (
-    <div className="prose max-w-none text-gray-900">
+    <div className="prose max-w-none text-black">
       {renderFormattedContent(content)}
     </div>
   );
@@ -288,7 +288,7 @@ const LinkModal = ({ isOpen, onClose, onInsert }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h3 className="font-medium text-gray-900">Insert Link</h3>
+          <h3 className="font-medium text-black">Insert Link</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <FiX size={18} />
           </button>
@@ -542,7 +542,7 @@ const DeleteConfirmModal = ({ isOpen, blog, onConfirm, onCancel, isLoading }) =>
           <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
             <FiAlertCircle className="text-red-600" size={20} />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">Delete Blog Post</h3>
+          <h3 className="text-lg font-semibold text-black">Delete Blog Post</h3>
         </div>
 
         <p className="text-gray-600 mb-2">
@@ -586,7 +586,7 @@ const ViewBlogModal = ({ blog, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-          <h3 className="font-medium text-gray-900">View Post</h3>
+          <h3 className="font-medium text-black">View Post</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-lg transition-colors">
             <FiX size={18} />
           </button>
@@ -623,7 +623,7 @@ const ViewBlogModal = ({ blog, onClose }) => {
             )}
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">{blog.title || 'Untitled'}</h1>
+          <h1 className="text-2xl font-bold text-black mb-4">{blog.title || 'Untitled'}</h1>
 
           <MarkdownRenderer content={blog.content} />
 
@@ -685,7 +685,7 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
       </div>
 
       <div className="p-4">
-        <h3 className="font-medium text-gray-900 mb-2 line-clamp-2">
+        <h3 className="font-medium text-black mb-2 line-clamp-2">
           {blog.title || 'Untitled'}
         </h3>
 
@@ -715,7 +715,7 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
           </button>
           <button
             onClick={() => onEdit(blog)}
-            className="p-2 text-gray-400 hover:text-gray-900 rounded-lg hover:bg-gray-100"
+            className="p-2 text-gray-400 hover:text-black rounded-lg hover:bg-gray-100"
             title="Edit"
           >
             <FiEdit size={16} />
@@ -1231,7 +1231,7 @@ const BlogManager = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <LuSparkles className="text-red-600 text-2xl" />
-              <h1 className="font-semibold text-gray-900">Blog Manager (MongoDB)</h1>
+              <h1 className="font-semibold text-black">Blog Manager (MongoDB)</h1>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-500">
               <button
@@ -1301,7 +1301,7 @@ const BlogManager = () => {
                 <input
                   type="text"
                   placeholder="Post title..."
-                  className="w-full px-0 py-2 text-xl font-medium border-0 focus:ring-0 placeholder-gray-300 bg-transparent text-gray-900"
+                  className="w-full px-0 py-2 text-xl font-medium border-0 focus:ring-0 placeholder-gray-300 bg-transparent text-black"
                   value={editingBlog?.title || newBlog.title}
                   onChange={(e) => {
                     if (editingBlog) {
@@ -1325,7 +1325,7 @@ const BlogManager = () => {
                   ref={textareaRef}
                   placeholder="Write your post... (Select text and click buttons to format)"
                   rows="10"
-                  className="w-full px-2 py-2 border-0 focus:ring-0 resize-none text-sm text-gray-900 placeholder-gray-300"
+                  className="w-full px-2 py-2 border-0 focus:ring-0 resize-none text-sm text-black placeholder-gray-300"
                   value={editingBlog?.content || newBlog.content}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -1414,7 +1414,7 @@ const BlogManager = () => {
                     <div>
                       <label className="text-xs font-medium text-gray-500 block mb-1">Category</label>
                       <select
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-black text-gray-900"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-black text-black"
                         value={editingBlog?.category || newBlog.category}
                         onChange={(e) => {
                           if (editingBlog) {
@@ -1438,7 +1438,7 @@ const BlogManager = () => {
                         type="number"
                         min="1"
                         placeholder="Auto"
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-black"
                         value={editingBlog?.readTime === undefined ? newBlog.readTime : editingBlog.readTime}
                         onChange={(e) => {
                           if (editingBlog) {
@@ -1454,7 +1454,7 @@ const BlogManager = () => {
                       <input
                         type="text"
                         placeholder="Short description"
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-black"
                         value={editingBlog?.excerpt || newBlog.excerpt}
                         onChange={(e) => {
                           if (editingBlog) {
@@ -1473,7 +1473,7 @@ const BlogManager = () => {
                       <input
                         type="text"
                         placeholder="Add tag"
-                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
+                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-black"
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addTag()}
@@ -1507,7 +1507,7 @@ const BlogManager = () => {
                     <textarea
                       placeholder="SEO description"
                       rows="2"
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-black"
                       value={editingBlog?.metaDescription || newBlog.metaDescription}
                       onChange={(e) => {
                         if (editingBlog) {
@@ -1640,7 +1640,7 @@ const BlogManager = () => {
                       </span>
                     )}
                   </div>
-                  <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                  <h1 className="text-2xl font-bold text-black mb-4">
                     {editingBlog?.title || newBlog.title || 'Your Blog Title'}
                   </h1>
                   <MarkdownRenderer content={editingBlog?.content || newBlog.content} />
