@@ -460,9 +460,9 @@ export default function BlogPage() {
                           {/* Tags */}
                           {blog.tags && blog.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-4">
-                              {blog.tags.slice(0, 3).map(tag => (
+                              {blog.tags.slice(0, 3).map((tag, idx) => (
                                 <span
-                                  key={tag}
+                                  key={`${tag}-${idx}`}
                                   className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
                                 >
                                   #{tag}

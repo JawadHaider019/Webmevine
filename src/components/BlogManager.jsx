@@ -629,8 +629,8 @@ const ViewBlogModal = ({ blog, onClose }) => {
 
           {blog.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-gray-100">
-              {blog.tags.map(tag => (
-                <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
+              {blog.tags.map((tag, idx) => (
+                <span key={`${tag}-${idx}`} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
                   #{tag}
                 </span>
               ))}
@@ -1012,7 +1012,18 @@ const BlogManager = () => {
 
   const addTag = () => {
     if (!newTag.trim()) return;
-    setNewBlog({ ...newBlog, tags: [...newBlog.tags, newTag.trim()] });
+    const trimmed = newTag.trim();
+    const currentTags = editingBlog?.tags || newBlog.tags;
+    if (currentTags.includes(trimmed)) {
+      addAlert('warning', 'Tag already exists');
+      setNewTag('');
+      return;
+    }
+    if (editingBlog) {
+      setEditingBlog({ ...editingBlog, tags: [...editingBlog.tags, trimmed] });
+    } else {
+      setNewBlog({ ...newBlog, tags: [...newBlog.tags, trimmed] });
+    }
     setNewTag('');
   };
 
@@ -1473,14 +1484,14 @@ const BlogManager = () => {
                     </div>
                     {(editingBlog?.tags || newBlog.tags).length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
-                        {(editingBlog?.tags || newBlog.tags).map(tag => (
-                          <span key={tag} className="px-2 py-1 bg-gray-100 rounded-full text-xs flex items-center gap-1">
+                        {(editingBlog?.tags || newBlog.tags).map((tag, idx) => (
+                          <span key={`${tag}-${idx}`} className="px-2 py-1 bg-gray-100 rounded-full text-xs flex items-center gap-1">
                             #{tag}
                             <button onClick={() => {
                               if (editingBlog) {
-                                setEditingBlog({ ...editingBlog, tags: editingBlog.tags.filter(t => t !== tag) });
+                                setEditingBlog({ ...editingBlog, tags: editingBlog.tags.filter((t, i) => i !== idx) });
                               } else {
-                                setNewBlog({ ...newBlog, tags: newBlog.tags.filter(t => t !== tag) });
+                                setNewBlog({ ...newBlog, tags: newBlog.tags.filter((t, i) => i !== idx) });
                               }
                             }}>
                               <FiX size={12} />
