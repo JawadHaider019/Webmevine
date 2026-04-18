@@ -34,6 +34,8 @@ export default function BlogPage() {
     if (!text) return '';
 
     return text
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
       .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
       .replace(/\*\*(.*?)\*\*/g, '$1')
       .replace(/\*(.*?)\*/g, '$1')
@@ -154,8 +156,8 @@ export default function BlogPage() {
               <button
                 onClick={() => setSelectedCategory('All')}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === 'All'
-                    ? 'bg-gradient-to-r from-black via-red-600 to-black text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-gradient-to-r from-black via-red-600 to-black text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
               >
                 All
@@ -165,8 +167,8 @@ export default function BlogPage() {
                   key={category}
                   onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === category
-                      ? 'bg-gradient-to-r from-black via-red-600 to-black text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-gradient-to-r from-black via-red-600 to-black text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                 >
                   {category}
@@ -258,9 +260,7 @@ export default function BlogPage() {
                     {featuredPost.title}
                   </h2>
 
-                  <p className="text-gray-300 text-lg mb-6 line-clamp-2">
-                    {featuredPost.excerpt || stripMarkdown(featuredPost.content?.substring(0, 200))}...
-                  </p>
+
 
                   <div className="flex items-center gap-4">
                     <span className="text-white font-medium">Read Article</span>
@@ -367,10 +367,7 @@ export default function BlogPage() {
                             <FiCalendar className="w-4 h-4" />
                             <span className="text-sm font-manrope">{day} {month}, {year}</span>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <FiMessageCircle className="w-4 h-4" />
-                            <span className="text-sm font-manrope">0 Comments</span>
-                          </div>
+
                           <div className="flex items-center gap-1">
                             <FiClock className="w-4 h-4" />
                             <span className="text-sm font-manrope">{blog.readTime} min</span>
@@ -382,27 +379,11 @@ export default function BlogPage() {
                           {blog.title}
                         </h3>
 
-                        {/* Excerpt */}
-                        <p className="font-instrument text-gray-600 text-sm mb-4 line-clamp-2">
-                          {blog.excerpt || stripMarkdown(blog.content?.substring(0, 120))}...
-                        </p>
 
                         {/* Author and Read More */}
                         <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                           <div className="flex items-center gap-2">
-                            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200">
-                              {blog.authorImage ? (
-                                <Image
-                                  src={blog.authorImage}
-                                  alt={blog.author}
-                                  fill
-                                  className="object-cover"
-                                />
-                              ) : (
-                                <div className="w-full h-full bg-gray-300 rounded-full" />
-                              )}
-                            </div>
-                            <span className="font-manrope text-sm font-medium text-gray-700">{blog.author}</span>
+                            <span className="font-manrope text-sm font-medium text-gray-700 ">By WebMavien</span>
                           </div>
 
                           <div className="flex items-center gap-1 text-gray-600 group-hover:text-red-600 transition-colors duration-300">
@@ -473,7 +454,7 @@ export default function BlogPage() {
                           </h3>
 
                           <p className="text-gray-600 mb-4 line-clamp-2">
-                            {blog.excerpt || stripMarkdown(blog.content?.substring(0, 150))}...
+                            {stripMarkdown(blog.excerpt || blog.content)?.substring(0, 150)}...
                           </p>
 
                           {/* Tags */}
@@ -520,8 +501,8 @@ export default function BlogPage() {
                 key={i + 1}
                 onClick={() => setCurrentPage(i + 1)}
                 className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === i + 1
-                    ? 'bg-red-600 text-white'
-                    : 'border border-gray-200 hover:bg-gray-50'
+                  ? 'bg-red-600 text-white'
+                  : 'border border-gray-200 hover:bg-gray-50'
                   }`}
               >
                 {i + 1}

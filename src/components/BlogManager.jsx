@@ -9,7 +9,7 @@ import {
   FiUser, FiTag, FiUpload, FiEyeOff, FiClock,
   FiCheckCircle, FiAlertCircle, FiStar, FiSave,
   FiSearch, FiGlobe, FiHelpCircle, FiPaperclip, FiRefreshCw,
-  FiTable, FiSquare, FiUploadCloud
+  FiTable, FiSquare, FiUploadCloud, FiCode
 } from 'react-icons/fi';
 import { LuSparkles } from 'react-icons/lu';
 import { blogService } from '@/services/blogService';
@@ -58,6 +58,31 @@ const MarkdownRenderer = ({ content }) => {
 
   const renderFormattedContent = (text) => {
     if (!text) return null;
+
+    // Check for raw HTML / Custom styled pages
+    if (text.toLowerCase().includes('<!doctype html>') || text.includes('<!-- RAW_HTML -->')) {
+      return (
+        <iframe
+          srcDoc={text}
+          className="w-full border-0 bg-white"
+          style={{ overflow: 'hidden' }}
+          scrolling="no"
+          title="Custom HTML Content"
+          onLoad={(e) => {
+            const iframe = e.target;
+            const adjustHeight = () => {
+              try {
+                const height = iframe.contentWindow.document.documentElement.scrollHeight;
+                iframe.style.height = height + 'px';
+              } catch (err) { }
+            };
+            adjustHeight();
+            setTimeout(adjustHeight, 500);
+            setTimeout(adjustHeight, 2000);
+          }}
+        />
+      );
+    }
 
     const lines = text.split('\n');
     const result = [];
@@ -382,6 +407,11 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload,
         newContent = content.substring(0, start) + btnTemplate + content.substring(end);
         newCursorPos = start + btnTemplate.length;
         break;
+      case 'html':
+        const htmlTemplate = `<!-- RAW_HTML -->\n<!DOCTYPE html>\n<html lang="en">\n<head>\n  <style>\n  /* Your CSS here */\n  </style>\n</head>\n<body>\n\n</body>\n</html>\n`;
+        newContent = content.substring(0, start) + htmlTemplate + content.substring(end);
+        newCursorPos = start + htmlTemplate.length;
+        break;
       default:
         return;
     }
@@ -423,6 +453,14 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload,
         type="button"
       >
         <FiSquare size={16} />
+      </button>
+      <button
+        onClick={() => handleFormat('html')}
+        className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
+        title="Insert Raw HTML Boilerplate"
+        type="button"
+      >
+        <FiCode size={16} />
       </button>
       <div className="w-px h-5 bg-gray-300 mx-1" />
       <button
@@ -722,13 +760,12 @@ const BlogManager = () => {
   const [newBlog, setNewBlog] = useState({
     title: '',
     content: '',
-    excerpt: '',
-    category: '',
+    category: 'Uncategorized',
     tags: [],
-    imageUrl: '',
-    featured: false,
-    published: false, // Changed from 'status' to 'published' boolean
-    metaDescription: ''
+    excerpt: '',
+    metaDescription: '',
+    published: true,
+    readTime: ''
   });
 
   const fileInputRef = useRef(null);
@@ -996,7 +1033,7 @@ const BlogManager = () => {
       featured: newBlog.featured,
       published: publishStatus, // Use boolean instead of string
       author: 'Admin',
-      readTime: Math.max(1, Math.ceil(newBlog.content.split(/\s+/).length / 200)),
+      readTime: newBlog.readTime ? parseInt(newBlog.readTime) : Math.max(1, Math.ceil(newBlog.content.split(/\s+/).length / 200)),
       metaDescription: newBlog.metaDescription || newBlog.content.substring(0, 155) + '...'
     };
 
@@ -1036,7 +1073,7 @@ const BlogManager = () => {
         featured: editingBlog.featured,
         published: editingBlog.published, // Use boolean
         author: editingBlog.author || 'Admin',
-        readTime: editingBlog.readTime || Math.max(1, Math.ceil(editingBlog.content.split(/\s+/).length / 200)),
+        readTime: editingBlog.readTime ? parseInt(editingBlog.readTime) : Math.max(1, Math.ceil(editingBlog.content.split(/\s+/).length / 200)),
         metaDescription: editingBlog.metaDescription || editingBlog.content.substring(0, 155) + '...'
       };
 
@@ -1129,7 +1166,8 @@ const BlogManager = () => {
       imageUrl: '',
       featured: false,
       published: false, // Changed from 'status' to 'published'
-      metaDescription: ''
+      metaDescription: '',
+      readTime: ''
     });
   };
 
@@ -1276,13 +1314,52 @@ const BlogManager = () => {
                   ref={textareaRef}
                   placeholder="Write your post... (Select text and click buttons to format)"
                   rows="10"
-                  className="w-full px-0 py-2 border-0 focus:ring-0 resize-none text-sm text-gray-900 placeholder-gray-300"
+                  className="w-full px-2 py-2 border-0 focus:ring-0 resize-none text-sm text-gray-900 placeholder-gray-300"
                   value={editingBlog?.content || newBlog.content}
                   onChange={(e) => {
-                    if (editingBlog) {
-                      setEditingBlog({ ...editingBlog, content: e.target.value });
+                    const val = e.target.value;
+
+                    // Auto-extract SEO fields from raw HTML
+                    if (val.toLowerCase().includes('<!doctype html>') || val.includes('<!-- RAW_HTML -->')) {
+                      const extractMeta = (name) => {
+                        const regex = new RegExp(`<meta\\s+name=["']${name}["']\\s+content=["']([^"']+)["']`, 'i');
+                        const match = val.match(regex);
+                        return match ? match[1] : '';
+                      };
+
+                      const titleMatch = val.match(/<title[^>]*>([^<]+)<\/title>/i);
+                      const extractedTitle = titleMatch ? titleMatch[1].trim() : '';
+                      const extractedDesc = extractMeta('description');
+                      const extractedKeywords = extractMeta('keywords');
+                      const extractedTags = extractedKeywords
+                        ? extractedKeywords.split(',').map(t => t.trim()).filter(t => t).slice(0, 10)
+                        : [];
+
+                      if (editingBlog) {
+                        setEditingBlog({
+                          ...editingBlog,
+                          content: val,
+                          title: extractedTitle || editingBlog.title,
+                          metaDescription: extractedDesc || editingBlog.metaDescription,
+                          excerpt: extractedDesc || editingBlog.excerpt,
+                          tags: extractedTags.length > 0 ? extractedTags : editingBlog.tags,
+                        });
+                      } else {
+                        setNewBlog({
+                          ...newBlog,
+                          content: val,
+                          title: extractedTitle || newBlog.title,
+                          metaDescription: extractedDesc || newBlog.metaDescription,
+                          excerpt: extractedDesc || newBlog.excerpt,
+                          tags: extractedTags.length > 0 ? extractedTags : newBlog.tags,
+                        });
+                      }
                     } else {
-                      setNewBlog({ ...newBlog, content: e.target.value });
+                      if (editingBlog) {
+                        setEditingBlog({ ...editingBlog, content: val });
+                      } else {
+                        setNewBlog({ ...newBlog, content: val });
+                      }
                     }
                   }}
                 />
@@ -1322,7 +1399,7 @@ const BlogManager = () => {
 
                 {/* Meta Section */}
                 <div className="mt-6 space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
                       <label className="text-xs font-medium text-gray-500 block mb-1">Category</label>
                       <select
@@ -1343,6 +1420,23 @@ const BlogManager = () => {
                         <option value="Development">Development</option>
                         <option value="Security">Security</option>
                       </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-gray-500 block mb-1">Min. Read</label>
+                      <input
+                        type="number"
+                        min="1"
+                        placeholder="Auto"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
+                        value={editingBlog?.readTime === undefined ? newBlog.readTime : editingBlog.readTime}
+                        onChange={(e) => {
+                          if (editingBlog) {
+                            setEditingBlog({ ...editingBlog, readTime: e.target.value });
+                          } else {
+                            setNewBlog({ ...newBlog, readTime: e.target.value });
+                          }
+                        }}
+                      />
                     </div>
                     <div>
                       <label className="text-xs font-medium text-gray-500 block mb-1">Excerpt</label>

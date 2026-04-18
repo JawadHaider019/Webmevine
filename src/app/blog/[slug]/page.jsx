@@ -6,11 +6,12 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
-  FiCalendar, FiClock, FiUser, FiTag, FiArrowLeft,
+  FiCalendar, FiClock, FiUser, FiTag, FiArrowLeft, FiArrowRight,
   FiTwitter, FiFacebook, FiLinkedin, FiLink, FiCheck, FiRefreshCw,
   FiAlertCircle
 } from 'react-icons/fi';
 import { LuSparkles } from 'react-icons/lu';
+import SectionHeader from '@/components/SectionHeader';
 import { getBlogBySlug, getRelatedBlogs, formatDate } from '@/utils/blogUtils';
 
 // Function to strip markdown for excerpts
@@ -18,6 +19,8 @@ const stripMarkdown = (text) => {
   if (!text) return '';
 
   return text
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
     .replace(/\*\*(.*?)\*\*/g, '$1')
     .replace(/\*(.*?)\*/g, '$1')
@@ -39,6 +42,31 @@ const MarkdownRenderer = ({ content }) => {
 
   const renderFormattedContent = (text) => {
     if (!text) return null;
+
+    // Check for raw HTML / Custom styled pages
+    if (text.toLowerCase().includes('<!doctype html>') || text.includes('<!-- RAW_HTML -->')) {
+      return (
+        <iframe
+          srcDoc={text}
+          className="w-full border-0 bg-white"
+          style={{ overflow: 'hidden' }}
+          scrolling="no"
+          title="Custom HTML Content"
+          onLoad={(e) => {
+            const iframe = e.target;
+            const adjustHeight = () => {
+              try {
+                const height = iframe.contentWindow.document.documentElement.scrollHeight;
+                iframe.style.height = height + 'px';
+              } catch (err) { }
+            };
+            adjustHeight();
+            setTimeout(adjustHeight, 500);
+            setTimeout(adjustHeight, 2000);
+          }}
+        />
+      );
+    }
 
     const lines = text.split('\n');
     const result = [];
@@ -272,7 +300,7 @@ export default function BlogPostPage() {
     <div className="min-h-screen bg-white">
       {/* Back Navigation */}
       <div className="border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+        <div className="max-w-6xl mx-auto px-4 py-4">
           <Link href="/blog" className="inline-flex items-center gap-2 text-gray-600 hover:text-red-600 transition-colors">
             <FiArrowLeft size={18} />
             Back to Blog
@@ -296,7 +324,7 @@ export default function BlogPostPage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
 
-        <div className="relative max-w-4xl mx-auto px-4">
+        <div className="relative max-w-6xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -323,7 +351,7 @@ export default function BlogPostPage() {
               </span>
               <span className="flex items-center gap-1">
                 <FiUser size={14} />
-                {blog.author || 'Admin'}
+                By WebMavien
               </span>
             </div>
           </motion.div>
@@ -331,7 +359,7 @@ export default function BlogPostPage() {
       </section>
 
       {/* Content */}
-      <section className="max-w-4xl mx-auto px-4 py-12">
+      <section className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-3">
@@ -432,38 +460,91 @@ export default function BlogPostPage() {
       {relatedPosts.length > 0 && (
         <section className="bg-gray-50 py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-              Related Articles
-            </h2>
+            <div className="mb-12">
+              <SectionHeader
+                smallHeading="Keep Reading"
+                heading="Related Articles"
+                gradientHeading={true}
+                gradientFrom="from-black"
+                gradientVia="via-red-600"
+                gradientTo="to-gray-900"
+                smallHeadingColor="text-red-600"
+              />
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {relatedPosts.map(post => (
-                <Link key={post.id} href={`/blog/${post.slug || post.id}`}>
-                  <motion.div
-                    whileHover={{ y: -4 }}
-                    className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {relatedPosts.map(post => {
+                const postDate = post.createdAt ? new Date(post.createdAt) : new Date();
+                const day = postDate.getDate();
+                const month = postDate.toLocaleString('en', { month: 'short' });
+                const year = postDate.getFullYear();
+
+                return (
+                  <Link
+                    href={`/blog/${post.slug || post.id}`}
+                    key={post.id}
+                    className="group bg-white rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:border-gray-400"
                   >
-                    {post.imageUrl && (
-                      <img
-                        src={post.imageUrl}
-                        alt={post.title}
-                        className="w-full h-40 object-cover"
-                        onError={(e) => {
-                          e.target.src = 'https://via.placeholder.com/400x200?text=No+Image';
-                        }}
-                      />
-                    )}
-                    <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                    {/* Featured Image */}
+                    <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+                      {post.imageUrl ? (
+                        <img
+                          src={post.imageUrl}
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="text-gray-400">No image</span>
+                        </div>
+                      )}
+
+                      {/* Category Overlay */}
+                      {post.category && (
+                        <div className="absolute top-4 left-4">
+                          <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-gray-900 text-xs font-semibold uppercase tracking-wider rounded-full shadow-lg">
+                            {post.category}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6">
+                      {/* Date and Read Time */}
+                      <div className="flex items-center gap-4 mb-3 text-gray-500">
+                        <div className="flex items-center gap-1">
+                          <FiCalendar className="w-4 h-4" />
+                          <span className="text-sm">{day} {month}, {year}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <FiClock className="w-4 h-4" />
+                          <span className="text-sm">{post.readTime} min</span>
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="font-marcellus text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors duration-300">
                         {post.title}
                       </h3>
-                      <p className="text-sm text-gray-600 line-clamp-2">
-                        {post.excerpt || stripMarkdown(post.content?.substring(0, 150))}...
-                      </p>
+
+                      {/* Author and Read More */}
+                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-700">By WebMavien</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-gray-600 group-hover:text-red-600 transition-colors duration-300">
+                          <span className="text-sm font-medium">Read More</span>
+                          <FiArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        </div>
+                      </div>
                     </div>
-                  </motion.div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
