@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { 
+import {
   FiCalendar, FiClock, FiUser, FiTag, FiArrowLeft,
   FiTwitter, FiFacebook, FiLinkedin, FiLink, FiCheck, FiRefreshCw,
   FiAlertCircle
@@ -16,7 +16,7 @@ import { getBlogBySlug, getRelatedBlogs, formatDate } from '@/utils/blogUtils';
 // Function to strip markdown for excerpts
 const stripMarkdown = (text) => {
   if (!text) return '';
-  
+
   return text
     .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
     .replace(/\*\*(.*?)\*\*/g, '$1')
@@ -38,30 +38,101 @@ const MarkdownRenderer = ({ content }) => {
   if (!content) return null;
 
   const renderFormattedContent = (text) => {
+    if (!text) return null;
+
     const lines = text.split('\n');
-    
-    return lines.map((line, lineIndex) => {
+    const result = [];
+    let i = 0;
+
+    const processInlineFormatting = (content) => {
+      let processedContent = content;
+      // Custom Button: [Text](btn:url)
+      processedContent = processedContent.replace(
+        /\[([^\]]+)\]\(btn:([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-red-600 to-black text-white font-bold rounded-full hover:scale-105 transition-all shadow-xl hover:shadow-2xl my-4">$1</a>'
+      );
+      // Bold/Italic/Links
+      processedContent = processedContent.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+      processedContent = processedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      processedContent = processedContent.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      processedContent = processedContent.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        (match, linkText, url) => {
+          if (url.startsWith('btn:')) return match;
+          return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:text-red-700 underline">${linkText}</a>`;
+        }
+      );
+      return processedContent;
+    };
+
+    while (i < lines.length) {
+      const line = lines[i];
+
+      // Handle Tables
+      if (line.trim().startsWith('|') && i + 1 < lines.length && lines[i + 1].replace(/\s/g, '').includes('|-')) {
+        const tableLines = [];
+        let j = i;
+        while (j < lines.length && lines[j].trim().startsWith('|')) {
+          tableLines.push(lines[j]);
+          j++;
+        }
+
+        if (tableLines.length >= 2) {
+          const headers = tableLines[0].split('|').filter(cell => cell.trim() !== '').map(cell => cell.trim());
+          const rows = tableLines.slice(2).map(row =>
+            row.split('|').filter(cell => cell.trim() !== '').map(cell => cell.trim())
+          );
+
+          result.push(
+            <div key={`table-${i}`} className="overflow-x-auto my-8 rounded-xl border border-gray-200 shadow-lg">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {headers.map((header, idx) => (
+                      <th key={idx} className="px-6 py-4 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                        <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(header) }} />
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {rows.map((row, rowIdx) => (
+                    <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
+                      {row.map((cell, cellIdx) => (
+                        <td key={cellIdx} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(cell) }} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+          i = j;
+          continue;
+        }
+      }
+
       // Headers
       if (line.startsWith('# ')) {
-        return <h1 key={lineIndex} className="text-3xl font-bold text-gray-900 mt-8 mb-4">{line.substring(2)}</h1>;
+        result.push(<h1 key={i} className="text-3xl font-bold text-gray-900 mt-8 mb-4"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(2)) }} /></h1>);
+      } else if (line.startsWith('## ')) {
+        result.push(<h2 key={i} className="text-2xl font-bold text-gray-800 mt-6 mb-3"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(3)) }} /></h2>);
+      } else if (line.startsWith('### ')) {
+        result.push(<h3 key={i} className="text-xl font-semibold text-gray-800 mt-5 mb-2"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(4)) }} /></h3>);
       }
-      if (line.startsWith('## ')) {
-        return <h2 key={lineIndex} className="text-2xl font-bold text-gray-800 mt-6 mb-3">{line.substring(3)}</h2>;
-      }
-      if (line.startsWith('### ')) {
-        return <h3 key={lineIndex} className="text-xl font-semibold text-gray-800 mt-5 mb-2">{line.substring(4)}</h3>;
-      }
-      
+
       // Images
-      if (line.startsWith('![') && line.includes('](')) {
+      else if (line.startsWith('![') && line.includes('](')) {
         const altMatch = line.match(/!\[(.*?)\]/);
         const urlMatch = line.match(/\((.*?)\)/);
         if (urlMatch) {
-          return (
-            <div key={lineIndex} className="my-8">
-              <img 
-                src={urlMatch[1]} 
-                alt={altMatch ? altMatch[1] : ''} 
+          result.push(
+            <div key={i} className="my-8">
+              <img
+                src={urlMatch[1]}
+                alt={altMatch ? altMatch[1] : ''}
                 className="w-full rounded-xl shadow-lg"
                 onError={(e) => {
                   e.target.src = 'https://via.placeholder.com/800x400?text=Image+Not+Found';
@@ -71,59 +142,37 @@ const MarkdownRenderer = ({ content }) => {
           );
         }
       }
-      
-      // Process inline formatting
-      if (line.trim()) {
-        let processedContent = line;
-        
-        // Bold
-        processedContent = processedContent.replace(
-          /\*\*(.*?)\*\*/g, 
-          '<strong class="font-bold text-gray-900">$1</strong>'
-        );
-        
-        // Italic
-        processedContent = processedContent.replace(
-          /\*(.*?)\*/g, 
-          '<em class="italic">$1</em>'
-        );
-        
-        // Links
-        processedContent = processedContent.replace(
-          /\[([^\]]+)\]\(([^)]+)\)/g,
-          '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:text-red-700 underline">$1</a>'
-        );
-        
-        // Lists
+
+      else if (line.trim()) {
         if (line.startsWith('- ')) {
-          return (
-            <li key={lineIndex} className="ml-6 list-disc text-gray-700 mb-2">
-              <span dangerouslySetInnerHTML={{ __html: processedContent.substring(2) }} />
+          result.push(
+            <li key={i} className="ml-6 list-disc text-gray-700 mb-2">
+              <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(2)) }} />
             </li>
           );
-        }
-        
-        if (/^\d+\.\s/.test(line)) {
-          return (
-            <li key={lineIndex} className="ml-6 list-decimal text-gray-700 mb-2">
-              <span dangerouslySetInnerHTML={{ __html: processedContent.replace(/^\d+\.\s/, '') }} />
+        } else if (/^\d+\.\s/.test(line)) {
+          result.push(
+            <li key={i} className="ml-6 list-decimal text-gray-700 mb-2">
+              <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.replace(/^\d+\.\s/, '')) }} />
             </li>
           );
+        } else {
+          result.push(
+            <p key={i} className="mb-4 text-gray-700 leading-relaxed">
+              <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line) }} />
+            </p>
+          );
         }
-        
-        return (
-          <p key={lineIndex} className="mb-4 text-gray-700 leading-relaxed">
-            <span dangerouslySetInnerHTML={{ __html: processedContent }} />
-          </p>
-        );
+      } else {
+        result.push(<br key={i} />);
       }
-      
-      return <br key={lineIndex} />;
-    });
+      i++;
+    }
+    return result;
   };
 
   return (
-    <div className="prose prose-lg max-w-none">
+    <div className="prose prose-lg max-w-none text-gray-900">
       {renderFormattedContent(content)}
     </div>
   );
@@ -144,11 +193,11 @@ export default function BlogPostPage() {
   const loadBlog = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       console.log('🔍 Looking for blog with slug:', params.slug);
       const post = await getBlogBySlug(params.slug);
-      
+
       if (post) {
         console.log('✅ Blog found:', post.title);
         setBlog(post);
@@ -246,7 +295,7 @@ export default function BlogPostPage() {
           )}
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
-        
+
         <div className="relative max-w-4xl mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -258,11 +307,11 @@ export default function BlogPostPage() {
                 {blog.category}
               </span>
             )}
-            
+
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
               {blog.title}
             </h1>
-            
+
             <div className="flex items-center justify-center gap-4 text-sm text-gray-300">
               <span className="flex items-center gap-1">
                 <FiCalendar size={14} />
@@ -362,11 +411,10 @@ export default function BlogPostPage() {
                   <ul className="space-y-2 text-sm">
                     {headings.map((heading, index) => (
                       <li key={index}>
-                        <a 
+                        <a
                           href={`#heading-${index}`}
-                          className={`text-gray-600 hover:text-red-600 block ${
-                            heading.level === 2 ? 'ml-3' : heading.level === 3 ? 'ml-6' : ''
-                          }`}
+                          className={`text-gray-600 hover:text-red-600 block ${heading.level === 2 ? 'ml-3' : heading.level === 3 ? 'ml-6' : ''
+                            }`}
                         >
                           {heading.text}
                         </a>
@@ -387,7 +435,7 @@ export default function BlogPostPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
               Related Articles
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.map(post => (
                 <Link key={post.id} href={`/blog/${post.slug || post.id}`}>

@@ -3,12 +3,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiPlus, FiEdit, FiTrash2, FiImage, FiLink, FiX, FiEye, 
-  FiSend, FiBold, FiItalic, FiList, FiHash, FiCalendar, 
+import {
+  FiPlus, FiEdit, FiTrash2, FiImage, FiLink, FiX, FiEye,
+  FiSend, FiBold, FiItalic, FiList, FiHash, FiCalendar,
   FiUser, FiTag, FiUpload, FiEyeOff, FiClock,
   FiCheckCircle, FiAlertCircle, FiStar, FiSave,
-  FiSearch, FiGlobe, FiHelpCircle, FiPaperclip, FiRefreshCw
+  FiSearch, FiGlobe, FiHelpCircle, FiPaperclip, FiRefreshCw,
+  FiTable, FiSquare, FiUploadCloud
 } from 'react-icons/fi';
 import { LuSparkles } from 'react-icons/lu';
 import { blogService } from '@/services/blogService';
@@ -57,29 +58,100 @@ const MarkdownRenderer = ({ content }) => {
 
   const renderFormattedContent = (text) => {
     if (!text) return null;
-    
+
     const lines = text.split('\n');
-    
-    return lines.map((line, lineIndex) => {
+    const result = [];
+    let i = 0;
+
+    const processInlineFormatting = (content) => {
+      let processedContent = content;
+      // Custom Button: [Text](btn:url)
+      processedContent = processedContent.replace(
+        /\[([^\]]+)\]\(btn:([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-black text-white font-semibold rounded-full hover:scale-105 transition-all shadow-md hover:shadow-lg my-2">$1</a>'
+      );
+      // Bold/Italic/Links
+      processedContent = processedContent.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+      processedContent = processedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      processedContent = processedContent.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      processedContent = processedContent.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        (match, linkText, url) => {
+          if (url.startsWith('btn:')) return match;
+          return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">${linkText}</a>`;
+        }
+      );
+      return processedContent;
+    };
+
+    while (i < lines.length) {
+      const line = lines[i];
+
+      // Handle Tables
+      if (line.trim().startsWith('|') && i + 1 < lines.length && lines[i + 1].replace(/\s/g, '').includes('|-')) {
+        const tableLines = [];
+        let j = i;
+        while (j < lines.length && lines[j].trim().startsWith('|')) {
+          tableLines.push(lines[j]);
+          j++;
+        }
+
+        if (tableLines.length >= 2) {
+          const headers = tableLines[0].split('|').filter(cell => cell.trim() !== '').map(cell => cell.trim());
+          const rows = tableLines.slice(2).map(row =>
+            row.split('|').filter(cell => cell.trim() !== '').map(cell => cell.trim())
+          );
+
+          result.push(
+            <div key={`table-${i}`} className="overflow-x-auto my-6 rounded-xl border border-gray-200 shadow-sm">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {headers.map((header, idx) => (
+                      <th key={idx} className="px-6 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                        <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(header) }} />
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {rows.map((row, rowIdx) => (
+                    <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
+                      {row.map((cell, cellIdx) => (
+                        <td key={cellIdx} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(cell) }} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+          i = j;
+          continue;
+        }
+      }
+
+      // Headers
       if (line.startsWith('# ')) {
-        return <h1 key={lineIndex} className="text-2xl font-bold text-gray-900 mt-6 mb-4">{line.substring(2)}</h1>;
+        result.push(<h1 key={i} className="text-2xl font-bold text-gray-900 mt-6 mb-4"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(2)) }} /></h1>);
+      } else if (line.startsWith('## ')) {
+        result.push(<h2 key={i} className="text-xl font-bold text-gray-800 mt-5 mb-3"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(3)) }} /></h2>);
+      } else if (line.startsWith('### ')) {
+        result.push(<h3 key={i} className="text-lg font-semibold text-gray-800 mt-4 mb-2"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(4)) }} /></h3>);
       }
-      if (line.startsWith('## ')) {
-        return <h2 key={lineIndex} className="text-xl font-bold text-gray-800 mt-5 mb-3">{line.substring(3)}</h2>;
-      }
-      if (line.startsWith('### ')) {
-        return <h3 key={lineIndex} className="text-lg font-semibold text-gray-800 mt-4 mb-2">{line.substring(4)}</h3>;
-      }
-      
-      if (line.startsWith('![') && line.includes('](')) {
+
+      // Images
+      else if (line.startsWith('![') && line.includes('](')) {
         const altMatch = line.match(/!\[(.*?)\]/);
         const urlMatch = line.match(/\((.*?)\)/);
         if (urlMatch) {
-          return (
-            <div key={lineIndex} className="my-4">
-              <img 
-                src={urlMatch[1]} 
-                alt={altMatch ? altMatch[1] : ''} 
+          result.push(
+            <div key={i} className="my-4">
+              <img
+                src={urlMatch[1]}
+                alt={altMatch ? altMatch[1] : ''}
                 className="max-w-full rounded-lg shadow-md hover:shadow-lg transition-shadow"
                 loading="lazy"
               />
@@ -90,59 +162,37 @@ const MarkdownRenderer = ({ content }) => {
           );
         }
       }
-      
-      if (line.trim()) {
-        let processedContent = line;
-        
-        processedContent = processedContent.replace(
-          /\*\*\*(.*?)\*\*\*/g, 
-          '<strong><em>$1</em></strong>'
-        );
-        
-        processedContent = processedContent.replace(
-          /\*\*(.*?)\*\*/g, 
-          '<strong>$1</strong>'
-        );
-        
-        processedContent = processedContent.replace(
-          /\*(.*?)\*/g, 
-          '<em>$1</em>'
-        );
-        
-        processedContent = processedContent.replace(
-          /\[([^\]]+)\]\(([^)]+)\)/g,
-          '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">$1</a>'
-        );
-        
+
+      else if (line.trim()) {
         if (line.startsWith('- ')) {
-          return (
-            <li key={lineIndex} className="ml-6 list-disc text-gray-700 mb-1">
-              <span dangerouslySetInnerHTML={{ __html: processedContent.substring(2) }} />
+          result.push(
+            <li key={i} className="ml-6 list-disc text-gray-900 mb-1">
+              <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(2)) }} />
             </li>
           );
-        }
-        
-        if (/^\d+\.\s/.test(line)) {
-          return (
-            <li key={lineIndex} className="ml-6 list-decimal text-gray-700 mb-1">
-              <span dangerouslySetInnerHTML={{ __html: processedContent.replace(/^\d+\.\s/, '') }} />
+        } else if (/^\d+\.\s/.test(line)) {
+          result.push(
+            <li key={i} className="ml-6 list-decimal text-gray-900 mb-1">
+              <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.replace(/^\d+\.\s/, '')) }} />
             </li>
           );
+        } else {
+          result.push(
+            <p key={i} className="mb-4 text-gray-900">
+              <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line) }} />
+            </p>
+          );
         }
-        
-        return (
-          <p key={lineIndex} className="mb-4 text-gray-700">
-            <span dangerouslySetInnerHTML={{ __html: processedContent }} />
-          </p>
-        );
+      } else {
+        result.push(<br key={i} />);
       }
-      
-      return <br key={lineIndex} />;
-    });
+      i++;
+    }
+    return result;
   };
 
   return (
-    <div className="prose max-w-none">
+    <div className="prose max-w-none text-gray-900">
       {renderFormattedContent(content)}
     </div>
   );
@@ -151,7 +201,7 @@ const MarkdownRenderer = ({ content }) => {
 // SEO Helper
 const SEOHelper = ({ blog }) => {
   const tips = [];
-  
+
   if (!blog?.title) tips.push({ type: 'error', msg: 'Title is missing' });
   else if (blog.title.length < 30) tips.push({ type: 'warning', msg: 'Title too short' });
   else if (blog.title.length > 60) tips.push({ type: 'warning', msg: 'Title too long' });
@@ -173,12 +223,11 @@ const SEOHelper = ({ blog }) => {
       </div>
       <div className="space-y-1">
         {tips.map((tip, i) => (
-          <div key={i} className={`text-xs flex items-center gap-1.5 ${
-            tip.type === 'error' ? 'text-red-600' :
+          <div key={i} className={`text-xs flex items-center gap-1.5 ${tip.type === 'error' ? 'text-red-600' :
             tip.type === 'warning' ? 'text-yellow-600' :
-            tip.type === 'success' ? 'text-green-600' :
-            'text-blue-600'
-          }`}>
+              tip.type === 'success' ? 'text-green-600' :
+                'text-blue-600'
+            }`}>
             <span>•</span>
             {tip.msg}
           </div>
@@ -219,7 +268,7 @@ const LinkModal = ({ isOpen, onClose, onInsert }) => {
             <FiX size={18} />
           </button>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <label className="text-xs font-medium text-gray-700 block mb-1">Link Text</label>
@@ -232,7 +281,7 @@ const LinkModal = ({ isOpen, onClose, onInsert }) => {
               autoFocus
             />
           </div>
-          
+
           <div>
             <label className="text-xs font-medium text-gray-700 block mb-1">URL</label>
             <input
@@ -243,7 +292,7 @@ const LinkModal = ({ isOpen, onClose, onInsert }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-black"
             />
           </div>
-          
+
           <div className="flex gap-2 pt-2">
             <button
               onClick={onClose}
@@ -266,7 +315,7 @@ const LinkModal = ({ isOpen, onClose, onInsert }) => {
 };
 
 // Formatting Toolbar (Single Image Upload)
-const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload, textareaRef }) => {
+const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload, onInlineImageUpload, textareaRef }) => {
   const formats = [
     { icon: FiBold, action: 'bold', title: 'Bold' },
     { icon: FiItalic, action: 'italic', title: 'Italic' },
@@ -299,7 +348,7 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload,
         const lineStart = content.lastIndexOf('\n', start - 1) + 1;
         const lineEnd = content.indexOf('\n', start);
         const currentLine = content.substring(lineStart, lineEnd === -1 ? content.length : lineEnd);
-        
+
         if (currentLine.startsWith('# ')) {
           newContent = content.substring(0, lineStart) + currentLine.substring(2) + content.substring(lineEnd === -1 ? content.length : lineEnd);
           newCursorPos = start - 2;
@@ -313,7 +362,7 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload,
         const lineStart = content.lastIndexOf('\n', start - 1) + 1;
         const lineEnd = content.indexOf('\n', start);
         const currentLine = content.substring(lineStart, lineEnd === -1 ? content.length : lineEnd);
-        
+
         if (currentLine.startsWith('- ')) {
           newContent = content.substring(0, lineStart) + currentLine.substring(2) + content.substring(lineEnd === -1 ? content.length : lineEnd);
           newCursorPos = start - 2;
@@ -323,6 +372,16 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload,
         }
         break;
       }
+      case 'table':
+        const tableTemplate = `\n| Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |\n`;
+        newContent = content.substring(0, start) + tableTemplate + content.substring(end);
+        newCursorPos = start + tableTemplate.length;
+        break;
+      case 'button':
+        const btnTemplate = `[Button Text](btn:https://example.com)`;
+        newContent = content.substring(0, start) + btnTemplate + content.substring(end);
+        newCursorPos = start + btnTemplate.length;
+        break;
       default:
         return;
     }
@@ -350,6 +409,23 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload,
       ))}
       <div className="w-px h-5 bg-gray-300 mx-1" />
       <button
+        onClick={() => handleFormat('table')}
+        className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
+        title="Insert Table"
+        type="button"
+      >
+        <FiTable size={16} />
+      </button>
+      <button
+        onClick={() => handleFormat('button')}
+        className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
+        title="Insert Button"
+        type="button"
+      >
+        <FiSquare size={16} />
+      </button>
+      <div className="w-px h-5 bg-gray-300 mx-1" />
+      <button
         onClick={onLinkClick}
         className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
         title="Insert Link"
@@ -365,7 +441,29 @@ const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload,
       >
         <FiImage size={16} />
       </button>
-    
+
+      <div className="relative">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={onInlineImageUpload}
+          className="absolute inset-0 opacity-0 w-full cursor-pointer"
+          title="Upload image to post"
+        />
+        <button
+          className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black flex items-center gap-1"
+          title="Upload image to post"
+          type="button"
+          onClick={(e) => {
+            e.currentTarget.previousSibling?.click();
+          }}
+        >
+          <FiUploadCloud size={16} />
+        </button>
+      </div>
+
+      <div className="w-px h-5 bg-gray-300 mx-1" />
+
       <div className="relative">
         <input
           type="file"
@@ -408,12 +506,12 @@ const DeleteConfirmModal = ({ isOpen, blog, onConfirm, onCancel, isLoading }) =>
           </div>
           <h3 className="text-lg font-semibold text-gray-900">Delete Blog Post</h3>
         </div>
-        
+
         <p className="text-gray-600 mb-2">
           Are you sure you want to delete <span className="font-semibold">"{blog?.title || 'this post'}"</span>?
         </p>
         <p className="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
-        
+
         <div className="flex gap-3">
           <button
             onClick={onCancel}
@@ -455,19 +553,19 @@ const ViewBlogModal = ({ blog, onClose }) => {
             <FiX size={18} />
           </button>
         </div>
-        
+
         <div className="p-6">
           {blog.imageUrl && (
-            <img 
-              src={blog.imageUrl} 
-              alt={blog.title || 'Blog post'} 
+            <img
+              src={blog.imageUrl}
+              alt={blog.title || 'Blog post'}
               className="w-full h-48 object-cover rounded-lg mb-6"
               onError={(e) => {
                 e.target.src = 'https://via.placeholder.com/400x200?text=Image+Not+Found';
               }}
             />
           )}
-          
+
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
             <span className="flex items-center gap-1">
               <FiCalendar size={14} /> {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'No date'}
@@ -486,11 +584,11 @@ const ViewBlogModal = ({ blog, onClose }) => {
               </span>
             )}
           </div>
-          
+
           <h1 className="text-2xl font-bold text-gray-900 mb-4">{blog.title || 'Untitled'}</h1>
-          
+
           <MarkdownRenderer content={blog.content} />
-          
+
           {blog.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-gray-100">
               {blog.tags.map(tag => (
@@ -510,7 +608,7 @@ const ViewBlogModal = ({ blog, onClose }) => {
 const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
   // Don't render if blog is undefined
   if (!blog) return null;
-  
+
   return (
     <motion.div
       layout
@@ -521,9 +619,9 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
     >
       <div className="relative h-36 bg-gray-100">
         {blog.imageUrl ? (
-          <img 
-            src={blog.imageUrl} 
-            alt={blog.title || 'Blog post'} 
+          <img
+            src={blog.imageUrl}
+            alt={blog.title || 'Blog post'}
             className="w-full h-full object-cover"
             onError={(e) => {
               e.target.src = 'https://via.placeholder.com/150?text=No+Image';
@@ -541,9 +639,8 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
               Featured
             </span>
           )}
-          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-            blog.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-          }`}>
+          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${blog.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+            }`}>
             {blog.published ? 'published' : 'draft'}
           </span>
         </div>
@@ -553,7 +650,7 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
         <h3 className="font-medium text-gray-900 mb-2 line-clamp-2">
           {blog.title || 'Untitled'}
         </h3>
-        
+
         <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
           <span className="flex items-center gap-1">
             <FiCalendar size={12} />
@@ -571,22 +668,22 @@ const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
         </div>
 
         <div className="flex items-center justify-end gap-1 pt-3 border-t border-gray-100">
-          <button 
-            onClick={() => onView(blog)} 
+          <button
+            onClick={() => onView(blog)}
             className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50"
             title="View"
           >
             <FiEye size={16} />
           </button>
-          <button 
-            onClick={() => onEdit(blog)} 
+          <button
+            onClick={() => onEdit(blog)}
             className="p-2 text-gray-400 hover:text-gray-900 rounded-lg hover:bg-gray-100"
             title="Edit"
           >
             <FiEdit size={16} />
           </button>
-          <button 
-            onClick={() => onDelete(blog)} 
+          <button
+            onClick={() => onDelete(blog)}
             className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50"
             title="Delete"
           >
@@ -621,7 +718,7 @@ const BlogManager = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [newTag, setNewTag] = useState('');
   const [showLinkModal, setShowLinkModal] = useState(false);
-  
+
   const [newBlog, setNewBlog] = useState({
     title: '',
     content: '',
@@ -668,7 +765,7 @@ const BlogManager = () => {
   const handleFormat = (newContent) => {
     const textarea = textareaRef.current;
     const cursorPos = textarea?.selectionStart || 0;
-    
+
     if (editingBlog) {
       setEditingBlog({ ...editingBlog, content: newContent });
     } else {
@@ -691,17 +788,17 @@ const BlogManager = () => {
     const end = textarea.selectionEnd;
     const selectedText = textarea.value.substring(start, end) || text;
     const content = textarea.value;
-    
+
     const linkMarkdown = `[${selectedText}](${url})`;
     const newContent = content.substring(0, start) + linkMarkdown + content.substring(end);
-    
+
     handleFormat(newContent);
 
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + linkMarkdown.length, start + linkMarkdown.length);
     }, 0);
-    
+
     addAlert('success', 'Link inserted');
   };
 
@@ -715,17 +812,17 @@ const BlogManager = () => {
       const end = textarea.selectionEnd;
       const selectedText = textarea.value.substring(start, end);
       const content = textarea.value;
-      
+
       const imageMarkdown = `![${selectedText || 'Image'}](${url})`;
       const newContent = content.substring(0, start) + imageMarkdown + content.substring(end);
-      
+
       handleFormat(newContent);
 
       setTimeout(() => {
         textarea.focus();
         textarea.setSelectionRange(start + imageMarkdown.length, start + imageMarkdown.length);
       }, 0);
-      
+
       addAlert('success', 'Image URL inserted');
     }
   };
@@ -733,29 +830,29 @@ const BlogManager = () => {
   const handleImageUpload = async (e) => {
     console.log('📁 File input event:', e);
     console.log('📁 Files:', e.target.files);
-    
+
     const file = e.target.files?.[0];
-    
+
     if (!file) {
       console.log('❌ No file selected');
       addAlert('error', 'Please select a file');
       return;
     }
-    
+
     console.log('📄 File details:', {
       name: file.name,
       type: file.type,
       size: file.size,
       lastModified: new Date(file.lastModified).toISOString()
     });
-    
+
     // Validate file type
     if (!file.type.startsWith('image/')) {
       console.log('❌ Invalid file type:', file.type);
       addAlert('error', 'Please select an image file');
       return;
     }
-    
+
     // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
@@ -763,34 +860,35 @@ const BlogManager = () => {
       addAlert('error', 'File size too large (max 5MB)');
       return;
     }
-    
+
     setUploadingImage(true);
-    
+    addAlert('info', 'Uploading featured image...');
+
     // Create FormData and log it
     const formData = new FormData();
     formData.append('image', file);
-    
+
     console.log('📦 FormData created with file:', file.name);
-    
+
     try {
       console.log('📤 Sending to /api/upload...');
-      
+
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData
       });
-      
+
       console.log('📥 Response status:', response.status);
-      
+
       const data = await response.json();
       console.log('📥 Response data:', data);
-      
+
       if (response.ok && data.success) {
         console.log('✅ Upload successful! URL:', data.url);
-        
+
         // Store the file reference for later use
         currentFileRef.current = file;
-        
+
         // Set the image URL in the blog
         if (editingBlog) {
           setEditingBlog({ ...editingBlog, imageUrl: data.url });
@@ -812,6 +910,66 @@ const BlogManager = () => {
       // Reset file input
       e.target.value = '';
       console.log('🔄 File input reset');
+    }
+  };
+
+  const handleInlineImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      addAlert('error', 'Please select an image file');
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      addAlert('error', 'File size too large (max 5MB)');
+      return;
+    }
+
+    setUploadingImage(true);
+    addAlert('info', 'Uploading inline image...');
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        addAlert('success', 'Image inserted into post!');
+
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+        const content = textarea.value;
+
+        const imageMarkdown = `![${selectedText || 'Inline Image'}](${data.url})\n`;
+        const newContent = content.substring(0, start) + imageMarkdown + content.substring(end);
+
+        handleFormat(newContent);
+
+        setTimeout(() => {
+          textarea.focus();
+          textarea.setSelectionRange(start + imageMarkdown.length, start + imageMarkdown.length);
+        }, 0);
+      } else {
+        addAlert('error', data.error || 'Failed to upload image');
+      }
+    } catch (error) {
+      addAlert('error', 'Error uploading image: ' + error.message);
+    } finally {
+      setUploadingImage(false);
+      e.target.value = '';
     }
   };
 
@@ -845,7 +1003,7 @@ const BlogManager = () => {
     setIsLoading(true);
     try {
       const result = await blogService.createBlog(blogData);
-      
+
       if (result.success) {
         setBlogs(prev => [result.data, ...prev]);
         resetForm();
@@ -886,13 +1044,13 @@ const BlogManager = () => {
       console.log('📝 Blog data:', blogData);
 
       const result = await blogService.updateBlog(editingBlog.id, blogData);
-      
+
       if (result.success) {
         // Update the blog in the local state
-        setBlogs(prev => prev.map(b => 
+        setBlogs(prev => prev.map(b =>
           b.id === editingBlog.id ? { ...b, ...blogData, id: editingBlog.id } : b
         ));
-        
+
         cancelEdit();
         addAlert('success', 'Blog updated successfully in MongoDB!');
       } else {
@@ -913,11 +1071,11 @@ const BlogManager = () => {
     setIsLoading(true);
     try {
       const result = await blogService.deleteBlog(deleteConfirm.blog.id);
-      
+
       if (result.success) {
         setBlogs(prev => prev.filter(b => b.id !== deleteConfirm.blog.id));
         addAlert('success', `"${deleteConfirm.blog.title}" deleted successfully from MongoDB`);
-        
+
         if (viewingBlog?.id === deleteConfirm.blog.id) {
           setViewingBlog(null);
         }
@@ -938,7 +1096,7 @@ const BlogManager = () => {
 
   const handleEditClick = (blog) => {
     if (!blog) return;
-    
+
     setEditingBlog(blog);
     setActiveTab('create');
     setShowPreview(false);
@@ -962,32 +1120,32 @@ const BlogManager = () => {
   };
 
   const resetForm = () => {
-    setNewBlog({ 
-      title: '', 
-      content: '', 
-      excerpt: '', 
-      category: '', 
-      tags: [], 
-      imageUrl: '', 
-      featured: false, 
+    setNewBlog({
+      title: '',
+      content: '',
+      excerpt: '',
+      category: '',
+      tags: [],
+      imageUrl: '',
+      featured: false,
       published: false, // Changed from 'status' to 'published'
-      metaDescription: '' 
+      metaDescription: ''
     });
   };
 
   // UPDATED: Filter function using 'published' boolean
   const filteredBlogs = blogs.filter(blog => {
     if (!blog) return false;
-    
+
     const title = blog.title || '';
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch = searchTerm === '' ||
       title.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     // Use published boolean for filtering
-    const matchesStatus = filterStatus === 'all' || 
+    const matchesStatus = filterStatus === 'all' ||
       (filterStatus === 'published' && blog.published === true) ||
       (filterStatus === 'draft' && blog.published === false);
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -995,11 +1153,11 @@ const BlogManager = () => {
     <div className="min-h-screen bg-white">
       <AnimatePresence>
         {alerts.map(alert => (
-          <Alert key={alert.id} {...alert} onClose={() => {}} />
+          <Alert key={alert.id} {...alert} onClose={() => { }} />
         ))}
       </AnimatePresence>
 
-      <LinkModal 
+      <LinkModal
         isOpen={showLinkModal}
         onClose={() => setShowLinkModal(false)}
         onInsert={handleLinkInsert}
@@ -1046,22 +1204,20 @@ const BlogManager = () => {
           <div className="flex gap-6">
             <button
               onClick={() => setActiveTab('create')}
-              className={`py-3 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${
-                activeTab === 'create' 
-                  ? 'border-red-600 text-red-600' 
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`py-3 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'create'
+                ? 'border-red-600 text-red-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
               <FiPlus size={16} />
               Write
             </button>
             <button
               onClick={() => setActiveTab('manage')}
-              className={`py-3 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${
-                activeTab === 'manage' 
-                  ? 'border-red-600 text-red-600' 
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
+              className={`py-3 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'manage'
+                ? 'border-red-600 text-red-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
             >
               <FiEdit size={16} />
               Posts ({blogs.length})
@@ -1096,7 +1252,7 @@ const BlogManager = () => {
                 <input
                   type="text"
                   placeholder="Post title..."
-                  className="w-full px-0 py-2 text-xl font-medium border-0 focus:ring-0 placeholder-gray-300 bg-transparent"
+                  className="w-full px-0 py-2 text-xl font-medium border-0 focus:ring-0 placeholder-gray-300 bg-transparent text-gray-900"
                   value={editingBlog?.title || newBlog.title}
                   onChange={(e) => {
                     if (editingBlog) {
@@ -1107,11 +1263,12 @@ const BlogManager = () => {
                   }}
                 />
 
-                <FormattingToolbar 
+                <FormattingToolbar
                   onFormat={handleFormat}
                   onLinkClick={() => setShowLinkModal(true)}
                   onImageClick={handleImageUrlInsert}
                   onImageUpload={handleImageUpload}
+                  onInlineImageUpload={handleInlineImageUpload}
                   textareaRef={textareaRef}
                 />
 
@@ -1119,7 +1276,7 @@ const BlogManager = () => {
                   ref={textareaRef}
                   placeholder="Write your post... (Select text and click buttons to format)"
                   rows="10"
-                  className="w-full px-0 py-2 border-0 focus:ring-0 resize-none text-sm text-gray-700 placeholder-gray-300"
+                  className="w-full px-0 py-2 border-0 focus:ring-0 resize-none text-sm text-gray-900 placeholder-gray-300"
                   value={editingBlog?.content || newBlog.content}
                   onChange={(e) => {
                     if (editingBlog) {
@@ -1141,9 +1298,9 @@ const BlogManager = () => {
                 {/* Featured Image Preview */}
                 {(newBlog.imageUrl || editingBlog?.imageUrl) && (
                   <div className="mt-4 relative inline-block">
-                    <img 
-                      src={editingBlog?.imageUrl || newBlog.imageUrl} 
-                      alt="Featured" 
+                    <img
+                      src={editingBlog?.imageUrl || newBlog.imageUrl}
+                      alt="Featured"
                       className="h-20 w-auto rounded-lg border border-gray-200"
                     />
                     <button
@@ -1169,7 +1326,7 @@ const BlogManager = () => {
                     <div>
                       <label className="text-xs font-medium text-gray-500 block mb-1">Category</label>
                       <select
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-black"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-black text-gray-900"
                         value={editingBlog?.category || newBlog.category}
                         onChange={(e) => {
                           if (editingBlog) {
@@ -1192,7 +1349,7 @@ const BlogManager = () => {
                       <input
                         type="text"
                         placeholder="Short description"
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
                         value={editingBlog?.excerpt || newBlog.excerpt}
                         onChange={(e) => {
                           if (editingBlog) {
@@ -1211,7 +1368,7 @@ const BlogManager = () => {
                       <input
                         type="text"
                         placeholder="Add tag"
-                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addTag()}
@@ -1245,7 +1402,7 @@ const BlogManager = () => {
                     <textarea
                       placeholder="SEO description"
                       rows="2"
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
                       value={editingBlog?.metaDescription || newBlog.metaDescription}
                       onChange={(e) => {
                         if (editingBlog) {
@@ -1282,7 +1439,7 @@ const BlogManager = () => {
                       <FiSend className="text-green-500" size={14} />
                       Published
                     </label>
-                    
+
                     <label className="flex items-center gap-1.5 text-sm text-gray-600">
                       <input
                         type="checkbox"
@@ -1299,7 +1456,7 @@ const BlogManager = () => {
                       <FiStar className="text-yellow-500" size={14} />
                       Featured
                     </label>
-                    
+
                     <button
                       onClick={() => setShowPreview(!showPreview)}
                       className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
@@ -1318,8 +1475,8 @@ const BlogManager = () => {
                         >
                           Cancel
                         </button>
-                        <button 
-                          onClick={updateBlog} 
+                        <button
+                          onClick={updateBlog}
                           disabled={isLoading || uploadingImage}
                           className="px-4 py-2 bg-black text-white rounded-lg text-sm hover:bg-gray-800 flex items-center gap-1 disabled:opacity-50"
                         >
@@ -1329,15 +1486,15 @@ const BlogManager = () => {
                       </>
                     ) : (
                       <>
-                        <button 
-                          onClick={() => saveBlog(false)} 
+                        <button
+                          onClick={() => saveBlog(false)}
                           disabled={isLoading || uploadingImage}
                           className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50"
                         >
                           {isLoading ? 'Saving...' : 'Save Draft'}
                         </button>
-                        <button 
-                          onClick={() => saveBlog(true)} 
+                        <button
+                          onClick={() => saveBlog(true)}
                           disabled={isLoading || uploadingImage}
                           className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 flex items-center gap-1 disabled:opacity-50"
                         >
@@ -1360,10 +1517,10 @@ const BlogManager = () => {
                 </h3>
                 <div className="prose prose-sm max-w-none">
                   {(editingBlog?.imageUrl || newBlog.imageUrl) && (
-                    <img 
-                      src={editingBlog?.imageUrl || newBlog.imageUrl} 
-                      alt="Featured" 
-                      className="w-full h-40 object-cover rounded-lg mb-4" 
+                    <img
+                      src={editingBlog?.imageUrl || newBlog.imageUrl}
+                      alt="Featured"
+                      className="w-full h-40 object-cover rounded-lg mb-4"
                     />
                   )}
 

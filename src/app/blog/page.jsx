@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import HeroSection from '@/components/HeroSection';
-import { 
+import {
   FiSearch, FiCalendar, FiClock, FiArrowRight,
   FiGrid, FiList, FiChevronLeft, FiChevronRight, FiRefreshCw,
   FiMessageCircle
@@ -23,16 +23,16 @@ export default function BlogPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
+
   // Refs for animations
   const rowsRef = useRef([]);
-  
+
   const postsPerPage = 9;
 
   // Function to strip markdown for excerpts
   const stripMarkdown = (text) => {
     if (!text) return '';
-    
+
     return text
       .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
       .replace(/\*\*(.*?)\*\*/g, '$1')
@@ -70,12 +70,12 @@ export default function BlogPage() {
     } else {
       setIsLoading(true);
     }
-    
+
     try {
       const publishedBlogs = await getPublishedBlogs();
       setBlogs(publishedBlogs);
       setFilteredBlogs(publishedBlogs);
-      
+
       const cats = await getAllCategories();
       setCategories(['All', ...cats]);
     } catch (error) {
@@ -90,12 +90,12 @@ export default function BlogPage() {
   useEffect(() => {
     const filterBlogsAsync = async () => {
       let results = blogs;
-      
+
       // Apply category filter
       if (selectedCategory !== 'All') {
         results = results.filter(blog => blog.category === selectedCategory);
       }
-      
+
       // Apply search
       if (searchQuery) {
         results = await searchBlogs(searchQuery);
@@ -103,7 +103,7 @@ export default function BlogPage() {
           results = results.filter(blog => blog.category === selectedCategory);
         }
       }
-      
+
       setFilteredBlogs(results);
       setCurrentPage(1);
     };
@@ -144,7 +144,7 @@ export default function BlogPage() {
         gradientVia="via-red-700"
         gradientTo="to-black"
       />
-      
+
       {/* Search and Filter Bar */}
       <section className="sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-200 z-10 py-4">
         <div className="max-w-7xl mx-auto px-4">
@@ -153,36 +153,34 @@ export default function BlogPage() {
             <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 w-full sm:w-auto">
               <button
                 onClick={() => setSelectedCategory('All')}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                  selectedCategory === 'All'
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === 'All'
                     ? 'bg-gradient-to-r from-black via-red-600 to-black text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                  }`}
               >
-                All 
+                All
               </button>
               {categories.filter(c => c !== 'All').map(category => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                    selectedCategory === category
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === category
                       ? 'bg-gradient-to-r from-black via-red-600 to-black text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
+                    }`}
                 >
                   {category}
                 </button>
               ))}
             </div>
-            
+
             {/* Search */}
             <div className="relative w-full sm:w-96">
               <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 type="text"
                 placeholder="Search articles..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all"
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all text-gray-900"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -198,21 +196,19 @@ export default function BlogPage() {
               >
                 <FiRefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
               </button>
-              
+
               <div className="hidden sm:flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'grid' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-500'
-                  }`}
+                  className={`p-2 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-500'
+                    }`}
                 >
                   <FiGrid size={18} />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'list' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-500'
-                  }`}
+                  className={`p-2 rounded-md transition-colors ${viewMode === 'list' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-500'
+                    }`}
                 >
                   <FiList size={18} />
                 </button>
@@ -241,7 +237,7 @@ export default function BlogPage() {
                 )}
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-              
+
               <div className="relative p-8 md:p-12">
                 <div className="max-w-3xl">
                   <div className="flex items-center gap-3 text-sm text-red-400 mb-4">
@@ -257,15 +253,15 @@ export default function BlogPage() {
                       {featuredPost.readTime} min read
                     </span>
                   </div>
-                  
+
                   <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 group-hover:text-red-400 transition-colors">
                     {featuredPost.title}
                   </h2>
-                  
+
                   <p className="text-gray-300 text-lg mb-6 line-clamp-2">
                     {featuredPost.excerpt || stripMarkdown(featuredPost.content?.substring(0, 200))}...
                   </p>
-                  
+
                   <div className="flex items-center gap-4">
                     <span className="text-white font-medium">Read Article</span>
                     <FiArrowRight className="text-red-400 group-hover:translate-x-2 transition-transform" size={20} />
@@ -324,14 +320,14 @@ export default function BlogPage() {
         {!isLoading && !isRefreshing && viewMode === 'grid' && filteredBlogs.length > 0 && (
           <div className="space-y-8 mt-8">
             {rows.map((row, rowIndex) => (
-              <div 
+              <div
                 key={rowIndex}
                 ref={el => rowsRef.current[rowIndex] = el}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
               >
                 {row.map((blog) => {
                   const { day, month, year } = formatReadableDate(blog.createdAt);
-                  
+
                   return (
                     <Link
                       href={`/blog/${blog.slug || blog.id}`}
@@ -352,7 +348,7 @@ export default function BlogPage() {
                             <span className="text-gray-400">No image</span>
                           </div>
                         )}
-                        
+
                         {/* Category Overlay */}
                         {blog.category && (
                           <div className="absolute top-4 left-4">
@@ -408,7 +404,7 @@ export default function BlogPage() {
                             </div>
                             <span className="font-manrope text-sm font-medium text-gray-700">{blog.author}</span>
                           </div>
-                          
+
                           <div className="flex items-center gap-1 text-gray-600 group-hover:text-red-600 transition-colors duration-300">
                             <span className="font-manrope text-sm font-medium">Read More</span>
                             <FiArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -518,21 +514,20 @@ export default function BlogPage() {
             >
               <FiChevronLeft size={20} />
             </button>
-            
+
             {[...Array(totalPages)].map((_, i) => (
               <button
                 key={i + 1}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`w-10 h-10 rounded-lg font-medium transition-colors ${
-                  currentPage === i + 1
+                className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === i + 1
                     ? 'bg-red-600 text-white'
                     : 'border border-gray-200 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 {i + 1}
               </button>
             ))}
-            
+
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
