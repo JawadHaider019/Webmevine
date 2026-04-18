@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Block admin and API routes from being crawled
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api
+Disallow: /api/
+
+# Site-map location
+Sitemap: https://webmavien.com/sitemap.xml
