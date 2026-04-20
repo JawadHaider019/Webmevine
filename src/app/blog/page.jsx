@@ -223,7 +223,7 @@ export default function BlogPage() {
       {/* Featured Post Section - ADD THIS BACK */}
       {featuredPost && selectedCategory === 'All' && !searchQuery && !isLoading && (
         <section className="max-w-7xl mx-auto px-4 py-12">
-          <Link href={`/blog/${featuredPost.slug || featuredPost.id}`}>
+          <Link href={`/blog/${featuredPost.slug}`}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -330,7 +330,7 @@ export default function BlogPage() {
 
                   return (
                     <Link
-                      href={`/blog/${blog.slug || blog.id}`}
+                      href={`/blog/${blog.slug}`}
                       key={blog.id}
                       className="group bg-white rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:border-gray-400"
                     >
@@ -412,7 +412,7 @@ export default function BlogPage() {
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Link href={`/blog/${blog.slug || blog.id}`}>
+                  <Link href={`/blog/${blog.slug}`}>
                     <div className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1">
                       <div className="flex flex-col md:flex-row">
                         {/* Image */}

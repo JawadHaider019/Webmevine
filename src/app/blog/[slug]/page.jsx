@@ -481,7 +481,7 @@ export default function BlogPostPage() {
 
                 return (
                   <Link
-                    href={`/blog/${post.slug || post.id}`}
+                    href={`/blog/${post.slug}`}
                     key={post.id}
                     className="group bg-white rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:border-gray-400"
                   >

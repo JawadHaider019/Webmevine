@@ -64,10 +64,12 @@ export async function POST(request) {
     // Generate slug
     let slug = generateSlug(body.title);
 
-    // Check if slug exists
-    const existing = await db.collection(COLLECTION).findOne({ slug });
-    if (existing) {
-      slug = `${slug}-${Date.now()}`;
+    // Check if slug exists, use counter-based suffix instead of timestamp
+    let baseSlug = slug;
+    let counter = 2;
+    while (await db.collection(COLLECTION).findOne({ slug })) {
+      slug = `${baseSlug}-${counter}`;
+      counter++;
     }
 
     // Prepare the blog post with proper fields
