@@ -5,13 +5,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import GlowingButton from './GlowingButton';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-    const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear();
 
   // Handle mount state to prevent hydration mismatch
   useEffect(() => {
@@ -21,7 +22,7 @@ export default function Navbar() {
   // Handle scroll effect - only on client side
   useEffect(() => {
     if (!mounted) return;
-    
+
     const handleScroll = () => {
       const isScrolled = window.scrollY > 20;
       if (isScrolled !== scrolled) {
@@ -32,7 +33,7 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     // Initial check
     handleScroll();
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -41,7 +42,7 @@ export default function Navbar() {
   // Prevent scrolling when drawer is open
   useEffect(() => {
     if (!mounted) return;
-    
+
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -62,7 +63,7 @@ export default function Navbar() {
 
   // Animation variants for mobile nav items (right to left)
   const mobileNavItemVariants = {
-    hidden: { 
+    hidden: {
       opacity: 0,
       x: 50,
       filter: "blur(4px)"
@@ -98,32 +99,32 @@ export default function Navbar() {
               <div className="relative shadow-xl px-3 sm:px-4 py-1 bg-white">
                 <div className="flex items-center justify-between h-12 sm:h-14">
                   <div className="flex items-center">
-                <div className="flex items-center">
-  <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
-    <Image 
-      src="/logo.png" 
-      alt="Web Mavein Logo"
-      width={140}
-      height={140}
-      className="object-contain w-full h-auto"
-      priority
-    />
-  </div>
-</div>
+                    <div className="flex items-center">
+                      <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
+                        <Image
+                          src="/logo.png"
+                          alt="Web Mavein Logo"
+                          width={140}
+                          height={140}
+                          className="object-contain w-full h-auto"
+                          priority
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </nav>
-   
+
       </>
     );
   }
 
   return (
     <>
-      <motion.nav 
+      <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -133,12 +134,12 @@ export default function Navbar() {
           {/* Main navbar container */}
           <div className="relative group">
             {/* Main navbar with scroll-based blur - SOLUTION 3 APPLIED */}
-            <motion.div 
+            <motion.div
               animate={{
                 backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.9)' : 'white',
                 backdropFilter: scrolled ? 'blur(10px)' : 'none',
-                boxShadow: scrolled 
-                  ? '0 4px 30px rgba(0, 0, 0, 0.1)' 
+                boxShadow: scrolled
+                  ? '0 4px 30px rgba(0, 0, 0, 0.1)'
                   : '0 2px 10px rgba(0, 0, 0, 0.05)',
               }}
               transition={{ duration: 0.3, ease: "easeOut" }}
@@ -147,25 +148,25 @@ export default function Navbar() {
                 WebkitBackdropFilter: scrolled ? 'blur(10px)' : 'none',
               }}
             >
-              <div className="flex items-center justify-between h-12 sm:h-14">
+              <div className="flex items-center justify-between h-15">
                 {/* Logo */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
-                 <Link href="/" className="flex items-center group/logo">
-  <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
-    <Image 
-      src="/logo.png" 
-      alt="WebMevine Logo"
-      width={140}
-      height={140}
-      className="object-contain w-full h-auto"
-      priority
-    />
-  </div>
-</Link>
+                  <Link href="/" className="flex items-center group/logo">
+                    <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
+                      <Image
+                        src="/logo.png"
+                        alt="WebMevine Logo"
+                        width={140}
+                        height={140}
+                        className="object-contain w-full h-auto"
+                        priority
+                      />
+                    </div>
+                  </Link>
                 </motion.div>
 
                 {/* Desktop Navigation Links */}
@@ -181,11 +182,10 @@ export default function Navbar() {
                       >
                         <Link
                           href={link.href}
-                          className={`relative px-3 xl:px-4 py-1.5 uppercase transition-all duration-300 text-[11px] xl:text-xs tracking-[0.2em] font-light group/link ${
-                            isActive 
-                              ? 'text-red-600 font-normal' 
-                              : 'text-black hover:text-gray-800'
-                          }`}
+                          className={`relative px-3 xl:px-4 py-1.5 uppercase transition-all duration-300 text-[11px] xl:text-xs tracking-[0.2em] font-light group/link ${isActive
+                            ? 'text-red-600 font-normal'
+                            : 'text-black hover:text-gray-800'
+                            }`}
                           style={{ fontFamily: 'var(--font-manrope)' }}
                         >
                           <span className="relative z-10 font-bold ">{link.label}</span>
@@ -199,7 +199,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Book Meeting - Desktop & Tablet (text) + Mobile (icon) */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
@@ -210,9 +210,13 @@ export default function Navbar() {
                     href="/contact"
                     className="relative group/btn hidden sm:block"
                   >
-                    <button className="btn-primary px-3 py-1 text-[9px] sm:text-[10px] whitespace-nowrap tracking-wider">
-                      Book Meeting
-                    </button>
+                    <GlowingButton
+                      glowColor="255, 255, 255"
+                      variant="primary"
+                      className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 text-base sm:text-lg"
+                    >
+                      Book a Meeting
+                    </GlowingButton>
                   </Link>
 
                   {/* Mobile: Icon button */}
@@ -229,16 +233,16 @@ export default function Navbar() {
                   </Link>
 
                   {/* Mobile/Tablet Menu Button */}
-                  <motion.button 
+                  <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setIsOpen(true)}
                     className="lg:hidden relative w-6 h-6 sm:w-7 sm:h-7 transition-colors duration-300 focus:outline-none group"
                   >
-                    <svg 
-                      className="w-3.5 h-3.5 sm:w-4 sm:h-4 mx-auto text-gray-900" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className="w-3.5 h-3.5 sm:w-4 sm:h-4 mx-auto text-gray-900"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -257,7 +261,7 @@ export default function Navbar() {
         {isOpen && (
           <div className="fixed inset-0 z-[100]">
             {/* Backdrop with blur */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -265,9 +269,9 @@ export default function Navbar() {
               className="absolute inset-0 bg-black/40 backdrop-blur-md"
               onClick={() => setIsOpen(false)}
             />
-            
+
             {/* Drawer - Premium Design */}
-            <motion.div 
+            <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -276,27 +280,27 @@ export default function Navbar() {
               style={{ boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.15)' }}
             >
               {/* Decorative red gradient line */}
-              <motion.div 
+              <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600 origin-left"
               />
-              
+
               {/* Drawer Header with close button */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.15 }}
                 className="relative flex items-center justify-between p-6 border-b border-red-600/10"
               >
-                <span 
+                <span
                   className="text-gray-900 text-sm sm:text-base tracking-[0.3em] uppercase font-light"
                   style={{ fontFamily: 'var(--font-manrope)' }}
                 >
                   Navigation
                 </span>
-                <motion.button 
+                <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setIsOpen(false)}
@@ -325,32 +329,30 @@ export default function Navbar() {
                         <Link
                           href={link.href}
                           onClick={() => setIsOpen(false)}
-                          className={`group relative px-4 py-3 rounded-xl transition-all duration-300 block ${
-                            isActive 
-                              ? 'text-red-500 bg-red-600/5' 
-                              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100/80'
-                          }`}
+                          className={`group relative px-4 py-3 rounded-xl transition-all duration-300 block ${isActive
+                            ? 'text-red-500 bg-red-600/5'
+                            : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100/80'
+                            }`}
                         >
                           {/* Active indicator */}
                           {isActive && (
-                            <motion.span 
+                            <motion.span
                               initial={{ scaleY: 0 }}
                               animate={{ scaleY: 1 }}
                               transition={{ duration: 0.3 }}
                               className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-red-600 to-red-800 rounded-full origin-top"
                             />
                           )}
-                          
+
                           {/* Link text */}
-                          <span 
-                            className={`block text-sm sm:text-base tracking-[0.15em] uppercase ${
-                              isActive ? 'font-normal' : 'font-light'
-                            }`}
+                          <span
+                            className={`block text-sm sm:text-base tracking-[0.15em] uppercase ${isActive ? 'font-normal' : 'font-light'
+                              }`}
                             style={{ fontFamily: 'var(--font-manrope)' }}
                           >
                             {link.label}
                           </span>
-                          
+
                           {/* Subtle hover effect */}
                           <span className="absolute inset-x-4 bottom-2 h-[1px] bg-gradient-to-r from-red-600/0 via-red-600/0 to-red-600/0 group-hover:from-red-600/0 group-hover:via-red-600/30 group-hover:to-red-600/0 transition-all duration-500" />
                         </Link>
@@ -360,7 +362,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Premium Divider */}
-                <motion.div 
+                <motion.div
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ duration: 0.5, delay: 0.5 }}
@@ -380,21 +382,18 @@ export default function Navbar() {
                     onClick={() => setIsOpen(false)}
                     className="sm:hidden block"
                   >
-                    <motion.button 
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full px-4 py-3.5 bg-gradient-to-r from-red-600 to-red-700 text-white text-sm font-normal rounded-xl transition-all duration-300 tracking-[0.15em] uppercase shadow-lg shadow-red-600/20 flex items-center justify-center gap-3 hover:shadow-xl hover:shadow-red-600/30"
+                    <GlowingButton
+                      glowColor="255, 255, 255"
+                      variant="primary"
+                      className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 text-base sm:text-lg"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      Book Meeting
-                    </motion.button>
+                      Book a Meeting
+                    </GlowingButton>
                   </Link>
                 </motion.div>
 
                 {/* Footer */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3, delay: 0.7 }}

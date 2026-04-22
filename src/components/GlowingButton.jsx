@@ -1,31 +1,23 @@
 // src/components/GlowingButton.jsx
 import { motion } from 'framer-motion';
+import { Zap } from 'lucide-react';
 
-const GlowingButton = ({ 
-  children, 
-  onClick, 
+const GlowingButton = ({
+  children,
+  onClick,
   variant = "primary", // "primary" or "secondary"
   className = "",
   glowColor = "255, 0, 0",
   spreadSize = "small",
   speed = "medium",
-  waveCount = 3, // Back to 3 waves for more visibility
-  ...props 
+  waveCount = 3,
+  ...props
 }) => {
-  
+
   const spreadConfig = {
-    small: {
-      baseScale: 1.0,
-      increment: 0.04,
-    },
-    medium: {
-      baseScale: 1.02,
-      increment: 0.06,
-    },
-    large: {
-      baseScale: 1.04,
-      increment: 0.08,
-    }
+    small: { baseScale: 1.0, increment: 0.03 },
+    medium: { baseScale: 1.02, increment: 0.05 },
+    large: { baseScale: 1.04, increment: 0.07 }
   };
 
   const speedConfig = {
@@ -37,83 +29,86 @@ const GlowingButton = ({
   const selectedSpread = spreadConfig[spreadSize] || spreadConfig.small;
   const selectedSpeed = speedConfig[speed] || speedConfig.medium;
 
-  // Determine button class based on variant
   const buttonClass = variant === "primary" ? "btn-primary" : "btn-secondary";
 
-  // Generate glow waves with good visibility but tight spread
   const waves = Array.from({ length: waveCount }).map((_, index) => {
-    const delay = index * 0.15;
-    const scaleMultiplier = 1 + (index * selectedSpread.increment);
-    const maxScale = Math.min(1 + ((index + 1) * 0.03), 1.12); // Max 12% growth
-    const opacity = Math.max(0.5 - (index * 0.12), 0.15);
-    const blurAmount = 3 + (index * 1.5);
-    
+    const delay = index * 0.2;
+    const maxScale = Math.min(1 + ((index + 1) * 0.02), 1.08);
+    const opacity = Math.max(0.4 - (index * 0.1), 0.1);
+
     return {
       id: index,
       delay,
       scale: [1, maxScale, 1],
-      opacity: [0.2, opacity, 0.2],
-      blurAmount,
+      opacity: [0.15, opacity, 0.15],
       zIndex: -1 - index,
     };
   });
 
-  // Create synchronized animation for float and glow
-  const buttonAnimation = {
-    y: [0, -4, 0, 4, 0], // Visible float
-    scale: [1, 1.03, 1, 0.97, 1], // Visible scale
+  const floatAnimation = {
+    y: [0, -4, 0],
     transition: {
-      y: {
-        duration: selectedSpeed.duration,
-        repeat: Infinity,
-        ease: "easeInOut",
-        times: [0, 0.25, 0.5, 0.75, 1]
-      },
-      scale: {
-        duration: selectedSpeed.duration,
-        repeat: Infinity,
-        ease: "easeInOut",
-        times: [0, 0.25, 0.5, 0.75, 1]
-      }
+      duration: selectedSpeed.duration,
+      repeat: Infinity,
+      ease: "easeInOut",
     }
   };
 
   return (
     <motion.button
-      animate={buttonAnimation}
-      whileHover={{ 
-        scale: 1.05,
+      animate={floatAnimation}
+      whileHover={{
+        scale: 1.02,
         y: -5,
-        transition: { duration: 0.2 }
+        transition: { type: "spring", stiffness: 400, damping: 10 }
       }}
-      whileTap={{ 
-        scale: 0.95,
-        y: 2,
-        transition: { duration: 0.1 }
+      whileTap={{
+        scale: 0.98,
+        y: 0
       }}
-      className={`relative overflow-visible group ${buttonClass} ${className}`}
+      className={`relative overflow-visible group flex items-center justify-center ${buttonClass} ${className}`}
+      style={{
+        background: variant === "primary"
+          ? `linear-gradient(135deg, #cc0000 0%, #000000 100%)`
+          : undefined,
+        boxShadow: variant === "primary"
+          ? `0 10px 30px -10px rgba(${glowColor}, 0.5)`
+          : undefined,
+      }}
       onClick={onClick}
       {...props}
     >
-      {/* Multiple glow wave effects - visible but tight */}
+      {/* Background Shimmer Effect */}
+      <div className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
+        <motion.div
+          animate={{
+            x: ['-100%', '200%'],
+          }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            ease: "easeInOut",
+            repeatDelay: 1
+          }}
+          className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg] z-0"
+        />
+      </div>
+
+      {/* Subtle Inner Ring */}
+      <div className="absolute inset-[1px] rounded-full border border-white/10 z-0 pointer-events-none" />
+
+      {/* Glow Waves */}
       {waves.map((wave) => (
         <motion.span
           key={wave.id}
           className="absolute inset-0 rounded-full pointer-events-none"
           style={{
-            // Balanced glow - visible but not spreading too far
-            boxShadow: `0 0 ${12 + wave.id * 4}px ${4 + wave.id}px rgba(${glowColor}, ${0.25})`,
-            filter: `blur(${wave.blurAmount}px)`,
+            boxShadow: `0 0 ${15 + wave.id * 5}px rgba(${glowColor}, ${0.3})`,
             zIndex: wave.zIndex,
           }}
           animate={{
             scale: wave.scale,
             opacity: wave.opacity,
-            boxShadow: [
-              `0 0 ${8 + wave.id * 2}px ${2 + wave.id}px rgba(${glowColor}, 0.15)`,
-              `0 0 ${15 + wave.id * 5}px ${5 + wave.id * 1.5}px rgba(${glowColor}, 0.4)`,
-              `0 0 ${8 + wave.id * 2}px ${2 + wave.id}px rgba(${glowColor}, 0.15)`,
-            ],
           }}
           transition={{
             duration: selectedSpeed.duration,
@@ -124,7 +119,11 @@ const GlowingButton = ({
         />
       ))}
 
-      <span className="relative z-10 font-medium">{children}</span>
+      {/* Button Content */}
+      <span className="relative z-10 flex items-center gap-2 font-semibold tracking-wide">
+        {children}
+
+      </span>
     </motion.button>
   );
 };

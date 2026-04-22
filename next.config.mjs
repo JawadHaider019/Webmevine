@@ -8,7 +8,15 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
         port: '',
-        pathname: '/dymvz3pmd/image/upload/**', // This matches your Cloudinary account ID
+        pathname: '/dymvz3pmd/image/upload/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
       },
     ],
   },
