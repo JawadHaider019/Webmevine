@@ -2,6 +2,7 @@ import { Marcellus, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CustomCursor from "@/components/CustomCursor";
 
 const marcellus = Marcellus({
   weight: "400",
@@ -113,6 +114,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="antialiased">
+        <CustomCursor />
         <Navbar />
         {children}
         <Footer />

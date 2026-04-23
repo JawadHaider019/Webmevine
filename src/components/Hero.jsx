@@ -205,43 +205,41 @@ export default function Hero() {
         </div>
 
         {/* Right Visual Component */}
-        <div className="flex flex-col gap-8 lg:gap-10 w-full relative z-10 order-1 lg:order-2 mb-8 lg:mb-0">
+        <div className="flex flex-col items-center justify-center   gap-4  w-full relative z-10 order-1 lg:order-2">
           <motion.div
             style={{ rotateX, rotateY, perspective: 1000, transformStyle: "preserve-3d" }}
-            className="relative group w-full"
+            className="relative w-full grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
-            {/* Main Visual Container */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-              className="relative aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-white/10 shadow-2xl"
-            >
-              {/* Glassmorphism Video UI Mockup */}
-              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1000')] bg-cover bg-center opacity-40 mix-blend-luminosity" />
+            {/* Service Cards */}
+            {[
+              { title: "Web Development", desc: "Luxury & High Performance ", icon: <Rocket className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" /> },
+              { title: "No-Code Solutions", desc: "Fast &   High Converting", icon: <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" /> },
+              { title: "SaaS Development", desc: "Fast & Scalable  Platforms", icon: <Globe className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" /> },
+              { title: "E-Commerce", desc: "Custom & Scalable Stores", icon: <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" /> }
+            ].map((service, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.95 }}
+                whileHover={{
+                  y: -12,
+                  scale: 1.03,
+                  transition: { duration: 0.2, ease: "easeOut" }
+                }}
+                transition={{ duration: 0.6, delay: 0.4 + idx * 0.15 }}
+                style={{ transformStyle: "preserve-3d" }}
+                className="bg-gray-900/40 backdrop-blur-lg border border-white/10 p-6 sm:p-8 rounded-2xl sm:rounded-3xl hover:border-red-600/60 hover:bg-gray-900/60 transition-colors duration-200 group shadow-2xl relative overflow-hidden flex flex-col items-start cursor-pointer"
+              >
+                {/* Glow effect on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-              {/* Play Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors duration-500 cursor-pointer">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center shadow-2xl shadow-red-600/20 relative z-10"
-                >
-                  <Play className="text-red-600 fill-red-600 ml-1 w-6 h-6 sm:w-8 sm:h-8" />
-                  {/* Ripple Effect */}
-                  <div className="absolute inset-0 rounded-full border-2 border-white animate-ping opacity-20" />
-                </motion.div>
-              </div>
-
-              <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-black/60 backdrop-blur-md border border-white/10">
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-1">
-                    {[1, 2, 3].map(i => <div key={i} className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-red-600 border border-black" />)}
-                  </div>
-                  <span className="text-[8px] sm:text-[10px] text-gray-300 font-medium">9.8/10 Satisfaction</span>
+                <div className="bg-red-600/10 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 group-hover:bg-red-600/20 transition-all duration-300 relative z-10">
+                  {service.icon}
                 </div>
-              </div>
-            </motion.div>
+                <h3 className="text-white text-base sm:text-lg font-bold mb-1.5 relative z-10 tracking-wide" style={{ fontFamily: 'var(--font-marcellus)' }}>{service.title}</h3>
+                <p className="text-gray-400 text-xs sm:text-sm relative z-10 leading-relaxed" style={{ fontFamily: 'var(--font-manrope)' }}>{service.desc}</p>
+              </motion.div>
+            ))}
 
             {/* Decorative glowing blobs */}
             <div className="absolute -z-10 -top-6 -right-6 sm:-top-10 sm:-right-10 w-24 h-24 sm:w-40 sm:h-40 bg-red-600/20 blur-2xl sm:blur-3xl rounded-full" />
@@ -251,17 +249,22 @@ export default function Hero() {
           {/* Features Row */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4"
+            className="flex flex-wrap justify-center lg:justify-start gap-3 "
           >
             {[
               { icon: <Globe size={16} />, text: "Global Clients" },
               { icon: <CheckCircle2 size={16} />, text: "Standardized QC" },
               { icon: <Rocket size={16} />, text: "Rapid Launch" }
             ].map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-gray-400 hover:text-red-500 transition-all duration-300 group bg-white/[0.03] backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/5 hover:border-red-500/30">
+              <motion.div
+                key={idx}
+                whileHover={{ y: -5, scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-2 text-gray-900 hover:text-red-500 transition-colors duration-200 group bg-gray-100  px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/5 hover:border-red-500/30 cursor-pointer"
+              >
                 <span className="text-red-600/60 group-hover:text-red-600 transition-colors">{item.icon}</span>
                 <span className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest">{item.text}</span>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>

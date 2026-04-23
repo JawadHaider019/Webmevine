@@ -22,10 +22,10 @@ export default function HowItWorks() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -77,12 +77,12 @@ export default function HowItWorks() {
   };
 
   const itemVariants = {
-    hidden: { 
-      opacity: 0, 
+    hidden: {
+      opacity: 0,
       y: 30
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         type: "spring",
@@ -94,11 +94,11 @@ export default function HowItWorks() {
   };
 
   const numberVariants = {
-    hidden: { 
+    hidden: {
       opacity: 0,
       scale: 0,
     },
-    visible: { 
+    visible: {
       opacity: 1,
       scale: 1,
       transition: {
@@ -112,11 +112,11 @@ export default function HowItWorks() {
 
   // Mobile-friendly variants
   const cardVariants = {
-    hidden: { 
+    hidden: {
       opacity: 0,
       x: -20
     },
-    visible: { 
+    visible: {
       opacity: 1,
       x: 0,
       transition: {
@@ -166,7 +166,7 @@ export default function HowItWorks() {
         >
           {/* Vertical Line - Desktop only */}
           {!isMobile && (
-            <motion.div 
+            <motion.div
               className="absolute left-1/2 -translate-x-1/2 w-[2px] h-full hidden md:block"
               initial={{ scaleY: 0 }}
               whileInView={{ scaleY: 1 }}
@@ -188,28 +188,25 @@ export default function HowItWorks() {
             // For mobile: simple left-aligned layout
             // For desktop: alternating left/right
             const isLeft = !isMobile && index % 2 === 0;
-            
+
             return (
               <motion.div
                 key={step.id}
                 variants={itemVariants}
-                className={`relative flex flex-col ${
-                  isMobile ? 'ml-12 mb-8' : `md:flex-row items-start gap-8 mb-8 last:mb-0 ${
-                    isLeft ? 'md:flex-row' : 'md:flex-row-reverse'
-                  }`
-                }`}
+                className={`relative flex flex-col ${isMobile ? 'ml-12 mb-8' : `md:flex-row items-start gap-8 mb-8 last:mb-0 ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'
+                    }`
+                  }`}
               >
                 {/* Number Circle with Icon */}
-                <motion.div 
-                  className={`${
-                    isMobile 
-                      ? 'absolute -left-12 top-0 z-10' 
+                <motion.div
+                  className={`${isMobile
+                      ? 'absolute -left-12 top-0 z-10'
                       : 'absolute left-0 md:left-1/2 md:-translate-x-1/2 -top-2 md:top-1/2 md:-translate-y-1/2 '
-                  }`}
+                    }`}
                   variants={numberVariants}
                 >
                   <motion.div
-                    whileHover={{ scale: 1.1}}
+                    whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-lg cursor-default"
                   >
@@ -217,28 +214,26 @@ export default function HowItWorks() {
                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-600 via-red-400 to-red-600 p-[2px]">
                       <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
                         {/* Icon inside */}
-                        <FontAwesomeIcon 
-                          icon={step.icon} 
+                        <FontAwesomeIcon
+                          icon={step.icon}
                           className="w-5 h-5 text-red-600"
                         />
                       </div>
                     </div>
-                    
-            
+
+
                   </motion.div>
                 </motion.div>
 
                 {/* Content Card */}
-                <div className={`w-full ${
-                  isMobile 
-                    ? '' 
-                    : `md:w-[calc(50%-40px)] ${
-                        isLeft ? 'md:pr-8' : 'md:pl-8 md:text-right'
-                      }`
-                }`}>
+                <div className={`w-full ${isMobile
+                    ? ''
+                    : `md:w-[calc(50%-40px)] ${isLeft ? 'md:pr-8' : 'md:pl-8 md:text-right'
+                    }`
+                  }`}>
                   <motion.div
                     variants={isMobile ? cardVariants : (isLeft ? leftCardVariants : rightCardVariants)}
-                    whileHover={!isMobile ? { 
+                    whileHover={!isMobile ? {
                       y: -5,
                       boxShadow: "0 20px 40px rgba(239,68,68,0.15)"
                     } : {}}
@@ -256,7 +251,7 @@ export default function HowItWorks() {
                     {/* Title with Icon for Mobile */}
                     {isMobile && (
                       <div className="flex items-center gap-2 mb-2">
-                      
+
                         <span className="text-sm font-['Manrope'] text-red-600 font-semibold">
                           {step.week}
                         </span>
@@ -264,16 +259,14 @@ export default function HowItWorks() {
                     )}
 
                     {/* Title */}
-                    <h3 className={`font-['Marcellus'] text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 ${
-                      !isMobile && isLeft ? 'pr-20' : !isMobile && !isLeft ? 'pl-20' : ''
-                    }`}>
+                    <h3 className={`font-['Marcellus'] text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 ${!isMobile && isLeft ? 'pr-20' : !isMobile && !isLeft ? 'pl-20' : ''
+                      }`}>
                       {step.title}
                     </h3>
 
                     {/* Description */}
-                    <p className={`font-['Manrope'] text-gray-600 text-sm md:text-base leading-relaxed ${
-                      !isMobile && isLeft ? 'pr-20' : !isMobile && !isLeft ? 'pl-20' : ''
-                    }`}>
+                    <p className={`font-['Manrope'] text-gray-600 text-sm md:text-base leading-relaxed ${!isMobile && isLeft ? 'pr-20' : !isMobile && !isLeft ? 'pl-20' : ''
+                      }`}>
                       {step.description}
                     </p>
 
@@ -288,9 +281,8 @@ export default function HowItWorks() {
 
                     {/* Visible Step Number - Positioned based on card side */}
                     {!isMobile && (
-                      <div className={`absolute top-1/2 -translate-y-1/2 ${
-                        isLeft ? 'left-4' : 'right-4'
-                      } opacity-20`}>
+                      <div className={`absolute top-1/2 -translate-y-1/2 ${isLeft ? 'left-4' : 'right-4'
+                        } opacity-20`}>
                         <span className="font-['Marcellus'] text-8xl font-black text-gray-300">
                           {step.number}
                         </span>
@@ -305,24 +297,24 @@ export default function HowItWorks() {
             );
           })}
         </motion.div>
-{/* CTA Button */}
-<motion.div
-  initial={{ opacity: 0, y: 20 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.5, delay: 0.6 }}
-  viewport={{ once: true }}
-  className="text-center mt-8 md:mt-16"
->
-  <GlowingButton 
-    glowColor="255, 150, 150"
-    spreadSize="small"
-    speed="medium"
-    waveCount={5}
-    onClick={() => window.location.href = '/contact'}
-  >
-    Get Your Custom Roadmap
-  </GlowingButton>
-</motion.div>
+        {/* CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          viewport={{ once: true }}
+          className="flex justify-center mt-8 md:mt-16"
+        >
+          <GlowingButton
+            glowColor="255, 150, 150"
+            spreadSize="small"
+            speed="medium"
+            waveCount={5}
+            onClick={() => window.location.href = '/contact'}
+          >
+            Get Your Custom Roadmap
+          </GlowingButton>
+        </motion.div>
       </div>
     </section>
   );
@@ -330,12 +322,12 @@ export default function HowItWorks() {
 
 // Keep these variants outside the component
 const leftCardVariants = {
-  hidden: { 
+  hidden: {
     opacity: 0,
     x: -50,
     rotateY: -15
   },
-  visible: { 
+  visible: {
     opacity: 1,
     x: 0,
     rotateY: 0,
@@ -349,12 +341,12 @@ const leftCardVariants = {
 };
 
 const rightCardVariants = {
-  hidden: { 
+  hidden: {
     opacity: 0,
     x: 50,
     rotateY: 15
   },
-  visible: { 
+  visible: {
     opacity: 1,
     x: 0,
     rotateY: 0,

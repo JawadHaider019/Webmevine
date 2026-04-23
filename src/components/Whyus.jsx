@@ -4,7 +4,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useState } from "react";
 import SectionHeader from "./SectionHeader";
 import GlowingButton from "./GlowingButton";
-import Link from "next/link"; 
+import Link from "next/link";
 
 // Font Awesome imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -94,7 +94,7 @@ export default function Whyus() {
     <section className="py-16 relative overflow-hidden bg-white" id="whyus">
       {/* Explicit white background for the entire section */}
       <div className="absolute inset-0 bg-white" />
-      
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with fade-in animation */}
         <motion.div
@@ -112,13 +112,13 @@ export default function Whyus() {
             gradientTo="to-gray-900"
           />
         </motion.div>
-        
+
         {/* Features Grid - 6 Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             const isHovered = hoveredCard === feature.id;
-            
+
             return (
               <motion.div
                 key={feature.id}
@@ -131,19 +131,19 @@ export default function Whyus() {
                 className="group relative cursor-pointer"
               >
                 {/* Glow effect on hover */}
-                <motion.div 
+                <motion.div
                   className="absolute -inset-0.5 bg-gradient-to-r from-red-600/20 to-red-300/30 rounded-2xl blur"
-                  animate={{ 
+                  animate={{
                     opacity: isHovered ? 1 : 0
                   }}
                   transition={{ duration: 0.3 }}
                 />
-                
+
                 {/* Card - with explicit white background */}
-                <motion.div 
+                <motion.div
                   className="relative bg-white p-6 rounded-xl border shadow-sm border-gray-200/30 h-full flex flex-col"
                   style={{ backgroundColor: '#ffffff' }} // Explicit white background
-                  animate={{ 
+                  animate={{
                     borderColor: isHovered ? '#ef4444' : '#e5e7eb',
                     y: isHovered ? -4 : 0,
                     boxShadow: isHovered ? '0 10px 25px -5px rgba(239, 68, 68, 0.1), 0 8px 10px -6px rgba(239, 68, 68, 0.1)' : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
@@ -151,10 +151,10 @@ export default function Whyus() {
                   transition={{ duration: 0.2 }}
                 >
                   {/* Icon with background */}
-                  <motion.div 
+                  <motion.div
                     className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                     style={{ backgroundColor: isHovered ? '#ef4444' : '#fee2e2' }}
-                    animate={{ 
+                    animate={{
                       scale: isHovered ? 1.1 : 1,
                     }}
                   >
@@ -162,9 +162,9 @@ export default function Whyus() {
                   </motion.div>
 
                   {/* Highlight/Subtitle - Manrope font */}
-                  <motion.p 
+                  <motion.p
                     className="font-['Manrope'] text-red-600 text-xs font-semibold uppercase tracking-wider mb-2"
-                    animate={{ 
+                    animate={{
                       x: isHovered ? 5 : 0
                     }}
                     transition={{ duration: 0.2 }}
@@ -185,9 +185,9 @@ export default function Whyus() {
                   </div>
 
                   {/* Animated Number Background - Marcellus font */}
-                  <motion.div 
+                  <motion.div
                     className="font-['Marcellus'] absolute bottom-3 right-4 text-5xl font-black text-gray-300 select-none z-0"
-                    animate={{ 
+                    animate={{
                       scale: isHovered ? 1.1 : 1,
                       opacity: isHovered ? 0.4 : 0.2,
                     }}
@@ -199,7 +199,7 @@ export default function Whyus() {
                   {/* Bottom accent line on hover */}
                   <motion.div
                     className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-gradient-to-r from-red-600 to-red-700"
-                    animate={{ 
+                    animate={{
                       width: isHovered ? '50%' : 0
                     }}
                     transition={{ duration: 0.3 }}
@@ -216,18 +216,18 @@ export default function Whyus() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-center mt-16"
+          className="flex justify-center mt-16"
         >
-             <Link href="/contact"> 
-              <GlowingButton 
-                glowColor="255, 255, 255"
-                spreadSize="small"
-                speed="medium"
-                waveCount={3}
-              >
-             Talk to an Expert
-              </GlowingButton>
-            </Link>
+          <Link href="/contact">
+            <GlowingButton
+              glowColor="255, 255, 255"
+              spreadSize="small"
+              speed="medium"
+              waveCount={3}
+            >
+              Talk to an Expert
+            </GlowingButton>
+          </Link>
         </motion.div>
       </div>
     </section>
