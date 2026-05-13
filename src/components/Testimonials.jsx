@@ -20,7 +20,7 @@ const countryFlags = {
   "Italy": "https://flagcdn.com/it.svg",
   "India": "https://flagcdn.com/in.svg",
   "Pakistan": "https://flagcdn.com/pk.svg",
-  "South Africa": "/sa.png"
+  "South Africa": "https://flagcdn.com/sa.svg"
 
 };
 export default function Testimonials() {
@@ -77,7 +77,7 @@ export default function Testimonials() {
       quote: "WebMavine delivered exactly what they promised—a comprehensive skill assessment platform with 250+ tests and AI-powered candidate ranking. The platform has 94% hiring accuracy, and our clients love how it eliminates bias from their recruitment process. Exceptional work delivered in just 4 weeks.",
       author: "James Wilson",
       rating: 5,
-      location: " Italy"
+      location: "Italy"
     },
     {
       id: 5,
@@ -366,7 +366,7 @@ export default function Testimonials() {
                           </h4>
                           <div className="flex items-center gap-2">
                             {/* Flag image from flagcdn.com */}
-                            <div className="relative w-5 h-3.5 overflow-hidden rounded-sm shadow-sm">
+                            {countryFlags[testimonial.location] && <div className="relative w-5 h-3.5 overflow-hidden rounded-sm shadow-sm">
                               <Image
                                 src={countryFlags[testimonial.location]}
                                 alt={`${testimonial.location} flag`}
@@ -374,7 +374,7 @@ export default function Testimonials() {
                                 className="object-cover"
                                 unoptimized
                               />
-                            </div>
+                            </div>}
                             <span className="font-['Manrope'] text-xs text-gray-500">
                               {testimonial.location}
                             </span>
