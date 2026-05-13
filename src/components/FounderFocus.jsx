@@ -14,7 +14,7 @@ export default function FounderFocus() {
       name: "Alexander Chen",
       company: "FinTech Labs",
       role: "Founder & CEO",
-      quote: "Ahmtech built our MVP in 4 weeks. We launched, got traction, and raised our seed round within 3 months.",
+      quote: "WebMavine  built our MVP in 4 weeks. We launched, got traction, and raised our seed round within 3 months.",
       videoThumb: "/founder-1.jpg", // Replace with actual thumbnail
       videoUrl: "/videos/founder-1.mp4", // Replace with actual video
       duration: "2:34",
@@ -36,7 +36,7 @@ export default function FounderFocus() {
       name: "Marcus Webb",
       company: "HealthTech Solutions",
       role: "CTO",
-      quote: "Working with Ahmtech felt like having an extension of our own team. Technical excellence with founder mindset.",
+      quote: "Working with WebMavine  felt like having an extension of our own team. Technical excellence with founder mindset.",
       videoThumb: "/founder-3.jpg",
       videoUrl: "/videos/founder-3.mp4",
       duration: "3:12",
@@ -61,9 +61,9 @@ export default function FounderFocus() {
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-to-l from-red-600/5 via-amber-200/5 to-transparent rounded-full blur-3xl" />
         <div className="absolute bottom-20 left-0 w-96 h-96 bg-gradient-to-r from-red-600/5 via-amber-200/5 to-transparent rounded-full blur-3xl" />
-        
+
         {/* Subtle pattern */}
-        <div className="absolute inset-0 opacity-[0.02]" 
+        <div className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: `radial-gradient(circle at 1px 1px, #000 1px, transparent 0)`,
             backgroundSize: '40px 40px'
@@ -93,7 +93,7 @@ export default function FounderFocus() {
         </motion.div>
 
         {/* Video Grid */}
-        <motion.div 
+        <motion.div
           className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -115,7 +115,7 @@ export default function FounderFocus() {
               <div className="relative aspect-[9/16] rounded-xl overflow-hidden shadow-lg">
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 z-10" />
-                
+
                 {/* Thumbnail placeholder */}
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900">
                   {/* This would be your actual thumbnail image */}
@@ -144,7 +144,7 @@ export default function FounderFocus() {
                 </div>
 
                 {/* Play button on hover */}
-                <motion.div 
+                <motion.div
                   className="absolute inset-0 bg-black/40 flex items-center justify-center z-30"
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 1 }}
@@ -159,7 +159,7 @@ export default function FounderFocus() {
               </div>
 
               {/* Quote preview on hover (optional) */}
-              <motion.div 
+              <motion.div
                 className="absolute -bottom-2 left-0 right-0 bg-white/95 backdrop-blur-sm p-3 rounded-lg shadow-lg z-40 border border-gray-200"
                 initial={{ opacity: 0, y: 10 }}
                 whileHover={{ opacity: 1, y: 0 }}
@@ -173,8 +173,8 @@ export default function FounderFocus() {
           ))}
         </motion.div>
 
-     
-      
+
+
       </div>
     </section>
   );

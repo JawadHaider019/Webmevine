@@ -24,8 +24,8 @@ const FounderSection = () => {
 
   const contentVariants = {
     hidden: { opacity: 0, x: -30 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       x: 0,
       transition: {
         type: "spring",
@@ -38,9 +38,9 @@ const FounderSection = () => {
 
   const imageVariants = {
     hidden: { opacity: 0, x: 30, scale: 0.95 },
-    visible: { 
-      opacity: 1, 
-      x: 0, 
+    visible: {
+      opacity: 1,
+      x: 0,
       scale: 1,
       transition: {
         type: "spring",
@@ -53,15 +53,15 @@ const FounderSection = () => {
   };
 
   return (
-    <section 
-      ref={sectionRef} 
+    <section
+      ref={sectionRef}
       className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-r from-black via-red-600 to-black"
     >
       {/* Background Effects */}
       <div className="absolute inset-0">
-        <motion.div 
+        <motion.div
           className="absolute top-20 -left-20 w-64 sm:w-80 lg:w-96 h-64 sm:h-80 lg:h-96 bg-gradient-to-r from-red-600/10 to-amber-600/10 rounded-full blur-3xl"
-          animate={{ 
+          animate={{
             scale: [1, 1.2, 1],
             opacity: [0.2, 0.3, 0.2],
           }}
@@ -71,9 +71,9 @@ const FounderSection = () => {
             ease: "easeInOut"
           }}
         />
-        <motion.div 
+        <motion.div
           className="absolute bottom-20 -right-20 w-64 sm:w-80 lg:w-96 h-64 sm:h-80 lg:h-96 bg-gradient-to-l from-amber-600/10 to-red-600/10 rounded-full blur-3xl"
-          animate={{ 
+          animate={{
             scale: [1, 1.3, 1],
             opacity: [0.2, 0.4, 0.2],
           }}
@@ -104,7 +104,7 @@ const FounderSection = () => {
             heading="Meet the Founder"
             description="Crafting High-Performance Websites & Scalable Digital Solutions."
             gradientHeading={true}
-            smallHeadingColor="text-white" 
+            smallHeadingColor="text-white"
             descriptionColor="text-white"
             gradientFrom="from-white"
             gradientVia="via-gray-100"
@@ -113,7 +113,7 @@ const FounderSection = () => {
         </motion.div>
 
         {/* Main Content Grid */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
@@ -131,7 +131,7 @@ const FounderSection = () => {
                 transition={{ duration: 0.5 }}
                 className="font-['Marcellus'] text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold text-white"
               >
-                Muhammad Ahmad 
+                Muhammad Ahmad
               </motion.h3>
             </div>
 
@@ -142,12 +142,12 @@ const FounderSection = () => {
               className="space-y-4 text-white/80 leading-relaxed text-sm sm:text-base lg:text-lg text-center lg:text-left font-['Manrope']"
             >
               <p>
-             I’m a specialist web designer and developer with 5+ years of experience creating high-performance websites and custom web applications for startups, businesses, and ambitious founders. With 100+ projects successfully delivered, I combine React JS development, Bubble.io SaaS builds, and AI-powered integrations to craft websites that are not only visually appealing but also conversion-focused and scalable. </p>
-              
-              <p>
-              At WebMavine, we don’t just write code we engineer digital assets that drive growth. From custom website development to fast MVP launches, every project is built with speed, quality, and ROI in mind.
+                I’m a specialist web designer and developer with 8+ years of experience creating high-performance websites and custom web applications for startups, businesses, and ambitious founders. With 100+ projects successfully delivered, I combine React JS development, Bubble.io SaaS builds, and AI-powered integrations to craft websites that are not only visually appealing but also conversion-focused and scalable. </p>
 
-My approach blends minimalist, user-centric design with robust technical architecture, ensuring your website or SaaS platform is future-ready, performance-optimized, and designed to scale. </p>
+              <p>
+                At WebMavine, we don’t just write code we engineer digital assets that drive growth. From custom website development to fast MVP launches, every project is built with speed, quality, and ROI in mind.
+
+                My approach blends minimalist, user-centric design with robust technical architecture, ensuring your website or SaaS platform is future-ready, performance-optimized, and designed to scale. </p>
             </motion.div>
           </motion.div>
 
@@ -157,19 +157,18 @@ My approach blends minimalist, user-centric design with robust technical archite
             className="w-full lg:w-1/2 flex justify-center items-center order-1 lg:order-2"
           >
             <div className="relative group w-[320px] h-[320px] sm:w-[450px] sm:h-[450px] ">
-             
+
               {/* Main Card */}
               <div className="relative w-full h-full bg-gradient-to-br from-gray-900 to-black rounded-2xl p-2 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-red-600/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
+
                 <div className="relative w-full h-full rounded-xl overflow-hidden">
                   <Image
                     src="/Founder image.png"
                     alt="Muhammad Ahmad - Founder & CEO"
                     fill
-                    className={`object-contain transition-all duration-700 ${
-                      imageLoaded ? 'scale-100 blur-0' : 'scale-105 blur-sm'
-                    } group-hover:scale-105`}
+                    className={`object-contain transition-all duration-700 ${imageLoaded ? 'scale-100 blur-0' : 'scale-105 blur-sm'
+                      } group-hover:scale-105`}
                     onLoad={() => setImageLoaded(true)}
                     priority
                   />
