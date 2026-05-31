@@ -47,12 +47,12 @@ export default function SectionHeader({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <h3
-            className={`font-['Manrope'] text-sm md:text-base font-semibold uppercase tracking-wider ${smallHeadingColor} mb-3 ${smallHeadingClassName}`}
+          <span
+            className={`font-['Manrope'] text-sm md:text-base font-semibold uppercase tracking-wider ${smallHeadingColor} mb-3 ${smallHeadingClassName} block`}
             style={{ fontFamily: 'var(--font-manrope)' }}
           >
             {smallHeading}
-          </h3>
+          </span>
         </motion.div>
       )}
 

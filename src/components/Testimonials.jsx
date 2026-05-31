@@ -361,9 +361,9 @@ export default function Testimonials() {
                       {/* Author info with flag */}
                       <div className="pt-4 border-t border-gray-100 mt-4 relative z-10">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-['Marcellus'] text-base font-bold text-gray-900">
+                          <h3 className="font-['Marcellus'] text-base font-bold text-gray-900">
                             {testimonial.author}
-                          </h4>
+                          </h3>
                           <div className="flex items-center gap-2">
                             {/* Flag image from flagcdn.com */}
                             {countryFlags[testimonial.location] && <div className="relative w-5 h-3.5 overflow-hidden rounded-sm shadow-sm">

@@ -236,7 +236,7 @@ export default function Hero() {
                 <div className="bg-red-600/10 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 group-hover:bg-red-600/20 transition-all duration-300 relative z-10">
                   {service.icon}
                 </div>
-                <h3 className="text-white text-base sm:text-lg font-bold mb-1.5 relative z-10 tracking-wide" style={{ fontFamily: 'var(--font-marcellus)' }}>{service.title}</h3>
+                <h2 className="text-white text-base sm:text-lg font-bold mb-1.5 relative z-10 tracking-wide" style={{ fontFamily: 'var(--font-marcellus)' }}>{service.title}</h2>
                 <p className="text-gray-400 text-xs sm:text-sm relative z-10 leading-relaxed" style={{ fontFamily: 'var(--font-manrope)' }}>{service.desc}</p>
               </motion.div>
             ))}

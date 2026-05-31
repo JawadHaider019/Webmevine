@@ -12,23 +12,23 @@ export default function HeroSection({
   ctaText = "Book a Free Call",
   ctaLink = "/contact",
   onCtaClick,
-  
+
   // Styling Props
   gradientFrom = "from-black",
   gradientVia = "via-red-700",
   gradientTo = "to-black",
   textColor = "text-white",
   patternOpacity = "opacity-30",
-  
+
   // Animation Props
   animationDuration = 0.8,
   staggerDelay = 0.2,
-  
+
   // Additional Content
   children,
   className = "",
 }) {
-  
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -43,8 +43,8 @@ export default function HeroSection({
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         type: "spring",
@@ -79,14 +79,14 @@ export default function HeroSection({
   return (
     <section className={`relative overflow-hidden bg-gradient-to-br ${gradientFrom} ${gradientVia} ${gradientTo} ${className}`}>
       {/* Background Pattern */}
-      <div 
+      <div
         className={`absolute inset-0 ${patternOpacity}`}
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
           backgroundSize: '30px 30px'
         }}
       />
-      
+
       {/* Content Container */}
       <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-10">
         <motion.div
@@ -121,9 +121,9 @@ export default function HeroSection({
           {ctaText && (
             <motion.div
               variants={itemVariants}
-              className="mt-10"
+              className="mt-10 flex justify-center"
             >
-              <GlowingButton 
+              <GlowingButton
                 glowColor="255,255, 255"
                 spreadSize="small"
                 speed="medium"
