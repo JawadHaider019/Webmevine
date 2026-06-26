@@ -82,6 +82,8 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://calendly.com" />
         <link rel="dns-prefetch" href="https://assets.calendly.com" />
         <link rel="dns-prefetch" href="https://calendly.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="icon" href="/fav.png" type="image/png" />
         <link rel="shortcut icon" href="/fav.png" type="image/png" />
         <link rel="apple-touch-icon" href="/fav.png" />
@@ -117,7 +119,7 @@ export default function RootLayout({ children }) {
         />
         <Script
           id="clarity-script"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               (function(c,l,a,r,i,t,y){

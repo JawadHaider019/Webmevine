@@ -2,15 +2,27 @@
 
 import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform, useInView } from "framer-motion";
-import { useRef, useEffect } from "react";
-import InteractiveGradient from "./InteractiveGradient";
+import { useRef, useEffect, useState } from "react";
+import dynamic from 'next/dynamic';
 import GlowingButton from './GlowingButton';
 import Link from "next/link";
 import { Play, CheckCircle2, Globe, Rocket, Zap } from "lucide-react";
 
+const InteractiveGradient = dynamic(() => import('./InteractiveGradient'), { ssr: false });
+
 export default function Hero() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Mouse position values for parallax effects
   const mouseX = useMotionValue(0);
@@ -20,11 +32,12 @@ export default function Hero() {
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
-  // Parallax transforms
-  const rotateX = useTransform(smoothY, [0, 1000], [2, -2]);
-  const rotateY = useTransform(smoothX, [0, 1000], [-2, 2]);
+  // Parallax transforms - disable on mobile for performance
+  const rotateX = useTransform(smoothY, [0, 1000], isMobile ? [0, 0] : [2, -2]);
+  const rotateY = useTransform(smoothX, [0, 1000], isMobile ? [0, 0] : [-2, 2]);
 
   const handleMouseMove = (e) => {
+    if (isMobile) return;
     const rect = sectionRef.current.getBoundingClientRect();
     mouseX.set(e.clientX - rect.left);
     mouseY.set(e.clientY - rect.top);
@@ -35,34 +48,28 @@ export default function Hero() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 25 },
+    hidden: { opacity: 0, y: 15 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
+      transition: { duration: 0.5, ease: "easeOut" }
     },
   };
 
-  const badgeVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
+  const textVariants = {
+    hidden: { opacity: 0, y: 10 },
     visible: {
       opacity: 1,
-      scale: 1,
-      transition: { type: "spring", stiffness: 200, damping: 15 }
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
     }
-  };
-
-  // Missing variants requested by USER changes
-  const textVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
   };
 
   const backgroundFillVariants = {
@@ -74,9 +81,9 @@ export default function Hero() {
       width: "100%",
       opacity: 1,
       transition: {
-        duration: 1,
+        duration: 0.8,
         ease: "easeInOut",
-        delay: 0.1
+        delay: 0.3
       }
     }
   };
@@ -89,10 +96,10 @@ export default function Hero() {
     >
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
-        <InteractiveGradient />
+        {!isMobile && <InteractiveGradient />}
         {/* Dot Grid Pattern */}
         <div
-          className="absolute inset-0 opacity-[0.15]"
+          className="absolute inset-0 opacity-[0.1]"
           style={{
             backgroundImage: `radial-gradient(circle at 2px 2px, #ffffff 1px, transparent 0)`,
             backgroundSize: '40px 40px'
@@ -103,25 +110,24 @@ export default function Hero() {
       </div>
 
       {/* Glow Overlays */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/10 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-900/10 blur-[150px] rounded-full translate-y-1/2 -translate-x-1/2" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/5 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-900/5 blur-[150px] rounded-full translate-y-1/2 -translate-x-1/2" />
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
+        animate="visible"
         className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-6 lg:pt-0"
       >
         {/* Left Content */}
         <div className="max-w-3xl text-center lg:text-left mx-auto lg:mx-0 order-1 lg:order-1">
           <motion.h1
             variants={textVariants}
-            transition={{ duration: 0.6 }}
-            className="boldonse-regular text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-white mb-6 uppercase font-bold"
+            className="text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-white mb-6 uppercase font-bold"
             style={{
-              lineHeight: '1.2',
-              textShadow: '0 4px 20px rgba(220, 38, 38, 0.15)',
-              letterSpacing: '-0.07em',
+              lineHeight: '1.1',
+              textShadow: '0 4px 20px rgba(220, 38, 38, 0.1)',
+              letterSpacing: '-0.05em',
               fontFamily: 'var(--font-marcellus)',
             }}
           >
@@ -132,8 +138,6 @@ export default function Hero() {
               <motion.span
                 className="absolute inset-0 -z-10 bg-white origin-left"
                 variants={backgroundFillVariants}
-                initial="hidden"
-                animate="visible"
                 style={{
                   transform: 'skewX(-12deg)',
                   top: 0,
@@ -150,8 +154,6 @@ export default function Hero() {
               <motion.span
                 className="absolute inset-0 -z-10 bg-white origin-left"
                 variants={backgroundFillVariants}
-                initial="hidden"
-                animate="visible"
                 style={{
                   transform: 'skewX(-12deg)',
                   top: 0,
@@ -193,7 +195,6 @@ export default function Hero() {
                     alt="User"
                     width={40}
                     height={40}
-                    priority
                   />
                 </div>
               ))}
@@ -206,9 +207,14 @@ export default function Hero() {
         </div>
 
         {/* Right Visual Component */}
-        <div className="flex flex-col items-center justify-center   gap-4  w-full relative z-10 order-1 lg:order-2">
+        <div className="flex flex-col items-center justify-center gap-4 w-full relative z-10 order-2 lg:order-2">
           <motion.div
-            style={{ rotateX, rotateY, perspective: 1000, transformStyle: "preserve-3d" }}
+            style={{
+              rotateX: isMobile ? 0 : rotateX,
+              rotateY: isMobile ? 0 : rotateY,
+              perspective: 1000,
+              transformStyle: "preserve-3d"
+            }}
             className="relative w-full grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
             {/* Service Cards */}
@@ -220,14 +226,12 @@ export default function Hero() {
             ].map((service, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.95 }}
-                whileHover={{
+                variants={itemVariants}
+                whileHover={!isMobile ? {
                   y: -12,
                   scale: 1.03,
                   transition: { duration: 0.2, ease: "easeOut" }
-                }}
-                transition={{ duration: 0.6, delay: 0.4 + idx * 0.15 }}
+                } : {}}
                 style={{ transformStyle: "preserve-3d" }}
                 className="bg-gray-900/40 backdrop-blur-lg border border-white/10 p-6 sm:p-8 rounded-2xl sm:rounded-3xl hover:border-red-600/60 hover:bg-gray-900/60 transition-colors duration-200 group shadow-2xl relative overflow-hidden flex flex-col items-start cursor-pointer"
               >
@@ -243,14 +247,18 @@ export default function Hero() {
             ))}
 
             {/* Decorative glowing blobs */}
-            <div className="absolute -z-10 -top-6 -right-6 sm:-top-10 sm:-right-10 w-24 h-24 sm:w-40 sm:h-40 bg-red-600/20 blur-2xl sm:blur-3xl rounded-full" />
-            <div className="absolute -z-10 -bottom-6 -left-6 sm:-bottom-10 sm:-left-10 w-24 h-24 sm:w-40 sm:h-40 bg-red-600/20 blur-2xl sm:blur-3xl rounded-full" />
+            {!isMobile && (
+              <>
+                <div className="absolute -z-10 -top-6 -right-6 sm:-top-10 sm:-right-10 w-24 h-24 sm:w-40 sm:h-40 bg-red-600/20 blur-2xl sm:blur-3xl rounded-full" />
+                <div className="absolute -z-10 -bottom-6 -left-6 sm:-bottom-10 sm:-left-10 w-24 h-24 sm:w-40 sm:h-40 bg-red-600/20 blur-2xl sm:blur-3xl rounded-full" />
+              </>
+            )}
           </motion.div>
 
           {/* Features Row */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-wrap justify-center lg:justify-start gap-3 "
+            className="flex flex-wrap justify-center lg:justify-start gap-3 mt-4"
           >
             {[
               { icon: <Globe size={16} />, text: "Global Clients" },
@@ -259,9 +267,9 @@ export default function Hero() {
             ].map((item, idx) => (
               <motion.div
                 key={idx}
-                whileHover={{ y: -5, scale: 1.05 }}
+                whileHover={!isMobile ? { y: -5, scale: 1.05 } : {}}
                 transition={{ duration: 0.2 }}
-                className="flex items-center gap-2 text-gray-900 hover:text-red-500 transition-colors duration-200 group bg-gray-100  px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/5 hover:border-red-500/30 cursor-pointer"
+                className="flex items-center gap-2 text-gray-900 hover:text-red-500 transition-colors duration-200 group bg-gray-100 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/5 hover:border-red-500/30 cursor-pointer"
               >
                 <span className="text-red-600/60 group-hover:text-red-600 transition-colors">{item.icon}</span>
                 <span className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-widest">{item.text}</span>
@@ -276,3 +284,4 @@ export default function Hero() {
     </section>
   );
 }
+

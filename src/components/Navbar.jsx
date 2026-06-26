@@ -92,42 +92,34 @@ export default function Navbar() {
   // Don't render anything until mounted to prevent hydration mismatch
   if (!mounted) {
     return (
-      <>
-        <nav className="fixed top-0 left-0 right-0 z-50">
-          <div className="w-full mx-auto">
-            <div className="relative group">
-              <div className="relative shadow-xl px-3 sm:px-4 py-1 bg-white">
-                <div className="flex items-center justify-between h-12 sm:h-14">
-                  <div className="flex items-center">
-                    <div className="flex items-center">
-                      <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
-                        <Image
-                          src="/logo.png"
-                          alt="Web Mavein Logo"
-                          width={140}
-                          height={140}
-                          className="object-contain w-full h-auto"
-                          priority
-                        />
-                      </div>
-                    </div>
+      <nav className="fixed top-0 left-0 right-0 z-50">
+        <div className="w-full mx-auto">
+          <div className="relative group">
+            <div className="relative shadow-xl px-3 sm:px-4 py-1 bg-white">
+              <div className="flex items-center justify-between h-16">
+                <div className="flex items-center">
+                  <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
+                    <Image
+                      src="/logo.png"
+                      alt="WebMevine Logo"
+                      width={140}
+                      height={140}
+                      className="object-contain w-full h-auto"
+                      priority
+                    />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </nav>
-
-      </>
+        </div>
+      </nav>
     );
   }
 
   return (
     <>
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+      <nav
         className="fixed top-0 left-0 right-0 z-50"
       >
         <div className="w-full mx-auto">
@@ -148,7 +140,8 @@ export default function Navbar() {
                 WebkitBackdropFilter: scrolled ? 'blur(10px)' : 'none',
               }}
             >
-              <div className="flex items-center justify-between h-15">
+              <div className="flex items-center justify-between h-16">
+
                 {/* Logo */}
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -255,7 +248,7 @@ export default function Navbar() {
             </motion.div>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
 
       {/* Premium Side Drawer for Mobile/Tablet */}
