@@ -15,10 +15,6 @@ export default function InteractiveGradient() {
 
     if (checkTouchDevice()) return;
 
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-
     const el = interactiveRef.current;
     if (!el) return;
 
@@ -26,13 +22,12 @@ export default function InteractiveGradient() {
     let curY = 0;
     let tgX = 0;
     let tgY = 0;
-    let animationFrameId;
 
     const move = () => {
       curX += (tgX - curX) / 20;
       curY += (tgY - curY) / 20;
       if (el) el.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
-      animationFrameId = requestAnimationFrame(move);
+      requestAnimationFrame(move);
     };
 
     const handleMouseMove = (e) => {
@@ -40,13 +35,10 @@ export default function InteractiveGradient() {
       tgY = e.clientY;
     };
 
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("mousemove", handleMouseMove);
     move();
 
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-    };
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   // Add animations to global stylesheet
