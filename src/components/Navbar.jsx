@@ -223,13 +223,14 @@ export default function Navbar() {
                   <Link
                     href="/contact"
                     className="relative group/btn sm:hidden"
+                    aria-label="Book a Meeting"
                   >
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600 to-red-800 rounded-full opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 blur-sm" />
-                    <button className="relative w-7 h-7 bg-gradient-to-r from-red-600 to-red-700 rounded-full flex items-center justify-center shadow-lg shadow-red-600/20">
-                      <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="relative w-10 h-10 bg-gradient-to-r from-red-600 to-red-700 rounded-full flex items-center justify-center shadow-lg shadow-red-600/20">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                    </button>
+                    </div>
                   </Link>
 
                   {/* Mobile/Tablet Menu Button */}
@@ -237,10 +238,11 @@ export default function Navbar() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setIsOpen(true)}
-                    className="lg:hidden relative w-6 h-6 sm:w-7 sm:h-7 transition-colors duration-300 focus:outline-none group"
+                    className="lg:hidden relative w-10 h-10 flex items-center justify-center transition-colors duration-300 focus:outline-none group"
+                    aria-label="Open navigation menu"
                   >
                     <svg
-                      className="w-3.5 h-3.5 sm:w-4 sm:h-4 mx-auto text-gray-900"
+                      className="w-6 h-6 text-gray-900"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -304,9 +306,10 @@ export default function Navbar() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-300 group"
+                  className="w-11 h-11 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-300 group"
+                  aria-label="Close navigation menu"
                 >
-                  <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-gray-600 group-hover:text-gray-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </motion.button>

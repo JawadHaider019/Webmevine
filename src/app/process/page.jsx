@@ -5,9 +5,9 @@ import { useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import SectionHeader from "@/components/SectionHeader";
 import Link from "next/link";
-import { 
-  FiCheckCircle, 
-  FiUsers, 
+import {
+  FiCheckCircle,
+  FiUsers,
   FiAward,
   FiShield,
   FiZap,
@@ -67,8 +67,8 @@ export default function ProcessPage() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         type: "spring",
@@ -92,7 +92,7 @@ export default function ProcessPage() {
         gradientVia="via-red-700"
         gradientTo="to-black"
       />
-      
+
       <HowItWorks />
 
       {/* Why Our Process Works Section - With enhanced hover effects */}
@@ -127,7 +127,7 @@ export default function ProcessPage() {
             {features.map((feature) => {
               const IconComponent = feature.icon;
               const isHovered = hoveredCard === feature.id;
-              
+
               return (
                 <motion.div
                   key={feature.id}
@@ -137,19 +137,19 @@ export default function ProcessPage() {
                   className="group relative cursor-pointer"
                 >
                   {/* Glow effect on hover */}
-                  <motion.div 
+                  <motion.div
                     className="absolute -inset-0.5 bg-gradient-to-r from-red-600/20 to-red-300/30 rounded-2xl blur"
-                    animate={{ 
+                    animate={{
                       opacity: isHovered ? 1 : 0
                     }}
                     transition={{ duration: 0.3 }}
                   />
-                  
+
                   {/* Card */}
-                  <motion.div 
+                  <motion.div
                     className="relative bg-white p-6 rounded-xl border shadow-sm border-gray-200/30 h-full flex flex-col"
                     style={{ backgroundColor: '#ffffff' }}
-                    animate={{ 
+                    animate={{
                       borderColor: isHovered ? '#ef4444' : '#e5e7eb',
                       y: isHovered ? -4 : 0,
                       boxShadow: isHovered ? '0 10px 25px -5px rgba(239, 68, 68, 0.1), 0 8px 10px -6px rgba(239, 68, 68, 0.1)' : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
@@ -157,10 +157,10 @@ export default function ProcessPage() {
                     transition={{ duration: 0.2 }}
                   >
                     {/* Icon with background */}
-                    <motion.div 
+                    <motion.div
                       className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                       style={{ backgroundColor: isHovered ? '#ef4444' : '#fee2e2' }}
-                      animate={{ 
+                      animate={{
                         scale: isHovered ? 1.1 : 1,
                       }}
                     >
@@ -168,9 +168,9 @@ export default function ProcessPage() {
                     </motion.div>
 
                     {/* Stats Number */}
-                    <motion.div 
+                    <motion.div
                       className="text-2xl font-bold text-red-600 mb-1 font-['Marcellus']"
-                      animate={{ 
+                      animate={{
                         scale: isHovered ? 1.1 : 1,
                       }}
                     >
@@ -178,9 +178,9 @@ export default function ProcessPage() {
                     </motion.div>
 
                     {/* Highlight/Subtitle */}
-                    <motion.p 
+                    <motion.p
                       className="font-['Manrope'] text-red-600 text-xs font-semibold uppercase tracking-wider mb-2"
-                      animate={{ 
+                      animate={{
                         x: isHovered ? 5 : 0
                       }}
                       transition={{ duration: 0.2 }}
@@ -201,9 +201,9 @@ export default function ProcessPage() {
                     </div>
 
                     {/* Animated Number Background */}
-                    <motion.div 
+                    <motion.div
                       className="font-['Marcellus'] absolute bottom-3 right-4 text-5xl font-black text-gray-300 select-none z-0"
-                      animate={{ 
+                      animate={{
                         scale: isHovered ? 1.1 : 1,
                         opacity: isHovered ? 0.4 : 0.2,
                       }}
@@ -215,7 +215,7 @@ export default function ProcessPage() {
                     {/* Bottom accent line on hover */}
                     <motion.div
                       className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-gradient-to-r from-red-600 to-red-700"
-                      animate={{ 
+                      animate={{
                         width: isHovered ? '50%' : 0
                       }}
                       transition={{ duration: 0.3 }}
@@ -225,25 +225,25 @@ export default function ProcessPage() {
               );
             })}
           </motion.div>
-{/* CTA Button */}
-<motion.div
-  initial={{ opacity: 0, y: 20 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.5, delay: 0.4 }}
-  viewport={{ once: true }}
-  className="text-center mt-8"
->
-  <Link href="/contact">
-    <GlowingButton 
-      glowColor="255, 150, 150"
-      spreadSize="small"
-      speed="medium"
-      waveCount={5} 
-    >
-      Book Your Free Strategy Call
-    </GlowingButton>
-  </Link>
-</motion.div>
+          {/* CTA Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="flex justify-center mt-8"
+          >
+            <Link href="/contact">
+              <GlowingButton
+                glowColor="255, 150, 150"
+                spreadSize="small"
+                speed="medium"
+                waveCount={5}
+              >
+                Book Your Free Strategy Call
+              </GlowingButton>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
@@ -259,7 +259,7 @@ export default function ProcessPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <motion.span 
+              <motion.span
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
@@ -268,27 +268,27 @@ export default function ProcessPage() {
                 PROVEN RESULTS
               </motion.span>
 
-              <motion.h2 
+              <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 className="font-['Marcellus'] text-4xl md:text-5xl text-gray-900 mb-6 font-semibold"
-              > 
+              >
                 Web Development Company{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-black via-red-600 to-red-900">
                   Trusted by 100+ Growing Brands
-                </span> 
+                </span>
               </motion.h2>
 
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
                 className="font-['Manrope'] text-gray-600 text-lg mb-8 leading-relaxed"
               >
-                WebMavine specializes in <strong>custom website development</strong>, <strong>React JS development</strong>, 
-                and <strong>SaaS MVP builds</strong>. Our 21-day framework has helped founders, 
-                e-commerce brands, and small businesses launch faster with scalable, 
+                WebMavine specializes in <strong>custom website development</strong>, <strong>React JS development</strong>,
+                and <strong>SaaS MVP builds</strong>. Our 21-day framework has helped founders,
+                e-commerce brands, and small businesses launch faster with scalable,
                 high-performance digital infrastructure.
               </motion.p>
 
@@ -304,8 +304,8 @@ export default function ProcessPage() {
                     key={index}
                     initial={{ opacity: 0, y: 20, scale: 0.9 }}
                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                    whileHover={{ 
-                      y: -5, 
+                    whileHover={{
+                      y: -5,
                       boxShadow: "0 20px 40px rgba(239,68,68,0.1)",
                       borderColor: "#ef4444",
                       transition: { duration: 0.3 }
@@ -314,7 +314,7 @@ export default function ProcessPage() {
                     transition={{ delay: stat.delay }}
                     className="backdrop-blur-lg bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 cursor-default"
                   >
-                    <motion.div 
+                    <motion.div
                       className="font-['Marcellus'] text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-black via-red-600 to-red-900 mb-2"
                       whileHover={{ scale: 1.1 }}
                       transition={{ type: "spring", stiffness: 300 }}
@@ -336,17 +336,17 @@ export default function ProcessPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ 
+                whileHover={{
                   boxShadow: "0 30px 60px rgba(239,68,68,0.15)",
                   borderColor: "#ef4444/40"
                 }}
                 transition={{ delay: 0.2 }}
                 className="backdrop-blur-lg bg-gradient-to-br from-red-600/5 to-red-500/5 border border-red-600/20 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500"
               >
-                <motion.h3 
+                <motion.h3
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
@@ -386,7 +386,7 @@ export default function ProcessPage() {
                 </div>
 
                 {/* Premium Quote */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
@@ -398,13 +398,13 @@ export default function ProcessPage() {
                     whileInView={{ x: "100%" }}
                     transition={{ duration: 1.5, delay: 1 }}
                   />
-                  <motion.p 
+                  <motion.p
                     className="italic text-lg font-light text-gray-600 leading-relaxed"
                   >
-                    “We don't just build websites. We engineer scalable digital assets 
+                    “We don't just build websites. We engineer scalable digital assets
                     that help founders launch faster, validate smarter, and grow with confidence.”
                   </motion.p>
-                  <motion.div 
+                  <motion.div
                     whileHover={{ x: 5 }}
                     className="text-sm text-red-600 font-semibold mt-3"
                   >

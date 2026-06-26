@@ -4,15 +4,15 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { 
-  FiLinkedin, 
-  FiInstagram, 
+import {
+  FiLinkedin,
+  FiInstagram,
   FiMail,
   FiPhone,
   FiArrowRight,
-  
+
 } from "react-icons/fi";
-import { FaWhatsapp } from "react-icons/fa"; 
+import { FaWhatsapp } from "react-icons/fa";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -54,16 +54,16 @@ export default function Footer() {
   // Handle FAQ navigation with smooth scroll
   const handleFAQClick = (e, href) => {
     e.preventDefault();
-    
+
     if (href.includes('#')) {
       const [path, hash] = href.split('#');
-      
+
       if (pathname === path || (path === '/' && pathname === '/')) {
         // Already on home page, just scroll
         const element = document.getElementById(hash);
         if (element) {
-          element.scrollIntoView({ 
-            behavior: 'smooth', 
+          element.scrollIntoView({
+            behavior: 'smooth',
             block: 'start',
           });
           window.history.pushState(null, '', href);
@@ -87,10 +87,10 @@ export default function Footer() {
     // Check if it's a hash link (starts with #)
     if (href.startsWith('#')) {
       e.preventDefault();
-      
+
       const targetId = href.substring(1);
       const targetElement = document.getElementById(targetId);
-      
+
       if (targetElement) {
         targetElement.scrollIntoView({
           behavior: 'smooth',
@@ -115,7 +115,7 @@ export default function Footer() {
   // Handle Get In Touch click based on current page
   const handleGetInTouch = (e) => {
     e.preventDefault();
-    
+
     if (pathname === '/contact') {
       // On contact page - scroll to calendar
       const calendar = document.querySelector('#calendar');
@@ -159,8 +159,8 @@ export default function Footer() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         type: "spring",
@@ -238,10 +238,10 @@ export default function Footer() {
         damping: 15
       }
     }),
-    hover: { 
-      y: -5, 
+    hover: {
+      y: -5,
       scale: 1.1,
-      transition: { 
+      transition: {
         type: "spring",
         stiffness: 400,
         damping: 10
@@ -272,8 +272,8 @@ export default function Footer() {
         <div className="absolute top-20 right-4 sm:right-10 w-32 h-32 sm:w-72 sm:h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
 
         {/* Circle Button - Get In Touch */}
-        <button onClick={handleGetInTouch}>
-          <motion.div 
+        <button onClick={handleGetInTouch} aria-label="Get In Touch">
+          <motion.div
             variants={scaleUp}
             initial="hidden"
             whileInView="visible"
@@ -284,9 +284,9 @@ export default function Footer() {
             <span className="text-[8px] md:text-sm">Get In Touch</span>
           </motion.div>
         </button>
-        
+
         {/* Text Content */}
-        <motion.h1 
+        <motion.h2
           variants={itemVariants}
           initial="hidden"
           whileInView="visible"
@@ -294,10 +294,10 @@ export default function Footer() {
           className="text-md md:text-2xl font-bold text-white"
         >
           LET'S COLLABORATE
-        </motion.h1>
-        
-        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[12rem] font-bold leading-tight md:leading-none px-2 text-white">
-          <motion.span 
+        </motion.h2>
+
+        <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[12rem] font-bold leading-tight md:leading-none px-2 text-white">
+          <motion.span
             variants={slideInLeft}
             initial="hidden"
             whileInView="visible"
@@ -306,8 +306,8 @@ export default function Footer() {
           >
             LET'S WORK
           </motion.span>
-          <br/>
-          <motion.span 
+          <br />
+          <motion.span
             variants={slideInRight}
             initial="hidden"
             whileInView="visible"
@@ -316,11 +316,11 @@ export default function Footer() {
           >
             TOGETHER
           </motion.span>
-        </h1>
+        </h2>
       </section>
 
       {/* Footer Section - White Background */}
-      <motion.footer 
+      <motion.footer
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, amount: 0.3 }}
@@ -329,18 +329,18 @@ export default function Footer() {
       >
         {/* Animated Premium Background Elements */}
         <div className="absolute inset-0 pointer-events-none">
-          <motion.div 
+          <motion.div
             variants={backgroundOrbVariants}
             animate="animate"
             className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-red-600/5 to-transparent rounded-full blur-3xl"
           />
-          <motion.div 
+          <motion.div
             variants={backgroundOrbVariants}
             animate="animate"
             custom={1}
             className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-red-600/5 to-transparent rounded-full blur-3xl"
           />
-          
+
           <motion.div
             animate={{
               scale: [1, 1.3, 1],
@@ -370,7 +370,7 @@ export default function Footer() {
         </div>
 
         {/* Main Footer Content */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -387,24 +387,24 @@ export default function Footer() {
                 className="mb-2"
               >
                 <Link href="/" className="inline-block" onClick={(e) => handleNavigation(e, '/')}>
-                  <Image 
-                    src="/logo.png" 
-                    alt="WebMavein Logo" 
+                  <Image
+                    src="/logo.png"
+                    alt="WebMavein Logo"
                     width={140}
                     height={140}
                     className="object-contain w-full h-auto"
                   />
                 </Link>
               </motion.div>
-              
-              <motion.p 
+
+              <motion.p
                 variants={itemVariants}
                 className="font-['Manrope'] text-gray-600 text-sm leading-relaxed mb-2"
               >
-                Your rapid launch partner, built for founders. 
+                Your rapid launch partner, built for founders.
                 We turn ideas into production-ready apps in weeks, not months.
               </motion.p>
-              
+
               {/* Contact Info */}
               <motion.div variants={itemVariants} className="space-y-3">
                 <motion.div
@@ -420,8 +420,8 @@ export default function Footer() {
                     </a>
                   </div>
                 </motion.div>
-                
-                <motion.div 
+
+                <motion.div
                   className="flex items-center gap-3 group cursor-pointer"
                   onClick={handlePhoneClick}
                 >
@@ -438,7 +438,7 @@ export default function Footer() {
 
             <div className='flex flex-col justify-between lg:col-span-8'>
               {/* Links Grid */}
-              <motion.div 
+              <motion.div
                 variants={itemVariants}
                 className="lg:col-span-6 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8"
               >
@@ -449,7 +449,7 @@ export default function Footer() {
                   </h3>
                   <ul className="space-y-3 ">
                     {footerLinks.product.map((link, i) => (
-                      <motion.li 
+                      <motion.li
                         key={link.name}
                         custom={i}
                         variants={linkVariants}
@@ -487,7 +487,7 @@ export default function Footer() {
                   </h3>
                   <ul className="space-y-3">
                     {footerLinks.company.map((link, i) => (
-                      <motion.li 
+                      <motion.li
                         key={link.name}
                         custom={i + 4}
                         variants={linkVariants}
@@ -509,17 +509,17 @@ export default function Footer() {
                 </div>
 
                 {/* Connect */}
-                <div className="pl-5"> 
+                <div className="pl-5">
                   <h3 className="font-['Marcellus']  text-gray-900 text-lg font-bold mb-6 pb-2 inline-block border-b-2 border-red-600">
                     Connect
                   </h3>
-                  <motion.div 
+                  <motion.div
                     variants={containerVariants}
                     className="flex gap-3"
                   >
                     {[
                       { icon: FiLinkedin, href: 'https://www.linkedin.com/company/web-mavien', label: 'LinkedIn' },
-                      { icon: FiInstagram, href: 'https://www.instagram.com/webmevine', label: 'Instagram'},
+                      { icon: FiInstagram, href: 'https://www.instagram.com/webmevine', label: 'Instagram' },
                       { icon: FaWhatsapp, href: '#', label: 'WhatsApp', onClick: handleWhatsAppClick },
                     ].map((social, i) => (
                       <motion.a
@@ -547,20 +547,20 @@ export default function Footer() {
           </div>
 
           {/* Bottom Bar */}
-          <motion.div 
+          <motion.div
             variants={itemVariants}
             className="pt-8 mt-8 border-t border-gray-200"
           >
             <div className="flex flex-col md:flex-row justify-center items-center gap-4">
               {/* Copyright */}
-              <motion.p 
+              <motion.p
                 whileHover={{ scale: 1.02 }}
                 className="font-['Manrope'] text-xs text-gray-400 order-2 md:order-1"
               >
                 © {currentYear} WebMavein. All rights reserved.
               </motion.p>
 
-             
+
             </div>
           </motion.div>
         </motion.div>

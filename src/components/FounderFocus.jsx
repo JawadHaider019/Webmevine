@@ -101,15 +101,16 @@ export default function FounderFocus() {
           transition={{ delay: 0.2 }}
         >
           {founders.map((founder, index) => (
-            <motion.div
+            <motion.button
               key={founder.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
               whileHover={{ y: -8, scale: 1.02 }}
-              className="relative group cursor-pointer"
+              className="relative group cursor-pointer w-full text-left focus:outline-none"
               onClick={() => setActiveVideo(founder)}
+              aria-label={`Play testimonial video from ${founder.name}, ${founder.role} at ${founder.company}`}
             >
               {/* Video Card - 9:16 Aspect Ratio */}
               <div className="relative aspect-[9/16] rounded-xl overflow-hidden shadow-lg">
@@ -169,7 +170,7 @@ export default function FounderFocus() {
                   "{founder.quote}"
                 </p>
               </motion.div>
-            </motion.div>
+            </motion.button>
           ))}
         </motion.div>
 

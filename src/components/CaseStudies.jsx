@@ -24,10 +24,10 @@ export default function CaseStudiesSection() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -131,14 +131,14 @@ export default function CaseStudiesSection() {
             heading="Success Stories"
             description="Real results from real projects. See how we've helped founders launch faster."
             gradientHeading={true}
-            smallHeadingColor="text-white" 
+            smallHeadingColor="text-white"
             descriptionColor="text-white"
             gradientFrom="from-white"
             gradientVia="via-gray-100"
             gradientTo="to-gray-300"
           />
         </motion.div>
-        
+
         {/* Mobile Navigation Arrows (visible only on mobile) */}
         {isMobile && (
           <div className="flex justify-between items-center mb-4 px-2">
@@ -146,24 +146,24 @@ export default function CaseStudiesSection() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={prevSlide}
-              className={`w-10 h-10 rounded-full bg-white/10 flex items-center justify-center ${
-                activeIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+              className={`w-10 h-10 rounded-full bg-white/10 flex items-center justify-center ${activeIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               disabled={activeIndex === 0}
+              aria-label="Previous case study"
             >
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </motion.button>
-            
+
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={nextSlide}
-              className={`w-10 h-10 rounded-full bg-white/10 flex items-center justify-center ${
-                activeIndex === featuredCaseStudies.length - 1 ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+              className={`w-10 h-10 rounded-full bg-white/10 flex items-center justify-center ${activeIndex === featuredCaseStudies.length - 1 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               disabled={activeIndex === featuredCaseStudies.length - 1}
+              aria-label="Next case study"
             >
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -186,8 +186,8 @@ export default function CaseStudiesSection() {
                   key={study.id}
                   layout
                   initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ 
-                    opacity: 1, 
+                  animate={{
+                    opacity: 1,
                     scale: 1,
                     width: width,
                     height: height,
@@ -207,7 +207,7 @@ export default function CaseStudiesSection() {
                     ${isMobile ? 'mb-3' : ''}
                     ${isMobile && !isActive ? 'hover:bg-gray-50 transition-colors' : ''}
                   `}
-                  style={{ 
+                  style={{
                     backgroundColor: study.color,
                     flexShrink: 0,
                   }}
@@ -215,7 +215,7 @@ export default function CaseStudiesSection() {
                 >
                   {/* White background with subtle gradient */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${study.gradient} opacity-90`} />
-                  
+
                   {/* Subtle pattern overlay */}
                   <div className="absolute inset-0 opacity-[0.02]">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(0,0,0,0.1)_0%,transparent_50%)]" />
@@ -250,7 +250,7 @@ export default function CaseStudiesSection() {
                               </div>
                             )}
                           </div>
-                          
+
                           {/* Founder info - hidden on small mobile, visible on larger screens */}
                           <div className="hidden sm:block bg-gray-50 rounded-lg md:rounded-xl p-3 md:p-4">
                             <p className="font-['Manrope'] text-xs md:text-sm text-gray-600 mb-1">{study.founder.name}</p>
@@ -276,12 +276,12 @@ export default function CaseStudiesSection() {
                           <p className="font-['Manrope'] text-gray-900 text-sm sm:text-base md:text-lg lg:text-xl font-medium mb-2 md:mb-4">
                             {study.shortDescription || study.description}
                           </p>
-                          
+
                           {/* Achievement */}
                           <p className="font-['Manrope'] text-gray-700 text-xs sm:text-sm md:text-base mb-4 md:mb-6 lg:mb-8 leading-relaxed">
                             {study.achievement}
                           </p>
-                          
+
                           {/* Stats Grid - Two columns */}
                           <div className="grid grid-cols-2 gap-3 md:gap-4 lg:gap-6 mb-4 md:mb-6 lg:mb-8">
                             {study.stats.map((stat, idx) => (
@@ -310,31 +310,31 @@ export default function CaseStudiesSection() {
                               handleOpenSlideClick(study.slug);
                             }}
                           >
-                            <motion.span 
+                            <motion.span
                               className="relative font-medium"
                               whileHover={{ letterSpacing: "0.05em" }}
                               transition={{ duration: 0.3 }}
                             >
                               Read The Story
-                              <motion.span 
+                              <motion.span
                                 className="absolute -bottom-1 left-0 h-[2px] bg-red-600 rounded-full"
                                 initial={{ width: 0 }}
                                 whileHover={{ width: "100%" }}
                                 transition={{ duration: 0.3 }}
                               />
                             </motion.span>
-                            
+
                             <motion.div
-                              animate={{ 
+                              animate={{
                                 x: [0, 3, 0],
                               }}
-                              transition={{ 
-                                duration: 1.5, 
+                              transition={{
+                                duration: 1.5,
                                 repeat: Infinity,
                                 repeatType: "loop",
                                 ease: "easeInOut"
                               }}
-                              whileHover={{ 
+                              whileHover={{
                                 scale: 1.2,
                                 x: 5,
                                 rotate: [0, 10, 0]
@@ -366,7 +366,7 @@ export default function CaseStudiesSection() {
                           /* Desktop closed view with hover effects */
                           <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
                             {/* Number at top - changes color on hover */}
-                            <motion.div 
+                            <motion.div
                               className="absolute top-4 left-1/2 -translate-x-1/2 w-full text-center"
                               whileHover={{ scale: 1.1 }}
                             >
@@ -374,10 +374,10 @@ export default function CaseStudiesSection() {
                                 {study.number}
                               </span>
                             </motion.div>
-                            
+
                             {/* Vertical category in middle - changes color on hover */}
                             <div className="flex items-center justify-center h-full">
-                              <motion.span 
+                              <motion.span
                                 className="font-['Manrope'] text-[10px] md:text-xs font-medium tracking-wider whitespace-nowrap rotate-90 origin-center uppercase transition-colors duration-300 group-hover:text-red-600"
                                 whileHover={{ scale: 1.1 }}
                               >
@@ -386,7 +386,7 @@ export default function CaseStudiesSection() {
                             </div>
                           </div>
                         )}
-                        
+
                         {/* Hover effect overlay */}
                         {!isActive && !isMobile && (
                           <motion.div
@@ -410,12 +410,12 @@ export default function CaseStudiesSection() {
           {featuredCaseStudies.map((_, index) => (
             <motion.button
               key={index}
-              className={`relative h-2 rounded-full transition-all ${
-                index === activeIndex ? 'w-8 md:w-10 bg-red-500' : 'w-2 bg-white/30'
-              }`}
+              className={`relative h-2 rounded-full transition-all ${index === activeIndex ? 'w-8 md:w-10 bg-red-500' : 'w-2 bg-white/30'
+                }`}
               onClick={() => handleSlideClick(index)}
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}
+              aria-label={`Go to case study ${index + 1}`}
             >
               {index === activeIndex && (
                 <motion.div
@@ -437,7 +437,7 @@ export default function CaseStudiesSection() {
           className="flex justify-center mt-12"
         >
           <Link href="/casestudies" onClick={handleViewAllClick} passHref>
-            <GlowingButton 
+            <GlowingButton
               glowColor="255, 255, 255"
               spreadSize="small"
               speed="fast"
