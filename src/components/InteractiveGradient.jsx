@@ -6,7 +6,17 @@ export default function InteractiveGradient() {
   const interactiveRef = useRef(null);
 
   useEffect(() => {
+    const checkTouchDevice = () => {
+      if (typeof window === 'undefined') return false;
+      return 'ontouchstart' in window ||
+        navigator.maxTouchPoints > 0 ||
+        (navigator).msMaxTouchPoints > 0;
+    };
+
+    if (checkTouchDevice()) return;
+
     const el = interactiveRef.current;
+    if (!el) return;
 
     let curX = 0;
     let curY = 0;
@@ -78,7 +88,7 @@ export default function InteractiveGradient() {
 
       <div className="relative w-full h-full" style={{ filter: 'url(#goo) blur(40px)' }}>
         {/* g1 - Reduced size */}
-        <div 
+        <div
           className="absolute rounded-full mix-blend-hard-light"
           style={{
             width: '60%',
@@ -89,9 +99,9 @@ export default function InteractiveGradient() {
             animation: 'moveVertical 30s ease infinite',
           }}
         />
-        
+
         {/* g2 - Reduced size */}
-        <div 
+        <div
           className="absolute rounded-full mix-blend-hard-light"
           style={{
             width: '60%',
@@ -103,9 +113,9 @@ export default function InteractiveGradient() {
             animation: 'rotate 20s linear infinite',
           }}
         />
-        
+
         {/* g3 - Reduced size */}
-        <div 
+        <div
           className="absolute rounded-full mix-blend-hard-light"
           style={{
             width: '60%',
@@ -117,9 +127,9 @@ export default function InteractiveGradient() {
             animation: 'rotate 40s linear infinite',
           }}
         />
-        
+
         {/* g4 - Reduced size */}
-        <div 
+        <div
           className="absolute rounded-full mix-blend-hard-light"
           style={{
             width: '60%',
@@ -130,9 +140,9 @@ export default function InteractiveGradient() {
             animation: 'moveHorizontal 40s ease infinite',
           }}
         />
-        
+
         {/* g5 - Reduced size */}
-        <div 
+        <div
           className="absolute rounded-full mix-blend-hard-light"
           style={{
             width: '100%',
@@ -143,9 +153,9 @@ export default function InteractiveGradient() {
             animation: 'rotate 25s linear infinite',
           }}
         />
-        
+
         {/* Interactive - Adjusted size */}
-        <div 
+        <div
           ref={interactiveRef}
           className="absolute pointer-events-none mix-blend-hard-light"
           style={{

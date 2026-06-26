@@ -9,14 +9,17 @@ const CustomCursor = () => {
 
     useEffect(() => {
         const checkTouchDevice = () => {
+            if (typeof window === 'undefined') return false;
             return 'ontouchstart' in window ||
                 navigator.maxTouchPoints > 0 ||
                 (navigator).msMaxTouchPoints > 0;
         };
 
-        setIsTouchDevice(checkTouchDevice());
-
-        if (isTouchDevice || !cursorRef.current) return;
+        if (checkTouchDevice()) {
+            setIsTouchDevice(true);
+            return;
+        }
+        setIsTouchDevice(false);
 
         const moveCursor = (e) => {
             const x = e.clientX;

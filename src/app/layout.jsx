@@ -1,3 +1,4 @@
+import Script from "next/script";
 import { Marcellus, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -8,11 +9,13 @@ const marcellus = Marcellus({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-marcellus",
+  display: 'swap',
 });
 
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
+  display: 'swap',
 });
 
 export const metadata = {
@@ -112,8 +115,9 @@ export default function RootLayout({ children }) {
             }),
           }}
         />
-        <script
-          type="text/javascript"
+        <Script
+          id="clarity-script"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function(c,l,a,r,i,t,y){

@@ -193,6 +193,7 @@ export default function Hero() {
                     alt="User"
                     width={40}
                     height={40}
+                    priority
                   />
                 </div>
               ))}
