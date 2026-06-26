@@ -78,6 +78,24 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${marcellus.variable} ${manrope.variable}`}>
       <head>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-NB5ZFSMPG5"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'G-NB5ZFSMPG5');
+            `,
+          }}
+        />
         <meta name="google-site-verification" content="6f__qaPJK4fGfUrDK255aelCxzz7nIitsVXRAa6OycM" />
 
         <script
