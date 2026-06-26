@@ -24,10 +24,23 @@ export default function Hero() {
   const rotateX = useTransform(smoothY, [0, 1000], [2, -2]);
   const rotateY = useTransform(smoothX, [0, 1000], [-2, 2]);
 
+  const rectRef = useRef(null);
+
+  useEffect(() => {
+    const updateRect = () => {
+      if (sectionRef.current) {
+        rectRef.current = sectionRef.current.getBoundingClientRect();
+      }
+    };
+    updateRect();
+    window.addEventListener('resize', updateRect);
+    return () => window.removeEventListener('resize', updateRect);
+  }, []);
+
   const handleMouseMove = (e) => {
-    const rect = sectionRef.current.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
+    if (!rectRef.current) return;
+    mouseX.set(e.clientX - rectRef.current.left);
+    mouseY.set(e.clientY - rectRef.current.top);
   };
 
   const containerVariants = {

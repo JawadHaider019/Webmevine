@@ -5,12 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import SectionHeader from "./SectionHeader";
 import Image from "next/image";
 
-// Font Awesome imports
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faQuoteRight,
-  faStar
-} from "@fortawesome/free-solid-svg-icons";
+import { Quote, Star } from "lucide-react";
 
 // Country flags using flagcdn.com for reliable flags
 const countryFlags = {
@@ -158,11 +153,8 @@ export default function Testimonials() {
     }
   ];
 
-  // Duplicate testimonials for infinite scroll effect (6x for seamless loop)
+  // Duplicate testimonials for infinite scroll effect (3x for seamless loop)
   const duplicatedTestimonials = [
-    ...testimonials,
-    ...testimonials,
-    ...testimonials,
     ...testimonials,
     ...testimonials,
     ...testimonials
@@ -331,20 +323,18 @@ export default function Testimonials() {
 
                       {/* Large Quote Icon */}
                       <div className="absolute top-4 right-4">
-                        <FontAwesomeIcon
-                          icon={faQuoteRight}
-                          className="w-20 h-20 text-red-600/15"
+                        <Quote
+                          className="w-20 h-20 text-red-600/15 rotate-180"
                         />
                       </div>
 
                       {/* Rating stars */}
                       <div className="flex gap-1 mb-4 relative z-10">
                         {[...Array(5)].map((_, i) => (
-                          <FontAwesomeIcon
+                          <Star
                             key={i}
-                            icon={faStar}
                             className={`w-4 h-4 ${i < testimonial.rating
-                              ? 'text-yellow-400'
+                              ? 'text-yellow-400 fill-yellow-400'
                               : 'text-gray-200'
                               }`}
                           />

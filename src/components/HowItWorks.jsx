@@ -5,14 +5,7 @@ import { useEffect, useState } from "react";
 import SectionHeader from "./SectionHeader";
 import GlowingButton from "./GlowingButton";
 
-// Font Awesome imports
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faChartLine,
-  faPencilRuler,
-  faCode,
-  faRocket,
-} from "@fortawesome/free-solid-svg-icons";
+import { LineChart, PenTool, Code, Rocket } from "lucide-react";
 
 export default function HowItWorks() {
   const [isMobile, setIsMobile] = useState(false);
@@ -36,7 +29,7 @@ export default function HowItWorks() {
       week: "Week 1",
       title: "Strategy & Conversion Planning",
       description: "We research your market, define clear goals, and build a conversion-focused strategy to ensure your website drives measurable results.",
-      icon: faChartLine
+      icon: <LineChart className="w-5 h-5 text-red-600" />
     },
     {
       id: 2,
@@ -44,7 +37,7 @@ export default function HowItWorks() {
       week: "Week 2",
       title: "UX Design & Wireframing",
       description: "We create intuitive wireframes and user flows designed for clarity, engagement, and high-converting user experience.",
-      icon: faPencilRuler
+      icon: <PenTool className="w-5 h-5 text-red-600" />
     },
     {
       id: 3,
@@ -52,7 +45,7 @@ export default function HowItWorks() {
       week: "Week 3",
       title: "Development & System Build",
       description: "Your custom website is built in React JS or Bubble.io, optimized for performance, scalability, and seamless integrations.",
-      icon: faCode
+      icon: <Code className="w-5 h-5 text-red-600" />
     },
     {
       id: 4,
@@ -60,7 +53,7 @@ export default function HowItWorks() {
       week: "Week 4",
       title: "Testing, Optimization & Launch",
       description: "We run full QA testing, refine performance, and deploy your site smoothly ensuring a confident, high-impact launch.",
-      icon: faRocket
+      icon: <Rocket className="w-5 h-5 text-red-600" />
     }
   ];
 
@@ -194,14 +187,14 @@ export default function HowItWorks() {
                 key={step.id}
                 variants={itemVariants}
                 className={`relative flex flex-col ${isMobile ? 'ml-12 mb-8' : `md:flex-row items-start gap-8 mb-8 last:mb-0 ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'
-                    }`
+                  }`
                   }`}
               >
                 {/* Number Circle with Icon */}
                 <motion.div
                   className={`${isMobile
-                      ? 'absolute -left-12 top-0 z-10'
-                      : 'absolute left-0 md:left-1/2 md:-translate-x-1/2 -top-2 md:top-1/2 md:-translate-y-1/2 '
+                    ? 'absolute -left-12 top-0 z-10'
+                    : 'absolute left-0 md:left-1/2 md:-translate-x-1/2 -top-2 md:top-1/2 md:-translate-y-1/2 '
                     }`}
                   variants={numberVariants}
                 >
@@ -214,10 +207,7 @@ export default function HowItWorks() {
                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-600 via-red-400 to-red-600 p-[2px]">
                       <div className="w-full h-full bg-white rounded-full flex items-center justify-center">
                         {/* Icon inside */}
-                        <FontAwesomeIcon
-                          icon={step.icon}
-                          className="w-5 h-5 text-red-600"
-                        />
+                        {step.icon}
                       </div>
                     </div>
 
@@ -227,9 +217,9 @@ export default function HowItWorks() {
 
                 {/* Content Card */}
                 <div className={`w-full ${isMobile
-                    ? ''
-                    : `md:w-[calc(50%-40px)] ${isLeft ? 'md:pr-8' : 'md:pl-8 md:text-right'
-                    }`
+                  ? ''
+                  : `md:w-[calc(50%-40px)] ${isLeft ? 'md:pr-8' : 'md:pl-8 md:text-right'
+                  }`
                   }`}>
                   <motion.div
                     variants={isMobile ? cardVariants : (isLeft ? leftCardVariants : rightCardVariants)}

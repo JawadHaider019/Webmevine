@@ -6,43 +6,34 @@ import SectionHeader from "./SectionHeader";
 import GlowingButton from "./GlowingButton";
 import Link from "next/link";
 
-// Font Awesome imports
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faRocket,
-  faShieldHalved,
-  faCode,
-  faChartLine,
-  faComments,
-  faHeadset,
-} from "@fortawesome/free-solid-svg-icons";
+import { Rocket, Shield, Code, LineChart, MessageCircle, Headphones } from "lucide-react";
 
 export default function Whyus() {
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // Font Awesome icons
+  // Lucide icons
   const RocketIcon = ({ className = "w-6 h-6 text-red-600" }) => (
-    <FontAwesomeIcon icon={faRocket} className={className} />
+    <Rocket className={className} />
   );
 
   const ShieldIcon = ({ className = "w-6 h-6 text-red-600" }) => (
-    <FontAwesomeIcon icon={faShieldHalved} className={className} />
+    <Shield className={className} />
   );
 
   const CodeIcon = ({ className = "w-6 h-6 text-red-600" }) => (
-    <FontAwesomeIcon icon={faCode} className={className} />
+    <Code className={className} />
   );
 
   const ChartIcon = ({ className = "w-6 h-6 text-red-600" }) => (
-    <FontAwesomeIcon icon={faChartLine} className={className} />
+    <LineChart className={className} />
   );
 
   const ConsultationIcon = ({ className = "w-6 h-6 text-red-600" }) => (
-    <FontAwesomeIcon icon={faComments} className={className} />
+    <MessageCircle className={className} />
   );
 
   const SupportIcon = ({ className = "w-6 h-6 text-red-600" }) => (
-    <FontAwesomeIcon icon={faHeadset} className={className} />
+    <Headphones className={className} />
   );
 
   const features = [
