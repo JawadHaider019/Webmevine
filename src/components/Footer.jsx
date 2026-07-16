@@ -519,7 +519,7 @@ export default function Footer() {
                   >
                     {[
                       { icon: FiLinkedin, href: 'https://www.linkedin.com/company/web-mavien', label: 'LinkedIn' },
-                      { icon: FiInstagram, href: 'https://www.instagram.com/webmevine', label: 'Instagram' },
+                      { icon: FiInstagram, href: 'https://www.instagram.com/webmavien', label: 'Instagram' },
                       { icon: FaWhatsapp, href: '#', label: 'WhatsApp', onClick: handleWhatsAppClick },
                     ].map((social, i) => (
                       <motion.a
