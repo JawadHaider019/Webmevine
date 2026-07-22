@@ -78,6 +78,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${marcellus.variable} ${manrope.variable}`}>
       <head>
+        {/* Google Analytics */}
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-NB5ZFSMPG5"
@@ -96,8 +97,48 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
+        
+        {/* Meta Pixel Code */}
+        <Script
+          id="meta-pixel"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              !function(f,b,e,v,n,t,s) {
+                if(f.fbq)return;
+                n=f.fbq=function(){
+                  n.callMethod ? n.callMethod.apply(n,arguments) : n.queue.push(arguments)
+                };
+                if(!f._fbq)f._fbq=n;
+                n.push=n;
+                n.loaded=!0;
+                n.version='2.0';
+                n.queue=[];
+                t=b.createElement(e);
+                t.async=!0;
+                t.src=v;
+                s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)
+              }(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', '2948429372170086');
+              fbq('track', 'PageView');
+            `,
+          }}
+        />
+
+        {/* NoScript fallback for Meta Pixel */}
+        <noscript>
+          <img 
+            height="1" 
+            width="1" 
+            style={{ display: 'none' }} 
+            src="https://www.facebook.com/tr?id=2948429372170086&ev=PageView&noscript=1" 
+          />
+        </noscript>
+
         <meta name="google-site-verification" content="6f__qaPJK4fGfUrDK255aelCxzz7nIitsVXRAa6OycM" />
 
+        {/* JSON-LD Schema Markup */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -127,6 +168,8 @@ export default function RootLayout({ children }) {
             }),
           }}
         />
+        
+        {/* Microsoft Clarity */}
         <Script
           id="clarity-script"
           strategy="afterInteractive"
