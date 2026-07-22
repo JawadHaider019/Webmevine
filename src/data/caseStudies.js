@@ -1,7 +1,57 @@
 // data/caseStudies.js
 export const caseStudies = [
-  {
+    {
     id: 1,
+    slug: "campuna",
+    category: "Marketplace & Travel Tech",
+    title: "Campuna",
+    shortDescription: "A German camping marketplace built on Bubble.io, connecting campers with verified camping spots across Germany.",
+    fullDescription: "Campuna is a German camping marketplace built on Bubble.io, connecting campers with verified camping spots, pitches, and outdoor stays across the country. The no-code platform enables hosts to list their camping spots, manage bookings, and receive payments, while campers can search, compare, and book stays with confidence.",
+    challenge: "Camping hosts across Germany lacked a dedicated, trustworthy platform to list their spots and manage bookings without relying on generic listing sites. Existing options offered little flexibility for camping-specific details, weak host verification, and no streamlined way to manage the full booking lifecycle from listing to payment.",
+    solution: "Campuna was built on Bubble.io to deliver a fully functional marketplace without the overhead of traditional development. The platform features a flexible listing system for camping-specific attributes, an admin approval workflow to ensure listing quality, and integrated payments to make booking seamless for both hosts and campers.",
+    achievement: "We built a fully functional camping marketplace on Bubble.io with flexible listings, an admin approval workflow, and integrated payments—giving hosts and campers a trustworthy platform from day one.",
+    stats: [
+  { label: "Listings Launched", value: "200+" },
+  { label: "Growth", value: "50%" }
+],
+    founder: {
+      name: "Voigt",
+      title: "Founder, Campuna"
+    },
+    testimonial: {
+      name: "Voigt",
+      role: " CAMPUNA FOUNDER.",
+      content: "Ahmad, today is a big day, and I’m truly moved.We did it. Campuna is live, I thank you from the bottom of my heart for finding each other and for bringing this project to life together with me. As a thank you, I will love to give you a small bonus. I look forward to continuing this journey with you! It’s truly very important to me to give you this as recognition for your work.",
+      rating: 5
+    },
+    images: {
+      main: "/casestudy/campuna 1.png",
+      gallery: [
+        "/casestudy/campuna 2.png",
+        "/casestudy/campuna 3.png"
+      ]
+    },
+    number: "06",
+    gradient: "from-gray-50 to-white",
+    technologies: ["Bubble.io", "No-Code", "API Integrations", "Payment Integration"],
+    features: [
+      "Flexible Listing System – Hosts can list camping spots with custom attributes and details.",
+      "Admin Listing Approval – Every listing is reviewed before going live, ensuring quality and trust.",
+      "Integrated Payments – Secure, built-in payment processing for bookings across Germany.",
+      "Host & Camper Dashboards – Separate, intuitive dashboards for managing listings and bookings.",
+      "Search & Discovery Tools – Campers can browse and filter camping spots by location and amenities.",
+      "Booking Management – Streamlined booking flow from inquiry to confirmed reservation.",
+      "Scalable No-Code Platform – Built on Bubble.io, making it adaptable as the marketplace grows."
+    ],
+    mission: "Campuna's mission is to make finding and booking camping spots across Germany simple, transparent, and trustworthy — connecting hosts and campers directly on an easy-to-use platform.",
+    impact: "Campuna has given camping hosts across Germany a dedicated platform to reach campers directly, with admin-reviewed listings ensuring quality and trust. Campers benefit from a streamlined search and booking experience, while hosts gain visibility and a reliable way to manage their spots and bookings.",
+    date: "2026",
+    role: "Bubble Developer, No-Code Expert",
+    service: "No-Code Development, API Integration",
+    industry: "Nonprofit & Charity, Crowdfunding"
+  },
+  {
+    id: 2,
     slug: "fintalio",
     category: "HR & Recruitment SaaS",
     title: "Fintalio",
@@ -52,7 +102,7 @@ export const caseStudies = [
     industry: "HR & Recruitment, Enterprise SaaS"
   },
   {
-    id: 2,
+    id: 3,
     slug: "fivup-ai",
     category: "AI-Powered Freelancing Tool",
     title: "FivUp AI",
@@ -102,7 +152,7 @@ export const caseStudies = [
     industry: "Freelancing & Gig Economy, AI & Automation"
   },
   {
-    id: 3,
+    id: 4,
     slug: "pure-clay",
     category: "E-Commerce & Organic Products",
     title: "Pure Clay",
@@ -157,56 +207,7 @@ export const caseStudies = [
   },
 
 
-  {
-    id: 4,
-    slug: "campuna",
-    category: "Marketplace & Travel Tech",
-    title: "Campuna",
-    shortDescription: "A German camping marketplace built on Bubble.io, connecting campers with verified camping spots across Germany.",
-    fullDescription: "Campuna is a German camping marketplace built on Bubble.io, connecting campers with verified camping spots, pitches, and outdoor stays across the country. The no-code platform enables hosts to list their camping spots, manage bookings, and receive payments, while campers can search, compare, and book stays with confidence.",
-    challenge: "Camping hosts across Germany lacked a dedicated, trustworthy platform to list their spots and manage bookings without relying on generic listing sites. Existing options offered little flexibility for camping-specific details, weak host verification, and no streamlined way to manage the full booking lifecycle from listing to payment.",
-    solution: "Campuna was built on Bubble.io to deliver a fully functional marketplace without the overhead of traditional development. The platform features a flexible listing system for camping-specific attributes, an admin approval workflow to ensure listing quality, and integrated payments to make booking seamless for both hosts and campers.",
-    achievement: "We built a fully functional camping marketplace on Bubble.io with flexible listings, an admin approval workflow, and integrated payments—giving hosts and campers a trustworthy platform from day one.",
-    stats: [
-  { label: "Listings Launched", value: "200+" },
-  { label: "Growth", value: "50%" }
-],
-    founder: {
-      name: "Voigt",
-      title: "Founder, Campuna"
-    },
-    testimonial: {
-      name: "Voigt",
-      role: " CAMPUNA FOUNDER.",
-      content: "Ahmad, today is a big day, and I’m truly moved.We did it. Campuna is live, I thank you from the bottom of my heart for finding each other and for bringing this project to life together with me. As a thank you, I will love to give you a small bonus. I look forward to continuing this journey with you! It’s truly very important to me to give you this as recognition for your work.",
-      rating: 5
-    },
-    images: {
-      main: "/casestudy/campuna 1.png",
-      gallery: [
-        "/casestudy/campuna 2.png",
-        "/casestudy/campuna 3.png"
-      ]
-    },
-    number: "06",
-    gradient: "from-gray-50 to-white",
-    technologies: ["Bubble.io", "No-Code", "API Integrations", "Payment Integration"],
-    features: [
-      "Flexible Listing System – Hosts can list camping spots with custom attributes and details.",
-      "Admin Listing Approval – Every listing is reviewed before going live, ensuring quality and trust.",
-      "Integrated Payments – Secure, built-in payment processing for bookings across Germany.",
-      "Host & Camper Dashboards – Separate, intuitive dashboards for managing listings and bookings.",
-      "Search & Discovery Tools – Campers can browse and filter camping spots by location and amenities.",
-      "Booking Management – Streamlined booking flow from inquiry to confirmed reservation.",
-      "Scalable No-Code Platform – Built on Bubble.io, making it adaptable as the marketplace grows."
-    ],
-    mission: "Campuna's mission is to make finding and booking camping spots across Germany simple, transparent, and trustworthy — connecting hosts and campers directly on an easy-to-use platform.",
-    impact: "Campuna has given camping hosts across Germany a dedicated platform to reach campers directly, with admin-reviewed listings ensuring quality and trust. Campers benefit from a streamlined search and booking experience, while hosts gain visibility and a reliable way to manage their spots and bookings.",
-    date: "2026",
-    role: "Bubble Developer, No-Code Expert",
-    service: "No-Code Development, API Integration",
-    industry: "Nonprofit & Charity, Crowdfunding"
-  },
+
     {
     id: 5,
     slug: "zola",

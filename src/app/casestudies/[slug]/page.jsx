@@ -617,8 +617,8 @@ export default function CaseStudyDetail() {
                 <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
               </motion.svg>
               <p className="font-['Manrope'] text-base sm:text-lg md:text-xl text-gray-700 mb-3 sm:mb-4 italic px-4 sm:px-8 md:px-12 group-hover:text-gray-900 transition-colors">
-                "Working with WebMavine was a game-changer. They understood our vision and delivered beyond expectations."
-              </p>
+             {study.testimonial.content}
+                </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
                 <div className="text-center sm:text-left">
                   <p className="font-['Marcellus'] text-base sm:text-lg font-bold text-gray-900 group-hover:text-red-600 transition-colors">
