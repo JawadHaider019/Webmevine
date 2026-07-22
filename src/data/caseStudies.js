@@ -172,13 +172,13 @@ export const caseStudies = [
   { label: "Growth", value: "50%" }
 ],
     founder: {
-      name: "",
+      name: "Voigt",
       title: "Founder, Campuna"
     },
     testimonial: {
-      name: "",
-      role: "Founder, Campuna",
-      content: "",
+      name: "Voigt",
+      role: " CAMPUNA FOUNDER.",
+      content: "Ahmad, today is a big day, and I’m truly moved.We did it. Campuna is live, I thank you from the bottom of my heart for finding each other and for bringing this project to life together with me. As a thank you, I will love to give you a small bonus. I look forward to continuing this journey with you! It’s truly very important to me to give you this as recognition for your work.",
       rating: 5
     },
     images: {
