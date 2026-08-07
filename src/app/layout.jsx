@@ -51,7 +51,7 @@ export const metadata = {
     siteName: "WebMavien",
     images: [
       {
-        url: "/logo.png",
+        url: "/fav.png",
         alt: "WebMavien Logo",
       },
     ],
@@ -62,7 +62,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "WebMavien | Website in 21 days Or Money Back",
     description: "Launch your AI-powered MVP or SaaS in just 21 days with WebMavien's expert development team.",
-    images: ["/logo.png"],
+    images: ["/fav.png"],
   },
 
   robots: {
