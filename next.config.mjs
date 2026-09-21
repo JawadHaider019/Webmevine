@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: '.next_app',
   /* config options here */
   reactCompiler: true,
   images: {

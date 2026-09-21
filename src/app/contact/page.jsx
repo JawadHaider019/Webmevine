@@ -144,8 +144,8 @@ export default function ContactPage() {
             <ContactCard
               icon={<FiMail />}
               title="Email"
-              text="team@webmavein.com"
-              link="mailto:team@webmavein.com"
+              text="team@webmavien.com"
+              link="mailto:team@webmavien.com"
               delay={0.1}
             />
 

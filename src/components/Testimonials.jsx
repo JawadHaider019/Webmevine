@@ -45,7 +45,7 @@ export default function Testimonials() {
 
     {
       id: 1,
-      quote: "WebMavine brought our AI-powered freelancing tool to life in record time. The platform they built generates high-converting proposals that actually work—our users are seeing 85% success rates. Their expertise in Bubble.io and AI integration made all the difference.",
+      quote: "WebMavien brought our AI-powered freelancing tool to life in record time. The platform they built generates high-converting proposals that actually work—our users are seeing 85% success rates. Their expertise in Bubble.io and AI integration made all the difference.",
       author: "Michael Roberts",
       rating: 5,
       location: "United States"
@@ -53,7 +53,7 @@ export default function Testimonials() {
     {
 
       id: 2,
-      quote: "Before WebMavine, I was manually handling orders through Instagram. They built a beautiful e-commerce platform that automated everything. Now my customers love the seamless shopping experience, and I've finally escaped the chaos of social media order management.",
+      quote: "Before WebMavien, I was manually handling orders through Instagram. They built a beautiful e-commerce platform that automated everything. Now my customers love the seamless shopping experience, and I've finally escaped the chaos of social media order management.",
       author: "Mudasir ",
       rating: 5,
       location: "Pakistan"
@@ -61,7 +61,7 @@ export default function Testimonials() {
 
     {
       id: 3,
-      quote: "Working with WebMavine on Zola was exceptional. They understood our vision for a unified business management platform and delivered a powerful Bubble.io solution in just 4 weeks. The automated review management and smart scheduling features have completely transformed how our beta users operate their businesses.",
+      quote: "Working with WebMavien on Zola was exceptional. They understood our vision for a unified business management platform and delivered a powerful Bubble.io solution in just 4 weeks. The automated review management and smart scheduling features have completely transformed how our beta users operate their businesses.",
       author: "David Ramos",
       rating: 5,
       location: "United States"
@@ -69,7 +69,7 @@ export default function Testimonials() {
     },
     {
       id: 4,
-      quote: "WebMavine delivered exactly what they promised—a comprehensive skill assessment platform with 250+ tests and AI-powered candidate ranking. The platform has 94% hiring accuracy, and our clients love how it eliminates bias from their recruitment process. Exceptional work delivered in just 4 weeks.",
+      quote: "WebMavien delivered exactly what they promised—a comprehensive skill assessment platform with 250+ tests and AI-powered candidate ranking. The platform has 94% hiring accuracy, and our clients love how it eliminates bias from their recruitment process. Exceptional work delivered in just 4 weeks.",
       author: "James Wilson",
       rating: 5,
       location: "Italy"

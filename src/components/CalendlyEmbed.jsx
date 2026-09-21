@@ -9,7 +9,7 @@ export default function CalendlyEmbed() {
   const iframeRef = useRef(null);
   
   const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || 
-    "https://calendly.com/webmavein/30min";
+    "https://calendly.com/webmavien/30min";
 
   // Add embed parameters for better performance
   const embedParams = new URLSearchParams({
@@ -140,7 +140,7 @@ export default function CalendlyEmbed() {
           }}
           allow="camera; microphone; fullscreen; payment"
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-downloads allow-modals allow-popups-to-escape-sandbox"
-          title="Schedule a meeting with Web Mavein"
+          title="Schedule a meeting with WebMavien"
         />
       </div>
     </>

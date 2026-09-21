@@ -181,7 +181,7 @@ export default function Hero() {
             className="text-sm sm:text-md md:text-lg text-gray-400 mb-8 sm:mb-10 leading-relaxed font-light max-w-xl mx-auto lg:mx-0"
             style={{ fontFamily: 'var(--font-manrope)' }}
           >
-            WebMavine builds high-performance React JS, Node.js, and Bubble.io websites for small businesses, e-commerce brands, and SaaS founders.
+            WebMavien builds high-performance React JS, Node.js, and Bubble.io websites for small businesses, e-commerce brands, and SaaS founders.
           </motion.p>
 
           <motion.div

@@ -21,7 +21,7 @@ export default function FAQ() {
     {
       id: 3,
       question: "Are you a React JS development company or a Bubble.io agency?",
-      answer: "We are both. WebMavine is a React JS development company and a Bubble.io development agency. We choose the right technology based on your business model, scalability needs, and growth roadmap."
+      answer: "We are both. WebMavien is a React JS development company and a Bubble.io development agency. We choose the right technology based on your business model, scalability needs, and growth roadmap."
     },
     {
       id: 4,
@@ -45,7 +45,7 @@ export default function FAQ() {
     },
     {
       id: 8,
-      question: "Is WebMavine a good fit for small businesses?",
+      question: "Is WebMavien a good fit for small businesses?",
       answer: "We work with serious small businesses, SaaS founders, and e-commerce brands focused on long-term growth. If you're looking for the cheapest option, we’re not the right fit. If you're building for scale, we are."
     }
   ];

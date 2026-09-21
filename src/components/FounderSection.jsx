@@ -145,7 +145,7 @@ const FounderSection = () => {
                 I’m a specialist web designer and developer with 8+ years of experience creating high-performance websites and custom web applications for startups, businesses, and ambitious founders. With 100+ projects successfully delivered, I combine React JS development, Bubble.io SaaS builds, and AI-powered integrations to craft websites that are not only visually appealing but also conversion-focused and scalable. </p>
 
               <p>
-                At WebMavine, we don’t just write code we engineer digital assets that drive growth. From custom website development to fast MVP launches, every project is built with speed, quality, and ROI in mind.
+                At WebMavien, we don’t just write code we engineer digital assets that drive growth. From custom website development to fast MVP launches, every project is built with speed, quality, and ROI in mind.
 
                 My approach blends minimalist, user-centric design with robust technical architecture, ensuring your website or SaaS platform is future-ready, performance-optimized, and designed to scale. </p>
             </motion.div>

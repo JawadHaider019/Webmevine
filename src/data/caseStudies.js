@@ -71,7 +71,7 @@ export const caseStudies = [
     testimonial: {
       name: "James Wilson",
       role: "CEO, Fintalio",
-      content: "WebMavine delivered exactly what they promised—a comprehensive skill assessment platform with 250+ tests and AI-powered candidate ranking. The platform has 94% hiring accuracy, and our clients love how it eliminates bias from their recruitment process. Exceptional work delivered in just 4 weeks.",
+      content: "WebMavien delivered exactly what they promised—a comprehensive skill assessment platform with 250+ tests and AI-powered candidate ranking. The platform has 94% hiring accuracy, and our clients love how it eliminates bias from their recruitment process. Exceptional work delivered in just 4 weeks.",
       rating: 5
     },
     images: {
@@ -122,7 +122,7 @@ export const caseStudies = [
     testimonial: {
       name: "Michael Roberts",
       role: "CEO, FivUp AI",
-      content: "WebMavine brought our AI-powered freelancing tool to life in record time. The platform they built generates high-converting proposals that actually work—our users are seeing 85% success rates. Their expertise in Bubble.io and AI integration made all the difference.",
+      content: "WebMavien brought our AI-powered freelancing tool to life in record time. The platform they built generates high-converting proposals that actually work—our users are seeing 85% success rates. Their expertise in Bubble.io and AI integration made all the difference.",
       rating: 5
     },
     images: {
@@ -172,7 +172,7 @@ export const caseStudies = [
     testimonial: {
       name: "Mudasir",
       role: "Founder, Pure Clay",
-      content: "Before WebMavine, I was manually handling orders through Instagram. They built a beautiful e-commerce platform that automated everything. Now my customers love the seamless shopping experience, and I've finally escaped the chaos of social media order management.",
+      content: "Before WebMavien, I was manually handling orders through Instagram. They built a beautiful e-commerce platform that automated everything. Now my customers love the seamless shopping experience, and I've finally escaped the chaos of social media order management.",
       rating: 5
     },
     images: {
@@ -229,7 +229,7 @@ export const caseStudies = [
     testimonial: {
       name: "David Ramos",
       role: "Founder & CEO",
-      content: "Working with WebMavine on Zola was exceptional. They understood our vision for a unified business management platform and delivered a powerful Bubble.io solution in just 4 weeks. The automated review management and smart scheduling features have completely transformed how our beta users operate their businesses.",
+      content: "Working with WebMavien on Zola was exceptional. They understood our vision for a unified business management platform and delivered a powerful Bubble.io solution in just 4 weeks. The automated review management and smart scheduling features have completely transformed how our beta users operate their businesses.",
       rating: 5
     },
     images: {
@@ -279,7 +279,7 @@ export const caseStudies = [
     testimonial: {
       name: "Rebecca Johnson",
       role: "Founder, United Mercy",
-      content: "United Mercy exists to make fundraising transparent and accessible. WebMavine understood this mission perfectly and built a platform with instant wallet transfers and community engagement tools that have helped raise over $250K for worthy causes. Campaigners tell us they've never experienced such fast donation delivery.",
+      content: "United Mercy exists to make fundraising transparent and accessible. WebMavien understood this mission perfectly and built a platform with instant wallet transfers and community engagement tools that have helped raise over $250K for worthy causes. Campaigners tell us they've never experienced such fast donation delivery.",
       rating: 5
     },
     images: {

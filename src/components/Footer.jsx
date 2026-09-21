@@ -42,7 +42,7 @@ export default function Footer() {
 
   // WhatsApp configuration
   const whatsappNumber = "+447424672943";
-  const whatsappMessage = "Hi! I'm interested in discussing a project with WebMavein.";
+  const whatsappMessage = "Hi! I'm interested in discussing a project with WebMavien.";
 
   const handleWhatsAppClick = (e) => {
     e.preventDefault();
@@ -389,7 +389,7 @@ export default function Footer() {
                 <Link href="/" className="inline-block" onClick={(e) => handleNavigation(e, '/')}>
                   <Image
                     src="/logo.png"
-                    alt="WebMavein Logo"
+                    alt="WebMavien Logo"
                     width={140}
                     height={140}
                     className="object-contain w-full h-auto"
@@ -415,8 +415,8 @@ export default function Footer() {
                   </div>
                   <div>
                     <p className="text-gray-500 text-xs">Email us</p>
-                    <a href="mailto:team@webmavein.com" className="text-gray-900 font-medium text-sm hover:text-red-600 transition-colors">
-                      team@webmavein.com
+                    <a href="mailto:team@webmavien.com" className="text-gray-900 font-medium text-sm hover:text-red-600 transition-colors">
+                      team@webmavien.com
                     </a>
                   </div>
                 </motion.div>
@@ -557,7 +557,7 @@ export default function Footer() {
                 whileHover={{ scale: 1.02 }}
                 className="font-['Manrope'] text-xs text-gray-400 order-2 md:order-1"
               >
-                © {currentYear} WebMavein. All rights reserved.
+                © {currentYear} WebMavien. All rights reserved.
               </motion.p>
 
 

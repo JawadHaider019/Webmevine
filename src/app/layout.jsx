@@ -3,7 +3,7 @@ import { Marcellus, Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import CustomCursor from "@/components/CustomCursor";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const marcellus = Marcellus({
   weight: "400",
@@ -167,7 +167,7 @@ export default function RootLayout({ children }) {
                 "@type": "ContactPoint",
                 "telephone": "+44 7424 672943",
                 "contactType": "customer service",
-                "email": "team@webmavein.com"
+                "email": "team@webmavien.com"
               }
             }),
           }}
@@ -189,10 +189,10 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="antialiased">
-        <CustomCursor />
         <Navbar />
         {children}
         <Footer />
+        <WhatsAppButton />
       </body>
     </html>
   );

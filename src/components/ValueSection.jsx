@@ -109,7 +109,7 @@ export default function ValueSection() {
             {/* Brand Statement */}
             <div className="pt-4">
               <p className="font-['Manrope'] text-gray-600 text-lg leading-relaxed">
-                At <span className="font-bold text-red-600">WebMavine</span>, we build digital assets engineered for authority, speed, and conversion. Because serious brands deserve serious infrastructure.
+                At <span className="font-bold text-red-600">WebMavien</span>, we build digital assets engineered for authority, speed, and conversion. Because serious brands deserve serious infrastructure.
               </p>
             </div>
 

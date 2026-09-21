@@ -14,7 +14,7 @@ export default function FounderFocus() {
       name: "Alexander Chen",
       company: "FinTech Labs",
       role: "Founder & CEO",
-      quote: "WebMavine  built our MVP in 4 weeks. We launched, got traction, and raised our seed round within 3 months.",
+      quote: "WebMavien built our MVP in 4 weeks. We launched, got traction, and raised our seed round within 3 months.",
       videoThumb: "/founder-1.jpg", // Replace with actual thumbnail
       videoUrl: "/videos/founder-1.mp4", // Replace with actual video
       duration: "2:34",
@@ -36,7 +36,7 @@ export default function FounderFocus() {
       name: "Marcus Webb",
       company: "HealthTech Solutions",
       role: "CTO",
-      quote: "Working with WebMavine  felt like having an extension of our own team. Technical excellence with founder mindset.",
+      quote: "Working with WebMavien felt like having an extension of our own team. Technical excellence with founder mindset.",
       videoThumb: "/founder-3.jpg",
       videoUrl: "/videos/founder-3.mp4",
       duration: "3:12",

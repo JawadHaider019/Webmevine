@@ -286,7 +286,7 @@ export default function ProcessPage() {
                 transition={{ delay: 0.3 }}
                 className="font-['Manrope'] text-gray-600 text-lg mb-8 leading-relaxed"
               >
-                WebMavine specializes in <strong>custom website development</strong>, <strong>React JS development</strong>,
+                WebMavien specializes in <strong>custom website development</strong>, <strong>React JS development</strong>,
                 and <strong>SaaS MVP builds</strong>. Our 21-day framework has helped founders,
                 e-commerce brands, and small businesses launch faster with scalable,
                 high-performance digital infrastructure.
@@ -352,7 +352,7 @@ export default function ProcessPage() {
                   transition={{ delay: 0.3 }}
                   className="font-['Marcellus'] text-2xl font-bold text-gray-900 mb-6"
                 >
-                  What You Get with WebMavine
+                  What You Get with WebMavien
                 </motion.h3>
 
                 <div className="space-y-4">
@@ -408,7 +408,7 @@ export default function ProcessPage() {
                     whileHover={{ x: 5 }}
                     className="text-sm text-red-600 font-semibold mt-3"
                   >
-                    — WebMavine
+                    — WebMavien
                   </motion.div>
                 </motion.div>
               </motion.div>
