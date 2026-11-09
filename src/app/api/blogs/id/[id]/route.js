@@ -2,125 +2,208 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
+import { createSlug, normalizeBlogDocument } from '@/lib/blogDb';
 
 const DB_NAME = 'webmavien';
-const COLLECTION = 'blogs';
+const COLLECTION_NAME = 'blogs';
 
-// GET blog by ID
-export async function GET(request, { params }) {
-  try {
-    const { id } = await params;
+async function ensureUniqueSlug(collection, desiredSlug, excludeId = null) {
+  let baseSlug = createSlug(desiredSlug) || `post-${Date.now()}`;
+  let candidate = baseSlug;
+  let counter = 1;
 
-    console.log('📡 Fetching blog by ID:', id);
-
-    if (!id || !ObjectId.isValid(id)) {
-      console.log('❌ Invalid blog ID:', id);
-      return NextResponse.json({ error: 'Invalid blog ID' }, { status: 400 });
+  while (true) {
+    const query = { slug: candidate };
+    if (excludeId && ObjectId.isValid(excludeId)) {
+      query._id = { $ne: new ObjectId(excludeId) };
     }
-
-    const client = await clientPromise;
-    const db = client.db(DB_NAME);
-
-    const blog = await db
-      .collection(COLLECTION)
-      .findOne({ _id: new ObjectId(id) });
-
-    if (!blog) {
-      console.log('❌ Blog not found with ID:', id);
-      return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
-    }
-
-    console.log('✅ Blog found:', blog.title);
-
-    return NextResponse.json({
-      ...blog,
-      id: blog._id.toString(),
-      _id: undefined
-    });
-  } catch (error) {
-    console.error('Error fetching blog by ID:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const existing = await collection.findOne(query);
+    if (!existing) return candidate;
+    candidate = `${baseSlug}-${counter}`;
+    counter++;
   }
 }
 
-// PUT update blog by ID
+// PUT /api/blogs/id/[id] - Update a blog by ID
 export async function PUT(request, { params }) {
   try {
-    const { id } = await params;
-    const body = await request.json();
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
+    const data = await request.json();
 
-    console.log('📝 Updating blog with ID:', id);
-
-    if (!id || !ObjectId.isValid(id)) {
-      console.log('❌ Invalid blog ID:', id);
-      return NextResponse.json({ error: 'Invalid blog ID' }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: 'Blog ID is required' }, { status: 400 });
     }
 
     const client = await clientPromise;
     const db = client.db(DB_NAME);
+    const collection = db.collection(COLLECTION_NAME);
 
-    // Remove _id and id from update data if present
-    const { _id, id: _, ...updateData } = body;
+    const existing = ObjectId.isValid(id)
+      ? await collection.findOne({ _id: new ObjectId(id) })
+      : await collection.findOne({ slug: id });
 
-    // Add updated timestamp
-    updateData.updatedAt = new Date();
-
-    const result = await db
-      .collection(COLLECTION)
-      .updateOne(
-        { _id: new ObjectId(id) },
-        { $set: updateData }
-      );
-
-    if (result.matchedCount === 0) {
-      console.log('❌ Blog not found for update:', id);
+    if (!existing) {
       return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
     }
 
-    console.log('✅ Blog updated successfully');
+    const isPublished =
+      data.status !== undefined
+        ? data.status === 'published'
+        : data.published !== undefined
+        ? Boolean(data.published)
+        : Boolean(existing.published);
 
-    return NextResponse.json({
-      success: true,
-      message: 'Blog updated successfully'
+    const status = isPublished ? 'published' : 'draft';
+    const published = isPublished;
+
+    const rawReadTime = String(
+      data.readTime ?? data.read_time ?? existing.readTime ?? '5'
+    );
+    const readTime = rawReadTime.replace(/[^\d]/g, '') || '5';
+
+    let finalSlug = existing.slug;
+    if (data.slug && createSlug(data.slug) !== existing.slug) {
+      finalSlug = await ensureUniqueSlug(
+        collection,
+        data.slug,
+        existing._id.toString()
+      );
+    } else if (!finalSlug) {
+      finalSlug = await ensureUniqueSlug(
+        collection,
+        data.title || existing.title,
+        existing._id.toString()
+      );
+    }
+
+    const createdAt = data.createdAt
+      ? new Date(data.createdAt)
+      : existing.createdAt
+      ? new Date(existing.createdAt)
+      : new Date();
+
+    const updatedAt = data.updatedAt ? new Date(data.updatedAt) : new Date();
+
+    const updateData = {
+      title: data.title ?? existing.title,
+      slug: finalSlug,
+      content: data.content ?? existing.content,
+      excerpt:
+        data.excerpt ??
+        data.metaDescription ??
+        data.meta_description ??
+        existing.excerpt ??
+        '',
+      metaTitle:
+        data.metaTitle ??
+        data.meta_title ??
+        existing.metaTitle ??
+        data.title ??
+        existing.title,
+      metaDescription:
+        data.metaDescription ??
+        data.meta_description ??
+        data.excerpt ??
+        existing.metaDescription ??
+        '',
+      breadcrumbTitle:
+        data.breadcrumbTitle ??
+        data.breadcrumb_title ??
+        existing.breadcrumbTitle ??
+        data.title ??
+        existing.title,
+      imageUrl:
+        data.imageUrl ?? data.image_url ?? existing.imageUrl ?? '',
+      altText:
+        data.altText ??
+        data.alt_text ??
+        existing.altText ??
+        data.title ??
+        existing.title,
+      schemaCaption:
+        data.schemaCaption ??
+        data.schema_caption ??
+        existing.schemaCaption ??
+        '',
+      author: data.author ?? existing.author ?? 'WebMavien Engineering Team',
+      authorRole:
+        data.authorRole ??
+        data.author_role ??
+        existing.authorRole ??
+        'Senior Full-Stack & AI Architects',
+      authorBio:
+        data.authorBio ??
+        data.author_bio ??
+        existing.authorBio ??
+        '',
+      category: data.category ?? existing.category ?? 'Development',
+      tags: Array.isArray(data.tags)
+        ? data.tags
+        : typeof data.tags === 'string'
+        ? data.tags.split(',').map((t) => t.trim()).filter(Boolean)
+        : existing.tags || [],
+      readTime,
+      chatGptLink:
+        data.chatGptLink ??
+        data.chatgpt_link ??
+        existing.chatGptLink ??
+        '',
+      published,
+      status,
+      featured:
+        data.featured !== undefined
+          ? Boolean(data.featured)
+          : Boolean(existing.featured),
+      createdAt: isNaN(createdAt.getTime()) ? new Date() : createdAt,
+      updatedAt: isNaN(updatedAt.getTime()) ? new Date() : updatedAt,
+    };
+
+    await collection.updateOne({ _id: existing._id }, { $set: updateData });
+
+    const updated = normalizeBlogDocument({
+      ...existing,
+      ...updateData,
+      _id: existing._id,
     });
+
+    return NextResponse.json(updated);
   } catch (error) {
     console.error('Error updating blog:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update blog', details: error.message },
+      { status: 500 }
+    );
   }
 }
 
-// DELETE blog by ID
+// DELETE /api/blogs/id/[id] - Delete a blog by ID
 export async function DELETE(request, { params }) {
   try {
-    const { id } = await params;
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
 
-    console.log('🗑️ Deleting blog with ID:', id);
-
-    if (!id || !ObjectId.isValid(id)) {
-      console.log('❌ Invalid blog ID:', id);
-      return NextResponse.json({ error: 'Invalid blog ID' }, { status: 400 });
+    if (!id) {
+      return NextResponse.json({ error: 'Blog ID is required' }, { status: 400 });
     }
 
     const client = await clientPromise;
     const db = client.db(DB_NAME);
+    const collection = db.collection(COLLECTION_NAME);
 
-    const result = await db
-      .collection(COLLECTION)
-      .deleteOne({ _id: new ObjectId(id) });
+    const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { slug: id };
+    const result = await collection.deleteOne(query);
 
     if (result.deletedCount === 0) {
-      console.log('❌ Blog not found for deletion:', id);
       return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
     }
 
-    console.log('✅ Blog deleted successfully');
-
-    return NextResponse.json({
-      success: true,
-      message: 'Blog deleted successfully'
-    });
+    return NextResponse.json({ message: 'Blog deleted successfully' });
   } catch (error) {
     console.error('Error deleting blog:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete blog', details: error.message },
+      { status: 500 }
+    );
   }
 }

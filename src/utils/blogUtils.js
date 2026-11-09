@@ -1,167 +1,119 @@
 // src/utils/blogUtils.js
-// Helper functions for working with blogs - MongoDB only
 import { blogService } from '@/services/blogService';
 
-// Cache for blogs to avoid excessive API calls
-let blogsCache = null;
-let cacheTimestamp = null;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-export const getPublishedBlogs = async () => {
+// Create a new blog post
+export async function createBlogPost(blogData, imageFile = null) {
   try {
-    console.log('📡 getPublishedBlogs called');
+    let imageUrl = blogData.imageUrl || blogData.image_url || '';
 
-    // Check cache first
-    if (blogsCache && cacheTimestamp && (Date.now() - cacheTimestamp < CACHE_DURATION)) {
-      console.log('📦 Using cached blogs');
-      // Use published boolean instead of status
-      const cachedPublished = blogsCache.filter(blog => blog.published === true)
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-      if (cachedPublished.length > 0) {
-        console.log(`✅ Found ${cachedPublished.length} published blogs in cache`);
-        return cachedPublished;
-      }
+    if (imageFile) {
+      imageUrl = await blogService.uploadImage(imageFile);
     }
 
-    // Fetch from MongoDB
-    console.log('🌐 Fetching from blogService.getAllBlogs()');
-    const apiBlogs = await blogService.getAllBlogs();
-    console.log('📥 Raw API response:', apiBlogs);
+    const published =
+      blogData.status !== undefined
+        ? blogData.status === 'published'
+        : blogData.published !== undefined
+        ? Boolean(blogData.published)
+        : true;
 
-    if (!apiBlogs || apiBlogs.length === 0) {
-      console.log('⚠️ No blogs found from API');
-      return [];
-    }
+    const status = published ? 'published' : 'draft';
 
-    // Update cache
-    blogsCache = apiBlogs;
-    cacheTimestamp = Date.now();
+    const payload = {
+      ...blogData,
+      imageUrl,
+      published,
+      status,
+    };
 
-    // Use published boolean instead of status
-    const publishedBlogs = apiBlogs.filter(blog => blog.published === true)
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    console.log(`✅ Found ${publishedBlogs.length} published blogs from API`);
-    return publishedBlogs;
-
+    const result = await blogService.createBlog(payload);
+    return {
+      ...result,
+      id: result._id || result.id,
+      status: result.status || (result.published ? 'published' : 'draft'),
+    };
   } catch (error) {
-    console.error('Error loading blogs from MongoDB:', error);
-    return []; // Return empty array instead of throwing
+    console.error('Error creating blog post:', error);
+    throw error;
   }
-};
+}
 
-export const getBlogBySlug = async (slug) => {
+// Get all blog posts
+export async function getAllBlogPosts(params = {}) {
   try {
-    console.log('📡 getBlogBySlug called for:', slug);
+    const blogs = await blogService.getBlogs(params);
+    const list = Array.isArray(blogs) ? blogs : blogs.blogs || [];
+    return list.map((blog) => ({
+      ...blog,
+      id: blog._id || blog.id,
+      status: blog.status || (blog.published ? 'published' : 'draft'),
+    }));
+  } catch (error) {
+    console.error('Error getting blog posts:', error);
+    throw error;
+  }
+}
 
-    // Check cache first
-    if (blogsCache) {
-      const cached = blogsCache.find(blog => blog.slug === slug);
-      if (cached) {
-        console.log('📦 Found in cache:', cached.title);
-        return cached;
-      }
-    }
-
-    // Fetch from MongoDB
-    console.log('🌐 Fetching from blogService.getBlogBySlug');
+// Get a single blog post by slug
+export async function getBlogPostBySlug(slug) {
+  try {
     const blog = await blogService.getBlogBySlug(slug);
+    if (!blog) return null;
+    return {
+      ...blog,
+      id: blog._id || blog.id,
+      status: blog.status || (blog.published ? 'published' : 'draft'),
+    };
+  } catch (error) {
+    console.error('Error getting blog post by slug:', error);
+    throw error;
+  }
+}
 
-    if (!blog) {
-      console.log('❌ Blog not found:', slug);
-      return null;
+// Update a blog post
+export async function updateBlogPost(postId, blogData, imageFile = null) {
+  try {
+    let imageUrl = blogData.imageUrl || blogData.image_url || '';
+
+    if (imageFile) {
+      imageUrl = await blogService.uploadImage(imageFile);
     }
 
-    console.log('✅ Blog found:', blog.title);
-    return blog;
+    const published =
+      blogData.status !== undefined
+        ? blogData.status === 'published'
+        : blogData.published !== undefined
+        ? Boolean(blogData.published)
+        : true;
 
+    const status = published ? 'published' : 'draft';
+
+    const payload = {
+      ...blogData,
+      imageUrl,
+      published,
+      status,
+    };
+
+    const result = await blogService.updateBlog(postId, payload);
+    return {
+      ...result,
+      id: result._id || result.id,
+      status: result.status || (result.published ? 'published' : 'draft'),
+    };
   } catch (error) {
-    console.error('Error loading blog from MongoDB:', error);
-    return null;
+    console.error('Error updating blog post:', error);
+    throw error;
   }
-};
+}
 
-export const getAllCategories = async () => {
+// Delete a blog post
+export async function deleteBlogPost(postId) {
   try {
-    console.log('📡 getAllCategories called');
-
-    // Use the service method that's optimized for this
-    const categories = await blogService.getAllCategories();
-    console.log('✅ Categories fetched:', categories);
-    return categories;
+    await blogService.deleteBlog(postId);
+    return { id: postId };
   } catch (error) {
-    console.error('Error fetching categories:', error);
-    return []; // Return empty array on error
+    console.error('Error deleting blog post:', error);
+    throw error;
   }
-};
-
-export const getBlogsByCategory = async (category) => {
-  try {
-    console.log('📡 getBlogsByCategory called for:', category);
-    const blogs = await getPublishedBlogs();
-    if (category === 'all' || category === 'All') return blogs;
-
-    const filtered = blogs.filter(blog => blog.category === category);
-    console.log(`✅ Found ${filtered.length} blogs in category ${category}`);
-    return filtered;
-  } catch (error) {
-    console.error('Error filtering blogs by category:', error);
-    return [];
-  }
-};
-
-export const searchBlogs = async (query) => {
-  try {
-    console.log('📡 searchBlogs called for:', query);
-
-    if (!query || query.trim() === '') {
-      return getPublishedBlogs();
-    }
-
-    // Use the service's search method for better performance
-    const results = await blogService.searchBlogs(query);
-    console.log(`✅ Found ${results.length} blogs matching "${query}"`);
-    return results;
-  } catch (error) {
-    console.error('Error searching blogs:', error);
-    return [];
-  }
-};
-
-export const getRelatedBlogs = async (currentBlog, limit = 3) => {
-  try {
-    console.log('📡 getRelatedBlogs called for:', currentBlog?.id);
-
-    if (!currentBlog || !currentBlog.id) {
-      return [];
-    }
-
-    // Use the service's optimized method
-    const related = await blogService.getRelatedBlogs(currentBlog, limit);
-    console.log(`✅ Found ${related.length} related blogs`);
-    return related;
-  } catch (error) {
-    console.error('Error fetching related blogs:', error);
-    return [];
-  }
-};
-
-export const formatDate = (dateString) => {
-  if (!dateString) return '';
-
-  try {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    return dateString;
-  }
-};
-
-// Function to clear cache (useful after publishing/updating)
-export const clearBlogCache = () => {
-  console.log('🧹 Clearing blog cache');
-  blogsCache = null;
-  cacheTimestamp = null;
-};
+}

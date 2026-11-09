@@ -1,1718 +1,530 @@
-// src/components/BlogManager.jsx
-"use client";
+'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import {
-  FiPlus, FiEdit, FiTrash2, FiImage, FiLink, FiX, FiEye,
-  FiSend, FiBold, FiItalic, FiList, FiHash, FiCalendar,
-  FiUser, FiTag, FiUpload, FiEyeOff, FiClock,
-  FiCheckCircle, FiAlertCircle, FiStar, FiSave,
-  FiSearch, FiGlobe, FiHelpCircle, FiPaperclip, FiRefreshCw,
-  FiTable, FiSquare, FiUploadCloud, FiCode
-} from 'react-icons/fi';
-import { LuSparkles } from 'react-icons/lu';
+  FileText,
+  Plus,
+  Search,
+  Edit3,
+  Trash2,
+  Eye,
+  CheckCircle2,
+  Clock,
+  Star,
+  Calendar,
+  ExternalLink,
+  AlertCircle,
+  Loader2,
+  Sparkles,
+  LogOut,
+  Globe,
+} from 'lucide-react';
 import { blogService } from '@/services/blogService';
+import WordPressBlogEditor from '@/components/admin/WordPressBlogEditor';
 
-// Custom Alert Component
-const Alert = ({ type, message, onClose }) => {
-  const [isVisible, setIsVisible] = useState(true);
+const DEFAULT_CATEGORIES = [
+  'AI & Automation',
+  'Web Development',
+  'SaaS & MVP',
+  'Technical SEO',
+  'Cloud & DevOps',
+  'UI/UX & Product Design',
+  'Case Studies & ROI',
+];
+
+export default function BlogManager() {
+  const [blogs, setBlogs] = useState([]);
+  const [stats, setStats] = useState({ total: 0, published: 0, draft: 0, featured: 0 });
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  // Editor View State
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg, type = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
+  };
+
+  const fetchBlogs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await blogService.getBlogs({
+        status: statusFilter,
+        category: categoryFilter === 'all' ? '' : categoryFilter,
+        search,
+        withStats: true,
+      });
+      const list = Array.isArray(res) ? res : res.blogs || [];
+      setBlogs(list);
+      if (res.stats) {
+        setStats(res.stats);
+      } else {
+        setStats({
+          total: list.length,
+          published: list.filter((b) => b.published || b.status === 'published').length,
+          draft: list.filter((b) => !b.published && b.status !== 'published').length,
+          featured: list.filter((b) => b.featured).length,
+        });
+      }
+    } catch (err) {
+      showToast(err.message || 'Error loading blog articles', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, [statusFilter, categoryFilter, search]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-      setTimeout(onClose, 300);
-    }, 4000);
-    return () => clearTimeout(timer);
-  }, [onClose]);
+    fetchBlogs();
+  }, [fetchBlogs]);
 
-  const styles = {
-    success: 'bg-green-50 border-green-200 text-green-800',
-    error: 'bg-red-50 border-red-200 text-red-800',
-    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-    info: 'bg-blue-50 border-blue-200 text-blue-800'
+  // All categories discovered from posts + defaults
+  const availableCategories = useMemo(() => {
+    const set = new Set(DEFAULT_CATEGORIES);
+    blogs.forEach((b) => {
+      if (b.category) set.add(b.category);
+    });
+    return Array.from(set);
+  }, [blogs]);
+
+  const openCreateModal = () => {
+    setEditingPost(null);
+    setIsEditorOpen(true);
   };
 
-  if (!isVisible) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      className={`fixed top-4 right-4 z-50 flex items-center p-3 sm:p-4 rounded-lg border shadow-lg max-w-xs sm:max-w-md ${styles[type]}`}
-    >
-      {type === 'success' && <FiCheckCircle className="mr-2 sm:mr-3 flex-shrink-0" />}
-      {type === 'error' && <FiAlertCircle className="mr-2 sm:mr-3 flex-shrink-0" />}
-      <div className="text-sm font-medium flex-1">{message}</div>
-      <button onClick={() => setIsVisible(false)} className="ml-2 hover:opacity-70">
-        <FiX size={16} />
-      </button>
-    </motion.div>
-  );
-};
-
-// Markdown Renderer with proper formatting
-const MarkdownRenderer = ({ content }) => {
-  if (!content) return null;
-
-  const renderFormattedContent = (text) => {
-    if (!text) return null;
-
-    // Check for raw HTML / Custom styled pages
-    if (text.toLowerCase().includes('<!doctype html>') || text.includes('<!-- RAW_HTML -->')) {
-      return (
-        <iframe
-          srcDoc={text}
-          className="w-full border-0 bg-white"
-          style={{ overflow: 'hidden' }}
-          scrolling="no"
-          title="Custom HTML Content"
-          onLoad={(e) => {
-            const iframe = e.target;
-            const adjustHeight = () => {
-              try {
-                const height = iframe.contentWindow.document.documentElement.scrollHeight;
-                iframe.style.height = height + 'px';
-              } catch (err) { }
-            };
-            adjustHeight();
-            setTimeout(adjustHeight, 500);
-            setTimeout(adjustHeight, 2000);
-          }}
-        />
-      );
-    }
-
-    const lines = text.split('\n');
-    const result = [];
-    let i = 0;
-
-    const processInlineFormatting = (content) => {
-      let processedContent = content;
-      // Custom Button: [Text](btn:url)
-      processedContent = processedContent.replace(
-        /\[([^\]]+)\]\(btn:([^)]+)\)/g,
-        '<a href="$2" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-black text-white font-semibold rounded-full hover:scale-105 transition-all shadow-md hover:shadow-lg my-2">$1</a>'
-      );
-      // Bold/Italic/Links
-      processedContent = processedContent.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-      processedContent = processedContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      processedContent = processedContent.replace(/\*(.*?)\*/g, '<em>$1</em>');
-      processedContent = processedContent.replace(
-        /\[([^\]]+)\]\(([^)]+)\)/g,
-        (match, linkText, url) => {
-          if (url.startsWith('btn:')) return match;
-          return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline">${linkText}</a>`;
-        }
-      );
-      return processedContent;
-    };
-
-    while (i < lines.length) {
-      const line = lines[i];
-
-      // Handle Tables
-      if (line.trim().startsWith('|') && i + 1 < lines.length && lines[i + 1].replace(/\s/g, '').includes('|-')) {
-        const tableLines = [];
-        let j = i;
-        while (j < lines.length && lines[j].trim().startsWith('|')) {
-          tableLines.push(lines[j]);
-          j++;
-        }
-
-        if (tableLines.length >= 2) {
-          const headers = tableLines[0].split('|').filter(cell => cell.trim() !== '').map(cell => cell.trim());
-          const rows = tableLines.slice(2).map(row =>
-            row.split('|').filter(cell => cell.trim() !== '').map(cell => cell.trim())
-          );
-
-          result.push(
-            <div key={`table-${i}`} className="overflow-x-auto my-6 rounded-xl border border-gray-200 shadow-sm">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    {headers.map((header, idx) => (
-                      <th key={idx} className="px-6 py-3 text-left text-xs font-semibold text-black uppercase tracking-wider">
-                        <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(header) }} />
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {rows.map((row, rowIdx) => (
-                    <tr key={rowIdx} className={rowIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
-                      {row.map((cell, cellIdx) => (
-                        <td key={cellIdx} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(cell) }} />
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          );
-          i = j;
-          continue;
-        }
-      }
-
-      // Headers
-      if (line.startsWith('# ')) {
-        result.push(<h1 key={i} className="text-2xl font-bold text-black mt-6 mb-4"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(2)) }} /></h1>);
-      } else if (line.startsWith('## ')) {
-        result.push(<h2 key={i} className="text-xl font-bold text-gray-800 mt-5 mb-3"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(3)) }} /></h2>);
-      } else if (line.startsWith('### ')) {
-        result.push(<h3 key={i} className="text-lg font-semibold text-gray-800 mt-4 mb-2"><span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(4)) }} /></h3>);
-      }
-
-      // Images
-      else if (line.startsWith('![') && line.includes('](')) {
-        const altMatch = line.match(/!\[(.*?)\]/);
-        const urlMatch = line.match(/\((.*?)\)/);
-        if (urlMatch) {
-          result.push(
-            <div key={i} className="my-4">
-              <img
-                src={urlMatch[1]}
-                alt={altMatch ? altMatch[1] : ''}
-                className="max-w-full rounded-lg shadow-md hover:shadow-lg transition-shadow"
-                loading="lazy"
-              />
-              {altMatch && altMatch[1] && (
-                <p className="text-xs text-gray-500 mt-1 text-center">{altMatch[1]}</p>
-              )}
-            </div>
-          );
-        }
-      }
-
-      else if (line.trim()) {
-        if (line.startsWith('- ')) {
-          result.push(
-            <li key={i} className="ml-6 list-disc text-black mb-1">
-              <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.substring(2)) }} />
-            </li>
-          );
-        } else if (/^\d+\.\s/.test(line)) {
-          result.push(
-            <li key={i} className="ml-6 list-decimal text-black mb-1">
-              <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line.replace(/^\d+\.\s/, '')) }} />
-            </li>
-          );
-        } else {
-          result.push(
-            <p key={i} className="mb-4 text-black">
-              <span dangerouslySetInnerHTML={{ __html: processInlineFormatting(line) }} />
-            </p>
-          );
-        }
-      } else {
-        result.push(<br key={i} />);
-      }
-      i++;
-    }
-    return result;
+  const openEditModal = (post) => {
+    setEditingPost(post);
+    setIsEditorOpen(true);
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await blogService.deleteBlog(id);
+      showToast('Article deleted successfully.');
+      setDeleteConfirmId(null);
+      fetchBlogs();
+    } catch (err) {
+      showToast(err.message || 'Error deleting article', 'error');
+    }
+  };
+
+  const handleQuickToggleStatus = async (post) => {
+    const postId = post.id || post._id;
+    const isCurrentlyPublished = post.status === 'published' || post.published;
+    const nextStatus = isCurrentlyPublished ? 'draft' : 'published';
+    try {
+      await blogService.updateBlog(postId, {
+        ...post,
+        status: nextStatus,
+        published: nextStatus === 'published',
+      });
+      showToast(
+        nextStatus === 'published'
+          ? 'Article published live!'
+          : 'Article moved to drafts.'
+      );
+      fetchBlogs();
+    } catch (err) {
+      showToast(err.message || 'Status update failed', 'error');
+    }
+  };
+
+  const handleQuickToggleFeatured = async (post) => {
+    const postId = post.id || post._id;
+    try {
+      await blogService.updateBlog(postId, {
+        ...post,
+        featured: !post.featured,
+      });
+      showToast(
+        !post.featured
+          ? 'Marked as Featured Spotlight article!'
+          : 'Removed from Featured Spotlight.'
+      );
+      fetchBlogs();
+    } catch (err) {
+      showToast(err.message || 'Update failed', 'error');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin-auth');
+    localStorage.removeItem('isAdmin');
+    window.location.reload();
+  };
+
+  // Render full WordPress / Sanity Style Editor when creating or editing
+  if (isEditorOpen) {
+    return (
+      <WordPressBlogEditor
+        initialPost={editingPost}
+        onCancel={() => {
+          setIsEditorOpen(false);
+          setEditingPost(null);
+        }}
+        onSaved={() => {
+          setIsEditorOpen(false);
+          setEditingPost(null);
+          showToast(
+            editingPost ? 'Article updated successfully!' : 'New article created!'
+          );
+          fetchBlogs();
+        }}
+      />
+    );
+  }
+
   return (
-    <div className="prose max-w-none text-black">
-      {renderFormattedContent(content)}
-    </div>
-  );
-};
-
-// SEO Helper
-const SEOHelper = ({ blog }) => {
-  const tips = [];
-
-  if (!blog?.title) tips.push({ type: 'error', msg: 'Title is missing' });
-  else if (blog.title.length < 30) tips.push({ type: 'warning', msg: 'Title too short' });
-  else if (blog.title.length > 60) tips.push({ type: 'warning', msg: 'Title too long' });
-  else tips.push({ type: 'success', msg: 'Title length good' });
-
-  if (!blog?.content) tips.push({ type: 'error', msg: 'Content is empty' });
-  else if (blog.content.length < 300) tips.push({ type: 'warning', msg: 'Content too short' });
-
-  if (!blog?.category) tips.push({ type: 'error', msg: 'Category not selected' });
-  if (!blog?.tags || blog.tags.length === 0) tips.push({ type: 'warning', msg: 'Add tags for SEO' });
-  if (!blog?.imageUrl) tips.push({ type: 'info', msg: 'Add featured image' });
-
-  return (
-    <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-      <div className="flex items-center gap-2 mb-2 text-xs font-medium text-gray-700">
-        <FiGlobe className="text-blue-500" />
-        SEO Checklist
-        <FiHelpCircle className="text-gray-400 ml-auto" size={14} />
-      </div>
-      <div className="space-y-1">
-        {tips.map((tip, i) => (
-          <div key={i} className={`text-xs flex items-center gap-1.5 ${tip.type === 'error' ? 'text-red-600' :
-            tip.type === 'warning' ? 'text-yellow-600' :
-              tip.type === 'success' ? 'text-green-600' :
-                'text-blue-600'
-            }`}>
-            <span>•</span>
-            {tip.msg}
+    <div className="min-h-screen bg-zinc-50 py-10 px-4 sm:px-8">
+      <div className="max-w-7xl mx-auto space-y-6 pb-12">
+        {/* Toast Notification */}
+        {toast && (
+          <div
+            className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-xl border text-sm font-semibold transition-all ${
+              toast.type === 'error'
+                ? 'bg-red-950 text-white border-red-800'
+                : 'bg-zinc-950 text-white border-red-500/40'
+            }`}
+          >
+            {toast.type === 'error' ? (
+              <AlertCircle className="w-4 h-4 text-red-400" />
+            ) : (
+              <CheckCircle2 className="w-4 h-4 text-red-500" />
+            )}
+            {toast.msg}
           </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+        )}
 
-// Link Modal
-const LinkModal = ({ isOpen, onClose, onInsert }) => {
-  const [linkText, setLinkText] = useState('');
-  const [linkUrl, setLinkUrl] = useState('');
-
-  if (!isOpen) return null;
-
-  const handleInsert = () => {
-    if (linkUrl) {
-      onInsert(linkText || 'Link', linkUrl);
-      setLinkText('');
-      setLinkUrl('');
-      onClose();
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-medium text-black">Insert Link</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <FiX size={18} />
-          </button>
+        {/* Top Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-zinc-200/90 shadow-xs">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <span className="w-3 h-3 rounded-full bg-red-600 animate-pulse" />
+              <span className="text-[11px] font-bold uppercase tracking-widest text-red-600">
+                WebMavien Editorial & Technical SEO Suite
+              </span>
+            </div>
+            <h1 className="font-['Marcellus'] text-2xl sm:text-3xl font-bold text-zinc-950 mt-1">
+              Blog & Content Management
+            </h1>
+            <p className="text-sm text-zinc-500 mt-1">
+              Manage articles, structured JSON-LD schemas, Key Takeaways, FAQs, and conversion CTAs.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Link
+              href="/blog"
+              target="_blank"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 font-bold text-xs transition-all"
+            >
+              <Globe className="w-4 h-4 text-red-600" />
+              View Live Blog
+            </Link>
+            <button
+              onClick={openCreateModal}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md shadow-red-600/20 transition-all cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              Create New Article
+            </button>
+            <button
+              onClick={handleLogout}
+              title="Sign Out"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-zinc-600 font-bold text-xs transition-all cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs font-medium text-gray-700 block mb-1">Link Text</label>
+        {/* 4-Card Bento Metrics Strip */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            {
+              label: 'Total Articles',
+              val: stats.total,
+              icon: FileText,
+              color: 'text-zinc-950 bg-zinc-100',
+            },
+            {
+              label: 'Published (Live)',
+              val: stats.published,
+              icon: CheckCircle2,
+              color: 'text-emerald-700 bg-emerald-50 border border-emerald-200/60',
+            },
+            {
+              label: 'Drafts',
+              val: stats.draft,
+              icon: Clock,
+              color: 'text-amber-700 bg-amber-50 border border-amber-200/60',
+            },
+            {
+              label: 'Featured Spotlight',
+              val: stats.featured,
+              icon: Star,
+              color: 'text-red-600 bg-red-50 border border-red-200/60',
+            },
+          ].map((card, i) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={i}
+                className="bg-white rounded-2xl p-5 border border-zinc-200/90 shadow-xs flex items-center justify-between"
+              >
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                    {card.label}
+                  </p>
+                  <p className="text-2xl sm:text-3xl font-bold text-zinc-950 mt-1 font-['Marcellus']">
+                    {card.val}
+                  </p>
+                </div>
+                <div
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center ${card.color}`}
+                >
+                  <Icon className="w-5 h-5" />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Filter & Search Bar */}
+        <div className="bg-white rounded-2xl p-4 border border-zinc-200/90 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              value={linkText}
-              onChange={(e) => setLinkText(e.target.value)}
-              placeholder="Click here"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-black"
-              autoFocus
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by title, slug, excerpt, or category..."
+              className="w-full pl-10 pr-4 py-2.5 text-sm bg-zinc-50 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-600/20 focus:border-red-600"
             />
           </div>
-
-          <div>
-            <label className="text-xs font-medium text-gray-700 block mb-1">URL</label>
-            <input
-              type="url"
-              value={linkUrl}
-              onChange={(e) => setLinkUrl(e.target.value)}
-              placeholder="https://example.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-1 focus:ring-black"
-            />
-          </div>
-
-          <div className="flex gap-2 pt-2">
-            <button
-              onClick={onClose}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="px-3.5 py-2.5 text-xs font-semibold bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-700 focus:outline-none focus:border-red-600"
             >
-              Cancel
-            </button>
-            <button
-              onClick={handleInsert}
-              disabled={!linkUrl}
-              className="flex-1 px-3 py-2 bg-black text-white rounded-lg text-sm hover:bg-gray-800 disabled:opacity-50"
-            >
-              Insert
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-};
+              <option value="all">All Categories</option>
+              {availableCategories.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
 
-// Formatting Toolbar (Single Image Upload)
-const FormattingToolbar = ({ onFormat, onLinkClick, onImageClick, onImageUpload, onInlineImageUpload, textareaRef }) => {
-  const formats = [
-    { icon: FiBold, action: 'bold', title: 'Bold' },
-    { icon: FiItalic, action: 'italic', title: 'Italic' },
-    { icon: FiHash, action: 'heading', title: 'Heading' },
-    { icon: FiList, action: 'ul', title: 'Bullet List' },
-  ];
-
-  const handleFormat = (action) => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = textarea.value.substring(start, end);
-    const content = textarea.value;
-
-    let newContent = '';
-    let newCursorPos = start;
-
-    switch (action) {
-      case 'bold':
-        newContent = content.substring(0, start) + `**${selectedText}**` + content.substring(end);
-        newCursorPos = end + 4;
-        break;
-      case 'italic':
-        newContent = content.substring(0, start) + `*${selectedText}*` + content.substring(end);
-        newCursorPos = end + 2;
-        break;
-      case 'heading': {
-        const lineStart = content.lastIndexOf('\n', start - 1) + 1;
-        const lineEnd = content.indexOf('\n', start);
-        const currentLine = content.substring(lineStart, lineEnd === -1 ? content.length : lineEnd);
-
-        if (currentLine.startsWith('# ')) {
-          newContent = content.substring(0, lineStart) + currentLine.substring(2) + content.substring(lineEnd === -1 ? content.length : lineEnd);
-          newCursorPos = start - 2;
-        } else {
-          newContent = content.substring(0, lineStart) + '# ' + currentLine + content.substring(lineEnd === -1 ? content.length : lineEnd);
-          newCursorPos = start + 2;
-        }
-        break;
-      }
-      case 'ul': {
-        const lineStart = content.lastIndexOf('\n', start - 1) + 1;
-        const lineEnd = content.indexOf('\n', start);
-        const currentLine = content.substring(lineStart, lineEnd === -1 ? content.length : lineEnd);
-
-        if (currentLine.startsWith('- ')) {
-          newContent = content.substring(0, lineStart) + currentLine.substring(2) + content.substring(lineEnd === -1 ? content.length : lineEnd);
-          newCursorPos = start - 2;
-        } else {
-          newContent = content.substring(0, lineStart) + '- ' + currentLine + content.substring(lineEnd === -1 ? content.length : lineEnd);
-          newCursorPos = start + 2;
-        }
-        break;
-      }
-      case 'table':
-        const tableTemplate = `\n| Header 1 | Header 2 |\n| --- | --- |\n| Cell 1 | Cell 2 |\n`;
-        newContent = content.substring(0, start) + tableTemplate + content.substring(end);
-        newCursorPos = start + tableTemplate.length;
-        break;
-      case 'button':
-        const btnTemplate = `[Button Text](btn:https://example.com)`;
-        newContent = content.substring(0, start) + btnTemplate + content.substring(end);
-        newCursorPos = start + btnTemplate.length;
-        break;
-      case 'html':
-        const htmlTemplate = `<!-- RAW_HTML -->\n<!DOCTYPE html>\n<html lang="en">\n<head>\n  <style>\n  /* Your CSS here */\n  </style>\n</head>\n<body>\n\n</body>\n</html>\n`;
-        newContent = content.substring(0, start) + htmlTemplate + content.substring(end);
-        newCursorPos = start + htmlTemplate.length;
-        break;
-      default:
-        return;
-    }
-
-    onFormat(newContent);
-
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(newCursorPos, newCursorPos);
-    }, 0);
-  };
-
-  return (
-    <div className="flex items-center gap-1 p-1.5 bg-gray-50 rounded-lg border border-gray-200 mb-4 flex-wrap">
-      {formats.map(({ icon: Icon, action, title }) => (
-        <button
-          key={action}
-          onClick={() => handleFormat(action)}
-          className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black transition-colors"
-          title={title}
-          type="button"
-        >
-          <Icon size={16} />
-        </button>
-      ))}
-      <div className="w-px h-5 bg-gray-300 mx-1" />
-      <button
-        onClick={() => handleFormat('table')}
-        className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
-        title="Insert Table"
-        type="button"
-      >
-        <FiTable size={16} />
-      </button>
-      <button
-        onClick={() => handleFormat('button')}
-        className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
-        title="Insert Button"
-        type="button"
-      >
-        <FiSquare size={16} />
-      </button>
-      <button
-        onClick={() => handleFormat('html')}
-        className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
-        title="Insert Raw HTML Boilerplate"
-        type="button"
-      >
-        <FiCode size={16} />
-      </button>
-      <div className="w-px h-5 bg-gray-300 mx-1" />
-      <button
-        onClick={onLinkClick}
-        className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
-        title="Insert Link"
-        type="button"
-      >
-        <FiLink size={16} />
-      </button>
-      <button
-        onClick={onImageClick}
-        className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black"
-        title="Insert Image URL"
-        type="button"
-      >
-        <FiImage size={16} />
-      </button>
-
-      <div className="relative">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={onInlineImageUpload}
-          className="absolute inset-0 opacity-0 w-full cursor-pointer"
-          title="Upload image to post"
-        />
-        <button
-          className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black flex items-center gap-1"
-          title="Upload image to post"
-          type="button"
-          onClick={(e) => {
-            e.currentTarget.previousSibling?.click();
-          }}
-        >
-          <FiUploadCloud size={16} />
-        </button>
-      </div>
-
-      <div className="w-px h-5 bg-gray-300 mx-1" />
-
-      <div className="relative">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={onImageUpload}
-          className="absolute inset-0 opacity-0 w-full cursor-pointer"
-          title="Upload featured image"
-        />
-        <button
-          className="p-2 hover:bg-white rounded-md text-gray-600 hover:text-black flex items-center gap-1"
-          title="Upload featured image"
-          type="button"
-          onClick={(e) => {
-            e.currentTarget.previousSibling?.click();
-          }}
-        >
-          <FiUpload size={16} />
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// Delete Confirmation Modal
-const DeleteConfirmModal = ({ isOpen, blog, onConfirm, onCancel, isLoading }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60]" onClick={onCancel}>
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-            <FiAlertCircle className="text-red-600" size={20} />
-          </div>
-          <h3 className="text-lg font-semibold text-black">Delete Blog Post</h3>
-        </div>
-
-        <p className="text-gray-600 mb-2">
-          Are you sure you want to delete <span className="font-semibold">"{blog?.title || 'this post'}"</span>?
-        </p>
-        <p className="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
-
-        <div className="flex gap-3">
-          <button
-            onClick={onCancel}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            disabled={isLoading}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={isLoading}
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {isLoading ? <FiRefreshCw className="animate-spin" size={16} /> : <FiTrash2 size={16} />}
-            Delete
-          </button>
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
-// View Modal
-const ViewBlogModal = ({ blog, onClose }) => {
-  if (!blog) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-          <h3 className="font-medium text-black">View Post</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-lg transition-colors">
-            <FiX size={18} />
-          </button>
-        </div>
-
-        <div className="p-6">
-          {blog.imageUrl && (
-            <img
-              src={blog.imageUrl}
-              alt={blog.title || 'Blog post'}
-              className="w-full h-48 object-cover rounded-lg mb-6"
-              onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/400x200?text=Image+Not+Found';
-              }}
-            />
-          )}
-
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
-            <span className="flex items-center gap-1">
-              <FiCalendar size={14} /> {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'No date'}
-            </span>
-            <span className="flex items-center gap-1">
-              <FiClock size={14} /> {blog.readTime || '1'} min read
-            </span>
-            {blog.category && (
-              <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs">
-                {blog.category}
-              </span>
-            )}
-            {blog.featured && (
-              <span className="bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-full text-xs flex items-center gap-1">
-                <FiStar size={10} /> Featured
-              </span>
-            )}
-          </div>
-
-          <h1 className="text-2xl font-bold text-black mb-4">{blog.title || 'Untitled'}</h1>
-
-          <MarkdownRenderer content={blog.content} />
-
-          {blog.tags?.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-gray-100">
-              {blog.tags.map((tag, idx) => (
-                <span key={`${tag}-${idx}`} className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
-                  #{tag}
-                </span>
+            <div className="flex bg-zinc-100 p-1 rounded-xl">
+              {[
+                { id: 'all', label: 'All' },
+                { id: 'published', label: 'Published' },
+                { id: 'draft', label: 'Drafts' },
+              ].map((st) => (
+                <button
+                  key={st.id}
+                  onClick={() => setStatusFilter(st.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    statusFilter === st.id
+                      ? 'bg-zinc-950 text-white shadow-2xs'
+                      : 'text-zinc-500 hover:text-zinc-900'
+                  }`}
+                >
+                  {st.label}
+                </button>
               ))}
             </div>
-          )}
+          </div>
         </div>
-      </motion.div>
-    </div>
-  );
-};
 
-// Blog Card Component - UPDATED to use 'published' instead of 'status'
-const BlogCard = ({ blog, onEdit, onDelete, onView }) => {
-  // Don't render if blog is undefined
-  if (!blog) return null;
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all"
-    >
-      <div className="relative h-36 bg-gray-100">
-        {blog.imageUrl ? (
-          <img
-            src={blog.imageUrl}
-            alt={blog.title || 'Blog post'}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/150?text=No+Image';
-            }}
-          />
+        {/* Blog Posts List */}
+        {loading ? (
+          <div className="bg-white rounded-2xl p-16 border border-zinc-200/80 flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-7 h-7 text-red-600 animate-spin" />
+            <p className="text-sm text-zinc-500">Loading articles from MongoDB...</p>
+          </div>
+        ) : blogs.length === 0 ? (
+          <div className="bg-white rounded-2xl p-16 border border-zinc-200/80 text-center space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mx-auto">
+              <FileText className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-zinc-950">No blog posts found</h3>
+              <p className="text-xs text-zinc-500 mt-1">
+                Create your first SEO-optimized article with structured schemas, FAQs, and comparison tables.
+              </p>
+            </div>
+            <button
+              onClick={openCreateModal}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Create First Article
+            </button>
+          </div>
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <FiImage className="text-gray-300 text-3xl" />
-          </div>
-        )}
-        <div className="absolute top-2 right-2 flex gap-1">
-          {blog.featured && (
-            <span className="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
-              <FiStar size={10} />
-              Featured
-            </span>
-          )}
-          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${blog.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-            }`}>
-            {blog.published ? 'published' : 'draft'}
-          </span>
-        </div>
-      </div>
-
-      <div className="p-4">
-        <h3 className="font-medium text-black mb-2 line-clamp-2">
-          {blog.title || 'Untitled'}
-        </h3>
-
-        <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
-          <span className="flex items-center gap-1">
-            <FiCalendar size={12} />
-            {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : 'No date'}
-          </span>
-          <span className="flex items-center gap-1">
-            <FiClock size={12} />
-            {blog.readTime || '1'}m
-          </span>
-          {blog.category && (
-            <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs">
-              {blog.category}
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center justify-end gap-1 pt-3 border-t border-gray-100">
-          <button
-            onClick={() => onView(blog)}
-            className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50"
-            title="View"
-          >
-            <FiEye size={16} />
-          </button>
-          <button
-            onClick={() => onEdit(blog)}
-            className="p-2 text-gray-400 hover:text-black rounded-lg hover:bg-gray-100"
-            title="Edit"
-          >
-            <FiEdit size={16} />
-          </button>
-          <button
-            onClick={() => onDelete(blog)}
-            className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50"
-            title="Delete"
-          >
-            <FiTrash2 size={16} />
-          </button>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// Helper function to generate slug
-const generateSlug = (title) => {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-};
-
-// Main BlogManager Component
-const BlogManager = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [alerts, setAlerts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [activeTab, setActiveTab] = useState('create');
-  const [showPreview, setShowPreview] = useState(false);
-  const [editingBlog, setEditingBlog] = useState(null);
-  const [viewingBlog, setViewingBlog] = useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, blog: null });
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [newTag, setNewTag] = useState('');
-  const [showLinkModal, setShowLinkModal] = useState(false);
-
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    content: '',
-    category: 'Uncategorized',
-    tags: [],
-    excerpt: '',
-    metaDescription: '',
-    published: true,
-    readTime: ''
-  });
-
-  const fileInputRef = useRef(null);
-  const textareaRef = useRef(null);
-  const currentFileRef = useRef(null);
-
-  // Load blogs from MongoDB on mount
-  useEffect(() => {
-    loadBlogs();
-  }, []);
-
-  const loadBlogs = async () => {
-    setIsLoading(true);
-    try {
-      // Get all blogs (including drafts for admin)
-      const data = await blogService.getAllBlogsAdmin();
-      // Ensure data is an array
-      setBlogs(Array.isArray(data) ? data : []);
-    } catch (error) {
-      addAlert('error', 'Failed to load blogs from MongoDB');
-      console.error('Error loading blogs:', error);
-      setBlogs([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const addAlert = (type, message) => {
-    const id = Date.now();
-    setAlerts(prev => [...prev, { id, type, message }]);
-    setTimeout(() => setAlerts(prev => prev.filter(a => a.id !== id)), 4000);
-  };
-
-  const handleFormat = (newContent) => {
-    const textarea = textareaRef.current;
-    const cursorPos = textarea?.selectionStart || 0;
-
-    if (editingBlog) {
-      setEditingBlog({ ...editingBlog, content: newContent });
-    } else {
-      setNewBlog({ ...newBlog, content: newContent });
-    }
-
-    setTimeout(() => {
-      if (textarea) {
-        textarea.focus();
-        textarea.setSelectionRange(cursorPos, cursorPos);
-      }
-    }, 0);
-  };
-
-  const handleLinkInsert = (text, url) => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = textarea.value.substring(start, end) || text;
-    const content = textarea.value;
-
-    const linkMarkdown = `[${selectedText}](${url})`;
-    const newContent = content.substring(0, start) + linkMarkdown + content.substring(end);
-
-    handleFormat(newContent);
-
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + linkMarkdown.length, start + linkMarkdown.length);
-    }, 0);
-
-    addAlert('success', 'Link inserted');
-  };
-
-  const handleImageUrlInsert = () => {
-    const url = prompt('Enter image URL:');
-    if (url) {
-      const textarea = textareaRef.current;
-      if (!textarea) return;
-
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const selectedText = textarea.value.substring(start, end);
-      const content = textarea.value;
-
-      const imageMarkdown = `![${selectedText || 'Image'}](${url})`;
-      const newContent = content.substring(0, start) + imageMarkdown + content.substring(end);
-
-      handleFormat(newContent);
-
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + imageMarkdown.length, start + imageMarkdown.length);
-      }, 0);
-
-      addAlert('success', 'Image URL inserted');
-    }
-  };
-
-  const handleImageUpload = async (e) => {
-    console.log('📁 File input event:', e);
-    console.log('📁 Files:', e.target.files);
-
-    const file = e.target.files?.[0];
-
-    if (!file) {
-      console.log('❌ No file selected');
-      addAlert('error', 'Please select a file');
-      return;
-    }
-
-    console.log('📄 File details:', {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      lastModified: new Date(file.lastModified).toISOString()
-    });
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      console.log('❌ Invalid file type:', file.type);
-      addAlert('error', 'Please select an image file');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      console.log('❌ File too large:', file.size);
-      addAlert('error', 'File size too large (max 5MB)');
-      return;
-    }
-
-    setUploadingImage(true);
-    addAlert('info', 'Uploading featured image...');
-
-    // Create FormData and log it
-    const formData = new FormData();
-    formData.append('image', file);
-
-    console.log('📦 FormData created with file:', file.name);
-
-    try {
-      console.log('📤 Sending to /api/upload...');
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      console.log('📥 Response status:', response.status);
-
-      const data = await response.json();
-      console.log('📥 Response data:', data);
-
-      if (response.ok && data.success) {
-        console.log('✅ Upload successful! URL:', data.url);
-
-        // Store the file reference for later use
-        currentFileRef.current = file;
-
-        // Set the image URL in the blog
-        if (editingBlog) {
-          setEditingBlog({ ...editingBlog, imageUrl: data.url });
-          console.log('✅ Updated editing blog with image URL');
-        } else {
-          setNewBlog({ ...newBlog, imageUrl: data.url });
-          console.log('✅ Updated new blog with image URL');
-        }
-        addAlert('success', 'Featured image uploaded successfully!');
-      } else {
-        console.error('❌ Upload failed:', data);
-        addAlert('error', data.error || 'Failed to upload image');
-      }
-    } catch (error) {
-      console.error('❌ Upload error:', error);
-      addAlert('error', 'Error uploading image: ' + error.message);
-    } finally {
-      setUploadingImage(false);
-      // Reset file input
-      e.target.value = '';
-      console.log('🔄 File input reset');
-    }
-  };
-
-  const handleInlineImageUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      addAlert('error', 'Please select an image file');
-      return;
-    }
-
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      addAlert('error', 'File size too large (max 5MB)');
-      return;
-    }
-
-    setUploadingImage(true);
-    addAlert('info', 'Uploading inline image...');
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        addAlert('success', 'Image inserted into post!');
-
-        const textarea = textareaRef.current;
-        if (!textarea) return;
-
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const selectedText = textarea.value.substring(start, end);
-        const content = textarea.value;
-
-        const imageMarkdown = `![${selectedText || 'Inline Image'}](${data.url})\n`;
-        const newContent = content.substring(0, start) + imageMarkdown + content.substring(end);
-
-        handleFormat(newContent);
-
-        setTimeout(() => {
-          textarea.focus();
-          textarea.setSelectionRange(start + imageMarkdown.length, start + imageMarkdown.length);
-        }, 0);
-      } else {
-        addAlert('error', data.error || 'Failed to upload image');
-      }
-    } catch (error) {
-      addAlert('error', 'Error uploading image: ' + error.message);
-    } finally {
-      setUploadingImage(false);
-      e.target.value = '';
-    }
-  };
-
-  const addTag = () => {
-    if (!newTag.trim()) return;
-    const trimmed = newTag.trim();
-    const currentTags = editingBlog?.tags || newBlog.tags;
-    if (currentTags.includes(trimmed)) {
-      addAlert('warning', 'Tag already exists');
-      setNewTag('');
-      return;
-    }
-    if (editingBlog) {
-      setEditingBlog({ ...editingBlog, tags: [...editingBlog.tags, trimmed] });
-    } else {
-      setNewBlog({ ...newBlog, tags: [...newBlog.tags, trimmed] });
-    }
-    setNewTag('');
-  };
-
-  // UPDATED: Use 'published' boolean instead of 'status' string
-  const saveBlog = async (publishStatus = false) => {
-    if (!newBlog.content.trim()) {
-      addAlert('error', 'Please add some content');
-      return;
-    }
-
-    const blogData = {
-      title: newBlog.title || 'Untitled',
-      content: newBlog.content,
-      excerpt: newBlog.excerpt || newBlog.content.substring(0, 150) + '...',
-      category: newBlog.category,
-      tags: newBlog.tags,
-      imageUrl: newBlog.imageUrl,
-      featured: newBlog.featured,
-      published: publishStatus, // Use boolean instead of string
-      author: 'Admin',
-      readTime: newBlog.readTime ? parseInt(newBlog.readTime) : Math.max(1, Math.ceil(newBlog.content.split(/\s+/).length / 200)),
-      metaDescription: newBlog.metaDescription || newBlog.content.substring(0, 155) + '...'
-    };
-
-    setIsLoading(true);
-    try {
-      const result = await blogService.createBlog(blogData);
-
-      if (result.success) {
-        setBlogs(prev => [result.data, ...prev]);
-        resetForm();
-        addAlert('success', publishStatus ? 'Blog published to MongoDB!' : 'Saved as draft in MongoDB');
-        setShowPreview(false);
-      } else {
-        addAlert('error', result.error || 'Failed to save blog');
-      }
-    } catch (error) {
-      addAlert('error', 'Failed to save blog to MongoDB');
-      console.error('Error saving blog:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // UPDATED: Use 'published' boolean instead of 'status' string
-  const updateBlog = async () => {
-    if (!editingBlog) return;
-
-    setIsLoading(true);
-    try {
-      const blogData = {
-        title: editingBlog.title,
-        content: editingBlog.content,
-        excerpt: editingBlog.excerpt || editingBlog.content.substring(0, 150) + '...',
-        category: editingBlog.category,
-        tags: editingBlog.tags,
-        imageUrl: editingBlog.imageUrl,
-        featured: editingBlog.featured,
-        published: editingBlog.published, // Use boolean
-        author: editingBlog.author || 'Admin',
-        readTime: editingBlog.readTime ? parseInt(editingBlog.readTime) : Math.max(1, Math.ceil(editingBlog.content.split(/\s+/).length / 200)),
-        metaDescription: editingBlog.metaDescription || editingBlog.content.substring(0, 155) + '...'
-      };
-
-      console.log('📝 Updating blog with ID:', editingBlog.id);
-      console.log('📝 Blog data:', blogData);
-
-      const result = await blogService.updateBlog(editingBlog.id, blogData);
-
-      if (result.success) {
-        // Update the blog in the local state
-        setBlogs(prev => prev.map(b =>
-          b.id === editingBlog.id ? { ...b, ...blogData, id: editingBlog.id } : b
-        ));
-
-        cancelEdit();
-        addAlert('success', 'Blog updated successfully in MongoDB!');
-      } else {
-        addAlert('error', result.error || 'Failed to update blog');
-        console.error('Update failed:', result.error);
-      }
-    } catch (error) {
-      addAlert('error', 'Failed to update blog in MongoDB');
-      console.error('Error updating blog:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const deleteBlog = async () => {
-    if (!deleteConfirm.blog) return;
-
-    setIsLoading(true);
-    try {
-      const result = await blogService.deleteBlog(deleteConfirm.blog.id);
-
-      if (result.success) {
-        setBlogs(prev => prev.filter(b => b.id !== deleteConfirm.blog.id));
-        addAlert('success', `"${deleteConfirm.blog.title}" deleted successfully from MongoDB`);
-
-        if (viewingBlog?.id === deleteConfirm.blog.id) {
-          setViewingBlog(null);
-        }
-        if (editingBlog?.id === deleteConfirm.blog.id) {
-          cancelEdit();
-        }
-      } else {
-        addAlert('error', result.error || 'Failed to delete blog');
-      }
-    } catch (error) {
-      addAlert('error', 'Failed to delete blog from MongoDB');
-      console.error('Error deleting blog:', error);
-    } finally {
-      setIsLoading(false);
-      setDeleteConfirm({ isOpen: false, blog: null });
-    }
-  };
-
-  const handleEditClick = (blog) => {
-    if (!blog) return;
-
-    setEditingBlog(blog);
-    setActiveTab('create');
-    setShowPreview(false);
-    setNewBlog({
-      title: blog.title || '',
-      content: blog.content || '',
-      excerpt: blog.excerpt || '',
-      category: blog.category || '',
-      tags: blog.tags || [],
-      imageUrl: blog.imageUrl || '',
-      featured: blog.featured || false,
-      published: blog.published || false, // Changed from 'status' to 'published'
-      metaDescription: blog.metaDescription || ''
-    });
-  };
-
-  const cancelEdit = () => {
-    setEditingBlog(null);
-    resetForm();
-    currentFileRef.current = null;
-  };
-
-  const resetForm = () => {
-    setNewBlog({
-      title: '',
-      content: '',
-      excerpt: '',
-      category: '',
-      tags: [],
-      imageUrl: '',
-      featured: false,
-      published: false, // Changed from 'status' to 'published'
-      metaDescription: '',
-      readTime: ''
-    });
-  };
-
-  // UPDATED: Filter function using 'published' boolean
-  const filteredBlogs = blogs.filter(blog => {
-    if (!blog) return false;
-
-    const title = blog.title || '';
-    const matchesSearch = searchTerm === '' ||
-      title.toLowerCase().includes(searchTerm.toLowerCase());
-
-    // Use published boolean for filtering
-    const matchesStatus = filterStatus === 'all' ||
-      (filterStatus === 'published' && blog.published === true) ||
-      (filterStatus === 'draft' && blog.published === false);
-
-    return matchesSearch && matchesStatus;
-  });
-
-  return (
-    <div className="min-h-screen bg-white">
-      <AnimatePresence>
-        {alerts.map(alert => (
-          <Alert key={alert.id} {...alert} onClose={() => { }} />
-        ))}
-      </AnimatePresence>
-
-      <LinkModal
-        isOpen={showLinkModal}
-        onClose={() => setShowLinkModal(false)}
-        onInsert={handleLinkInsert}
-      />
-
-      <DeleteConfirmModal
-        isOpen={deleteConfirm.isOpen}
-        blog={deleteConfirm.blog}
-        onConfirm={deleteBlog}
-        onCancel={() => setDeleteConfirm({ isOpen: false, blog: null })}
-        isLoading={isLoading}
-      />
-
-      <ViewBlogModal
-        blog={viewingBlog}
-        onClose={() => setViewingBlog(null)}
-      />
-
-      {/* Header */}
-      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <LuSparkles className="text-red-600 text-2xl" />
-              <h1 className="font-semibold text-black">Blog Manager (MongoDB)</h1>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <button
-                onClick={loadBlogs}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Refresh from MongoDB"
-              >
-                <FiRefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
-              </button>
-              <span>{blogs.length} posts</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex gap-6">
-            <button
-              onClick={() => setActiveTab('create')}
-              className={`py-3 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'create'
-                ? 'border-red-600 text-red-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
-            >
-              <FiPlus size={16} />
-              Write
-            </button>
-            <button
-              onClick={() => setActiveTab('manage')}
-              className={`py-3 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'manage'
-                ? 'border-red-600 text-red-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
-            >
-              <FiEdit size={16} />
-              Posts ({blogs.length})
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {activeTab === 'create' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Editor */}
-            <div className="space-y-4">
-              <div className="bg-white rounded-xl border border-gray-200 p-5">
-                {/* Edit Mode Indicator */}
-                {editingBlog && (
-                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm text-blue-700">
-                      <FiEdit size={14} />
-                      <span>Editing: <span className="font-semibold">{editingBlog.title}</span></span>
-                    </div>
-                    <button
-                      onClick={cancelEdit}
-                      className="text-blue-700 hover:text-blue-900"
-                    >
-                      <FiX size={16} />
-                    </button>
-                  </div>
-                )}
-
-                <input
-                  type="text"
-                  placeholder="Post title..."
-                  className="w-full px-0 py-2 text-xl font-medium border-0 focus:ring-0 placeholder-gray-300 bg-transparent text-black"
-                  value={editingBlog?.title || newBlog.title}
-                  onChange={(e) => {
-                    if (editingBlog) {
-                      setEditingBlog({ ...editingBlog, title: e.target.value });
-                    } else {
-                      setNewBlog({ ...newBlog, title: e.target.value });
-                    }
-                  }}
-                />
-
-                <FormattingToolbar
-                  onFormat={handleFormat}
-                  onLinkClick={() => setShowLinkModal(true)}
-                  onImageClick={handleImageUrlInsert}
-                  onImageUpload={handleImageUpload}
-                  onInlineImageUpload={handleInlineImageUpload}
-                  textareaRef={textareaRef}
-                />
-
-                <textarea
-                  ref={textareaRef}
-                  placeholder="Write your post... (Select text and click buttons to format)"
-                  rows="10"
-                  className="w-full px-2 py-2 border-0 focus:ring-0 resize-none text-sm text-black placeholder-gray-300"
-                  value={editingBlog?.content || newBlog.content}
-                  onChange={(e) => {
-                    const val = e.target.value;
-
-                    // Auto-extract SEO fields from raw HTML
-                    if (val.toLowerCase().includes('<!doctype html>') || val.includes('<!-- RAW_HTML -->')) {
-                      const extractMeta = (name) => {
-                        const regex = new RegExp(`<meta\\s+name=["']${name}["']\\s+content=["']([^"']+)["']`, 'i');
-                        const match = val.match(regex);
-                        return match ? match[1] : '';
-                      };
-
-                      const titleMatch = val.match(/<title[^>]*>([^<]+)<\/title>/i);
-                      const extractedTitle = titleMatch ? titleMatch[1].trim() : '';
-                      const extractedDesc = extractMeta('description');
-                      const extractedKeywords = extractMeta('keywords');
-                      const extractedTags = extractedKeywords
-                        ? extractedKeywords.split(',').map(t => t.trim()).filter(t => t).slice(0, 10)
-                        : [];
-
-                      if (editingBlog) {
-                        setEditingBlog({
-                          ...editingBlog,
-                          content: val,
-                          title: extractedTitle || editingBlog.title,
-                          metaDescription: extractedDesc || editingBlog.metaDescription,
-                          excerpt: extractedDesc || editingBlog.excerpt,
-                          tags: extractedTags.length > 0 ? extractedTags : editingBlog.tags,
-                        });
-                      } else {
-                        setNewBlog({
-                          ...newBlog,
-                          content: val,
-                          title: extractedTitle || newBlog.title,
-                          metaDescription: extractedDesc || newBlog.metaDescription,
-                          excerpt: extractedDesc || newBlog.excerpt,
-                          tags: extractedTags.length > 0 ? extractedTags : newBlog.tags,
-                        });
-                      }
-                    } else {
-                      if (editingBlog) {
-                        setEditingBlog({ ...editingBlog, content: val });
-                      } else {
-                        setNewBlog({ ...newBlog, content: val });
-                      }
-                    }
-                  }}
-                />
-
-                {/* Uploading Indicator */}
-                {uploadingImage && (
-                  <div className="mt-2 text-sm text-gray-500 flex items-center gap-2">
-                    <FiRefreshCw className="animate-spin" size={14} />
-                    Uploading featured image...
-                  </div>
-                )}
-
-                {/* Featured Image Preview */}
-                {(newBlog.imageUrl || editingBlog?.imageUrl) && (
-                  <div className="mt-4 relative inline-block">
-                    <img
-                      src={editingBlog?.imageUrl || newBlog.imageUrl}
-                      alt="Featured"
-                      className="h-20 w-auto rounded-lg border border-gray-200"
-                    />
-                    <button
-                      onClick={() => {
-                        if (editingBlog) {
-                          setEditingBlog({ ...editingBlog, imageUrl: '' });
-                        } else {
-                          setNewBlog({ ...newBlog, imageUrl: '' });
+          <div className="grid grid-cols-1 gap-3.5">
+            {blogs.map((post) => {
+              const postId = post.id || post._id;
+              const isPublished = post.status === 'published' || post.published;
+              return (
+                <div
+                  key={postId}
+                  className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-200/90 shadow-xs hover:shadow-md hover:border-zinc-300 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                >
+                  <div className="flex items-start sm:items-center gap-4 min-w-0 flex-1">
+                    <div className="w-24 h-20 rounded-xl overflow-hidden bg-zinc-100 shrink-0 border border-zinc-200/60 relative">
+                      <img
+                        src={
+                          post.imageUrl ||
+                          post.image_url ||
+                          'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80'
                         }
-                        currentFileRef.current = null;
-                      }}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 shadow-sm"
-                      title="Remove featured image"
-                    >
-                      <FiX size={12} />
-                    </button>
-                  </div>
-                )}
+                        alt={post.altText || post.title}
+                        className="w-full h-full object-cover"
+                      />
+                      {post.featured && (
+                        <span className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-amber-400 text-white flex items-center justify-center shadow">
+                          <Star className="w-3 h-3 fill-current" />
+                        </span>
+                      )}
+                    </div>
 
-                {/* Meta Section */}
-                <div className="mt-6 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div>
-                      <label className="text-xs font-medium text-gray-500 block mb-1">Category</label>
-                      <select
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-black text-black"
-                        value={editingBlog?.category || newBlog.category}
-                        onChange={(e) => {
-                          if (editingBlog) {
-                            setEditingBlog({ ...editingBlog, category: e.target.value });
-                          } else {
-                            setNewBlog({ ...newBlog, category: e.target.value });
-                          }
-                        }}
-                      >
-                        <option value="">Select</option>
-                        <option value="Tech">Tech</option>
-                        <option value="Business">Business</option>
-                        <option value="Design">Design</option>
-                        <option value="Development">Development</option>
-                        <option value="Security">Security</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-gray-500 block mb-1">Min. Read</label>
-                      <input
-                        type="number"
-                        min="1"
-                        placeholder="Auto"
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-black"
-                        value={editingBlog?.readTime === undefined ? newBlog.readTime : editingBlog.readTime}
-                        onChange={(e) => {
-                          if (editingBlog) {
-                            setEditingBlog({ ...editingBlog, readTime: e.target.value });
-                          } else {
-                            setNewBlog({ ...newBlog, readTime: e.target.value });
-                          }
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-gray-500 block mb-1">Excerpt</label>
-                      <input
-                        type="text"
-                        placeholder="Short description"
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-black"
-                        value={editingBlog?.excerpt || newBlog.excerpt}
-                        onChange={(e) => {
-                          if (editingBlog) {
-                            setEditingBlog({ ...editingBlog, excerpt: e.target.value });
-                          } else {
-                            setNewBlog({ ...newBlog, excerpt: e.target.value });
-                          }
-                        }}
-                      />
-                    </div>
-                  </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                        <button
+                          onClick={() => handleQuickToggleStatus(post)}
+                          title="Click to toggle Published / Draft status"
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-colors ${
+                            isPublished
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-amber-50 text-amber-700 border border-amber-200'
+                          }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              isPublished ? 'bg-emerald-500' : 'bg-amber-500'
+                            }`}
+                          />
+                          {isPublished ? 'Published' : 'Draft'}
+                        </button>
 
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 block mb-1">Tags</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="Add tag"
-                        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-black"
-                        value={newTag}
-                        onChange={(e) => setNewTag(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addTag()}
-                      />
-                      <button onClick={addTag} className="px-4 py-2 bg-gray-100 rounded-lg text-sm hover:bg-gray-200">
-                        Add
-                      </button>
-                    </div>
-                    {(editingBlog?.tags || newBlog.tags).length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {(editingBlog?.tags || newBlog.tags).map((tag, idx) => (
-                          <span key={`${tag}-${idx}`} className="px-2 py-1 bg-gray-100 rounded-full text-xs flex items-center gap-1">
-                            #{tag}
-                            <button onClick={() => {
-                              if (editingBlog) {
-                                setEditingBlog({ ...editingBlog, tags: editingBlog.tags.filter((t, i) => i !== idx) });
-                              } else {
-                                setNewBlog({ ...newBlog, tags: newBlog.tags.filter((t, i) => i !== idx) });
-                              }
-                            }}>
-                              <FiX size={12} />
-                            </button>
-                          </span>
-                        ))}
+                        <span className="px-2.5 py-0.5 rounded-full bg-red-50 text-red-700 text-[11px] font-semibold">
+                          {post.category || 'Development'}
+                        </span>
+
+                        <span className="text-[11px] text-zinc-400 flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {post.createdAt
+                            ? new Date(post.createdAt).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })
+                            : '—'}
+                        </span>
+
+                        <span className="text-[11px] text-zinc-400">
+                          • {post.read_time || `${post.readTime || 5} Min. Read`}
+                        </span>
                       </div>
-                    )}
+
+                      <h3 className="font-['Marcellus'] font-bold text-zinc-950 text-base sm:text-lg truncate">
+                        {post.title}
+                      </h3>
+                      <p className="text-xs text-zinc-500 line-clamp-1 mt-0.5">
+                        {post.metaDescription || post.excerpt}
+                      </p>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="text-xs font-medium text-gray-500 block mb-1">Meta Description</label>
-                    <textarea
-                      placeholder="SEO description"
-                      rows="2"
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-black"
-                      value={editingBlog?.metaDescription || newBlog.metaDescription}
-                      onChange={(e) => {
-                        if (editingBlog) {
-                          setEditingBlog({ ...editingBlog, metaDescription: e.target.value });
-                        } else {
-                          setNewBlog({ ...newBlog, metaDescription: e.target.value });
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                    <button
+                      onClick={() => handleQuickToggleFeatured(post)}
+                      title={
+                        post.featured
+                          ? 'Featured Article (Click to unfeature)'
+                          : 'Mark as Featured Article'
+                      }
+                      className={`p-2 rounded-xl border transition-colors ${
+                        post.featured
+                          ? 'bg-amber-50 border-amber-200 text-amber-500'
+                          : 'border-zinc-200 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50'
+                      }`}
+                    >
+                      <Star className={`w-4 h-4 ${post.featured ? 'fill-current' : ''}`} />
+                    </button>
 
-                {/* SEO Helper */}
-                <div className="mt-4">
-                  <SEOHelper blog={editingBlog || newBlog} />
-                </div>
-
-                {/* Actions - UPDATED with published checkbox */}
-                <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-4">
-                    <label className="flex items-center gap-1.5 text-sm text-gray-600">
-                      <input
-                        type="checkbox"
-                        checked={editingBlog?.published || newBlog.published}
-                        onChange={(e) => {
-                          if (editingBlog) {
-                            setEditingBlog({ ...editingBlog, published: e.target.checked });
-                          } else {
-                            setNewBlog({ ...newBlog, published: e.target.checked });
-                          }
-                        }}
-                        className="rounded border-gray-300"
-                      />
-                      <FiSend className="text-green-500" size={14} />
-                      Published
-                    </label>
-
-                    <label className="flex items-center gap-1.5 text-sm text-gray-600">
-                      <input
-                        type="checkbox"
-                        checked={editingBlog?.featured || newBlog.featured}
-                        onChange={(e) => {
-                          if (editingBlog) {
-                            setEditingBlog({ ...editingBlog, featured: e.target.checked });
-                          } else {
-                            setNewBlog({ ...newBlog, featured: e.target.checked });
-                          }
-                        }}
-                        className="rounded border-gray-300"
-                      />
-                      <FiStar className="text-yellow-500" size={14} />
-                      Featured
-                    </label>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      target="_blank"
+                      title="Open Public Article Page"
+                      className="p-2 rounded-xl border border-zinc-200 text-zinc-600 hover:text-red-600 hover:bg-red-50/50 transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Link>
 
                     <button
-                      onClick={() => setShowPreview(!showPreview)}
-                      className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                      onClick={() => openEditModal(post)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-950 text-white text-xs font-semibold hover:bg-red-600 transition-colors cursor-pointer"
                     >
-                      {showPreview ? <FiEyeOff size={14} /> : <FiEye size={14} />}
-                      {showPreview ? 'Hide' : 'Show'} Preview
+                      <Edit3 className="w-3.5 h-3.5" />
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => setDeleteConfirmId(postId)}
+                      className="p-2 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                      title="Delete Article"
+                    >
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-
-                  <div className="flex gap-2">
-                    {editingBlog ? (
-                      <>
-                        <button
-                          onClick={cancelEdit}
-                          className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={updateBlog}
-                          disabled={isLoading || uploadingImage}
-                          className="px-4 py-2 bg-black text-white rounded-lg text-sm hover:bg-gray-800 flex items-center gap-1 disabled:opacity-50"
-                        >
-                          {isLoading ? <FiRefreshCw className="animate-spin" size={14} /> : <FiSave size={14} />}
-                          Update
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => saveBlog(false)}
-                          disabled={isLoading || uploadingImage}
-                          className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50"
-                        >
-                          {isLoading ? 'Saving...' : 'Save Draft'}
-                        </button>
-                        <button
-                          onClick={() => saveBlog(true)}
-                          disabled={isLoading || uploadingImage}
-                          className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 flex items-center gap-1 disabled:opacity-50"
-                        >
-                          {isLoading ? <FiRefreshCw className="animate-spin" size={14} /> : <FiSend size={14} />}
-                          Publish
-                        </button>
-                      </>
-                    )}
-                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Preview */}
-            {showPreview && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-white rounded-xl border border-gray-200 p-5">
-                <h3 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-                  <LuSparkles className="text-red-600" size={16} />
-                  Live Preview
-                </h3>
-                <div className="prose prose-sm max-w-none">
-                  {(editingBlog?.imageUrl || newBlog.imageUrl) && (
-                    <img
-                      src={editingBlog?.imageUrl || newBlog.imageUrl}
-                      alt="Featured"
-                      className="w-full h-40 object-cover rounded-lg mb-4"
-                    />
-                  )}
-
-                  <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
-                    <span>Just now</span>
-                    <span>
-                      {Math.max(1, Math.ceil((editingBlog?.content || newBlog.content).split(/\s+/).length / 200))} min read
-                    </span>
-                    {(editingBlog?.category || newBlog.category) && (
-                      <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
-                        {editingBlog?.category || newBlog.category}
-                      </span>
-                    )}
-                  </div>
-                  <h1 className="text-2xl font-bold text-black mb-4">
-                    {editingBlog?.title || newBlog.title || 'Your Blog Title'}
-                  </h1>
-                  <MarkdownRenderer content={editingBlog?.content || newBlog.content} />
-                </div>
-              </motion.div>
-            )}
+              );
+            })}
           </div>
         )}
 
-        {activeTab === 'manage' && (
-          <div>
-            {/* Search & Filter - UPDATED filter options remain the same */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <div className="flex-1 relative">
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  placeholder="Search posts..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-black"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+        {/* Delete Confirmation Modal */}
+        {deleteConfirmId && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-zinc-200 space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center">
+                <Trash2 className="w-6 h-6" />
               </div>
-              <select
-                className="w-full sm:w-32 px-3 py-2 border border-gray-200 rounded-lg text-sm"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="all">All</option>
-                <option value="published">Published</option>
-                <option value="draft">Draft</option>
-              </select>
+              <div>
+                <h3 className="text-lg font-bold text-zinc-950 font-['Marcellus']">
+                  Delete Article Permanently?
+                </h3>
+                <p className="text-xs text-zinc-500 mt-1">
+                  This action cannot be undone. The article and its URL slug will be removed from MongoDB.
+                </p>
+              </div>
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  onClick={() => setDeleteConfirmId(null)}
+                  className="px-4 py-2 rounded-xl border border-zinc-200 text-xs font-semibold text-zinc-600 hover:bg-zinc-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(deleteConfirmId)}
+                  className="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-semibold hover:bg-red-700"
+                >
+                  Yes, Delete Permanently
+                </button>
+              </div>
             </div>
-
-            {/* Loading State */}
-            {isLoading && (
-              <div className="text-center py-12">
-                <FiRefreshCw className="animate-spin text-gray-400 text-3xl mx-auto mb-3" />
-                <p className="text-gray-500">Loading from MongoDB...</p>
-              </div>
-            )}
-
-            {/* Blog Grid */}
-            {!isLoading && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <AnimatePresence>
-                  {filteredBlogs.length > 0 ? (
-                    filteredBlogs.map(blog => (
-                      blog && (
-                        <BlogCard
-                          key={blog.id}
-                          blog={blog}
-                          onEdit={handleEditClick}
-                          onDelete={(blog) => setDeleteConfirm({ isOpen: true, blog })}
-                          onView={setViewingBlog}
-                        />
-                      )
-                    ))
-                  ) : (
-                    <div className="col-span-full text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-                      <FiEdit className="mx-auto text-gray-300 text-4xl mb-3" />
-                      <p className="text-gray-500">No posts found in MongoDB</p>
-                    </div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
           </div>
         )}
       </div>
     </div>
   );
-};
-
-export default BlogManager;
+}

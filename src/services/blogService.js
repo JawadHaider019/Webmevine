@@ -1,277 +1,146 @@
 // src/services/blogService.js
-// This is client-safe and uses fetch to call your API routes
-
-const API_BASE = '/api/blogs';
+// Client-side service that calls Next.js API routes for MongoDB & Cloudinary operations
 
 export const blogService = {
-  // Get all published blogs
-  getAllBlogs: async () => {
+  // Get all blogs (optionally with filters or stats)
+  async getBlogs(params = {}) {
     try {
-      console.log('📡 Fetching all published blogs...');
-      const res = await fetch(API_BASE);
-      
-      if (!res.ok) {
-        console.error('Blogs API responded with status:', res.status);
-        const errorText = await res.text();
-        console.error('Error response:', errorText);
-        return [];
+      const searchParams = new URLSearchParams();
+      if (params.status) searchParams.set('status', params.status);
+      if (params.category) searchParams.set('category', params.category);
+      if (params.search) searchParams.set('search', params.search);
+      if (params.featured !== undefined) searchParams.set('featured', String(params.featured));
+      if (params.limit) searchParams.set('limit', String(params.limit));
+      if (params.withStats) searchParams.set('withStats', 'true');
+
+      const queryString = searchParams.toString();
+      const url = `/api/blogs${queryString ? `?${queryString}` : ''}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch blogs');
       }
-      
-      const data = await res.json();
-      console.log(`✅ Fetched ${data.length} published blogs`);
-      return Array.isArray(data) ? data : [];
+
+      return await response.json();
     } catch (error) {
-      console.error('Error fetching blogs:', error);
-      return [];
+      console.error('Error in getBlogs:', error);
+      throw error;
     }
   },
 
-  // Get all blogs (including drafts) for admin
-  getAllBlogsAdmin: async () => {
+  // Get a single blog by slug
+  async getBlogBySlug(slug) {
     try {
-      console.log('📡 Fetching all blogs (admin)...');
-      const res = await fetch(`${API_BASE}?admin=true`);
-      
-      if (!res.ok) {
-        console.error('Admin blogs API responded with status:', res.status);
-        const errorText = await res.text();
-        console.error('Error response:', errorText);
-        return [];
+      const response = await fetch(`/api/blogs/${encodeURIComponent(slug)}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null;
+        }
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch blog');
       }
-      
-      const data = await res.json();
-      console.log(`✅ Fetched ${data.length} blogs (including drafts)`);
-      return Array.isArray(data) ? data : [];
+
+      return await response.json();
     } catch (error) {
-      console.error('Error fetching blogs:', error);
-      return [];
+      console.error('Error in getBlogBySlug:', error);
+      throw error;
     }
   },
 
-  // Get blog by slug
-  getBlogBySlug: async (slug) => {
+  // Create a new blog
+  async createBlog(blogData) {
     try {
-      console.log('📡 Fetching blog with slug:', slug);
-      const res = await fetch(`${API_BASE}/${slug}`);
-      
-      if (res.status === 404) {
-        console.log('Blog not found with slug:', slug);
-        return null;
-      }
-      
-      if (!res.ok) {
-        console.error('Blog API responded with status:', res.status);
-        const errorText = await res.text();
-        console.error('Error response:', errorText);
-        return null;
-      }
-      
-      const data = await res.json();
-      console.log('✅ Blog fetched:', data.title);
-      return data;
-    } catch (error) {
-      console.error('Error fetching blog:', error);
-      return null;
-    }
-  },
-
-  // Get blog by ID
-  getBlogById: async (id) => {
-    try {
-      console.log('📡 Fetching blog with ID:', id);
-      const res = await fetch(`${API_BASE}/id/${id}`);
-      
-      if (res.status === 404) {
-        console.log('Blog not found with ID:', id);
-        return null;
-      }
-      
-      if (!res.ok) {
-        console.error('Blog API responded with status:', res.status);
-        const errorText = await res.text();
-        console.error('Error response:', errorText);
-        return null;
-      }
-      
-      const data = await res.json();
-      console.log('✅ Blog fetched:', data.title);
-      return data;
-    } catch (error) {
-      console.error('Error fetching blog:', error);
-      return null;
-    }
-  },
-
-  // Create blog
-  createBlog: async (blogData) => {
-    try {
-      console.log('📝 Creating new blog:', blogData.title);
-      
-      const res = await fetch(API_BASE, {
+      const response = await fetch('/api/blogs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(blogData)
+        body: JSON.stringify(blogData),
       });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        console.error('Create blog failed:', data);
-        return { success: false, error: data.error || 'Failed to create blog' };
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create blog');
       }
-      
-      console.log('✅ Blog created successfully:', data);
-      
-      // Ensure consistent return structure
-      return { 
-        success: true, 
-        data: data.data || data  // Handle both response formats
-      };
+
+      return await response.json();
     } catch (error) {
-      console.error('Error creating blog:', error);
-      return { success: false, error: error.message };
+      console.error('Error in createBlog:', error);
+      throw error;
     }
   },
 
-  // Update blog by ID
-  updateBlog: async (id, blogData) => {
+  // Update a blog
+  async updateBlog(id, blogData) {
     try {
-      console.log('📝 Updating blog with ID:', id);
-      console.log('📝 Update data:', blogData);
-      
-      const res = await fetch(`${API_BASE}/id/${id}`, {
+      const response = await fetch(`/api/blogs/id/${encodeURIComponent(id)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(blogData)
+        body: JSON.stringify(blogData),
       });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        console.error('Update failed:', data);
-        return { success: false, error: data.error || 'Failed to update blog' };
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update blog');
       }
-      
-      console.log('✅ Blog updated successfully');
-      
-      // Ensure consistent return structure
-      return { 
-        success: true, 
-        data: { ...blogData, id } 
-      };
+
+      return await response.json();
     } catch (error) {
-      console.error('Error updating blog:', error);
-      return { success: false, error: error.message };
+      console.error('Error in updateBlog:', error);
+      throw error;
     }
   },
 
-  // Delete blog by ID
-  deleteBlog: async (id) => {
+  // Delete a blog
+  async deleteBlog(id) {
     try {
-      console.log('🗑️ Deleting blog with ID:', id);
-      
-      const res = await fetch(`${API_BASE}/id/${id}`, {
-        method: 'DELETE'
-      });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        console.error('Delete failed:', data);
-        return { success: false, error: data.error || 'Failed to delete blog' };
-      }
-      
-      console.log('✅ Blog deleted successfully');
-      return { success: true };
-    } catch (error) {
-      console.error('Error deleting blog:', error);
-      return { success: false, error: error.message };
-    }
-  },
-
-  // Get all categories
-  getAllCategories: async () => {
-    try {
-      console.log('📡 Fetching categories from /api/categories...');
-      const res = await fetch('/api/categories');
-      
-      if (!res.ok) {
-        console.error('Categories API responded with status:', res.status);
-        const errorText = await res.text();
-        console.error('Error response:', errorText);
-        return [];
-      }
-      
-      const data = await res.json();
-      console.log(`✅ Fetched ${data.length} categories:`, data);
-      return Array.isArray(data) ? data : [];
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      return [];
-    }
-  },
-
-  // Search blogs
-  searchBlogs: async (query) => {
-    try {
-      if (!query || query.trim() === '') {
-        return await blogService.getAllBlogs();
-      }
-      
-      console.log('📡 Searching blogs for:', query);
-      
-      const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}`);
-      
-      if (!res.ok) {
-        console.error('Search API responded with status:', res.status);
-        const errorText = await res.text();
-        console.error('Error response:', errorText);
-        return [];
-      }
-      
-      const data = await res.json();
-      console.log(`✅ Found ${data.length} blogs matching "${query}"`);
-      return Array.isArray(data) ? data : [];
-    } catch (error) {
-      console.error('Error searching blogs:', error);
-      return [];
-    }
-  },
-
-  // Get related blogs
-  getRelatedBlogs: async (currentBlog, limit = 3) => {
-    try {
-      if (!currentBlog || !currentBlog.id) {
-        console.log('No current blog provided for related search');
-        return [];
-      }
-      
-      console.log('📡 Fetching related blogs for:', currentBlog.id);
-      
-      const res = await fetch(`${API_BASE}/related`, {
-        method: 'POST',
+      const response = await fetch(`/api/blogs/id/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          blogId: currentBlog.id,
-          category: currentBlog.category,
-          tags: currentBlog.tags || [],
-          limit
-        })
       });
-      
-      if (!res.ok) {
-        console.error('Related blogs API responded with status:', res.status);
-        const errorText = await res.text();
-        console.error('Error response:', errorText);
-        return [];
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete blog');
       }
-      
-      const data = await res.json();
-      console.log(`✅ Found ${data.length} related blogs`);
-      return Array.isArray(data) ? data : [];
+
+      return await response.json();
     } catch (error) {
-      console.error('Error fetching related blogs:', error);
-      return [];
+      console.error('Error in deleteBlog:', error);
+      throw error;
     }
-  }
+  },
+
+  // Upload image to Cloudinary via API route
+  async uploadImage(file) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to upload image');
+      }
+
+      const data = await response.json();
+      return data.imageUrl;
+    } catch (error) {
+      console.error('Error in uploadImage:', error);
+      throw error;
+    }
+  },
 };
