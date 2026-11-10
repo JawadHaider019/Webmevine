@@ -35,8 +35,8 @@ export default function FAQ() {
     },
     {
       id: 6,
-      question: "How much does a custom website cost?",
-      answer: "Pricing depends on scope, complexity, and integrations. Most custom-coded websites and SaaS MVPs start at premium-tier pricing due to performance, scalability, and strategy focus. We discuss exact investment during your strategy call."
+      question: "How do I get a quote for a custom website or SaaS MVP?",
+      answer: "Every project is tailored to your scope, architecture, and integrations. Book a free strategy call with our engineering team to get a custom roadmap and scope for your build."
     },
     {
       id: 7,

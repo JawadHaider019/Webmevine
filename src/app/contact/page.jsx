@@ -135,7 +135,7 @@ export default function ContactPage() {
                   </p>
                   <p className="font-['Manrope'] text-xs sm:text-sm text-zinc-100">
                     {matchedProject
-                      ? `Scoping a build inspired by ${matchedProject.title} (${matchedProject.category}). We'll review architecture, 21-day milestones, and fixed pricing.`
+                      ? `Scoping a build inspired by ${matchedProject.title} (${matchedProject.category}). We'll review architecture and your 21-day milestone roadmap on a free strategy call.`
                       : `Scoping your ${goalLabel} — we'll map out stack choice (React vs Bubble.io) and a clear 21-day launch plan.`}
                   </p>
                 </div>
@@ -160,8 +160,8 @@ export default function ContactPage() {
               },
               {
                 step: "03",
-                title: "Fixed Pricing + Zero Risk",
-                desc: "Transparent scope and fixed investment before any commitment—backed by our full satisfaction guarantee.",
+                title: "Book a Free Call + Zero Risk",
+                desc: "Get a tailored architecture roadmap and milestone scope on your free call—backed by our full satisfaction guarantee.",
               },
             ].map((item) => (
               <div

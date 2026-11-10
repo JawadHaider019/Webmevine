@@ -8,7 +8,7 @@ import { normalizeHtmlToMarkdownIfNeeded } from './articleParser';
 export const DEFAULT_CTA = {
   heading: 'Ready to Scale Your Digital Product?',
   description:
-    'Book a free 30-minute architecture & AI strategy session with WebMavien — get a tailored roadmap, timeline, and transparent cost breakdown.',
+    'Book a free 30-minute architecture & AI strategy session with WebMavien — get a tailored roadmap, architecture blueprint, and 21-day launch plan.',
   buttonText: 'Book Free Strategy Call',
   buttonLink: '/contact',
 };

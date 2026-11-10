@@ -805,7 +805,7 @@ export default function CaseStudyDetail() {
                 Want a Platform Like {study.title} Built in 21 Days?
               </h2>
               <p className="font-['Manrope'] text-zinc-300 text-sm sm:text-base leading-relaxed">
-                We engineered {study.title} using {(study.technologies || []).slice(0, 3).join(", ")} with fixed milestone pricing and full post-launch support. Book a free strategy session to scope your roadmap.
+                We engineered {study.title} using {(study.technologies || []).slice(0, 3).join(", ")} with structured 21-day milestones and full post-launch support. Book a free strategy call to get your tailored roadmap.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0">
