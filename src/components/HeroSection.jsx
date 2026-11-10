@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import GlowingButton from "./GlowingButton";
 
 // Reusable Hero Section Component
@@ -28,6 +29,7 @@ export default function HeroSection({
   children,
   className = "",
 }) {
+  const router = useRouter();
 
   // Animation variants
   const containerVariants = {
@@ -71,7 +73,7 @@ export default function HeroSection({
           });
         }
       } else {
-        window.location.href = ctaLink;
+        router.push(ctaLink);
       }
     }
   };

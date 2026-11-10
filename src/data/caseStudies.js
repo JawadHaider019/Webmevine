@@ -1,39 +1,60 @@
 // data/caseStudies.js
 export const caseStudies = [
-    {
+  {
     id: 1,
     slug: "campuna",
     category: "Marketplace & Travel Tech",
+    stackGroup: "Bubble.io & No-Code",
     title: "Campuna",
-    shortDescription: "A German camping marketplace built on Bubble.io, connecting campers with verified camping spots across Germany.",
-    fullDescription: "Campuna is a German camping marketplace built on Bubble.io, connecting campers with verified camping spots, pitches, and outdoor stays across the country. The no-code platform enables hosts to list their camping spots, manage bookings, and receive payments, while campers can search, compare, and book stays with confidence.",
-    challenge: "Camping hosts across Germany lacked a dedicated, trustworthy platform to list their spots and manage bookings without relying on generic listing sites. Existing options offered little flexibility for camping-specific details, weak host verification, and no streamlined way to manage the full booking lifecycle from listing to payment.",
-    solution: "Campuna was built on Bubble.io to deliver a fully functional marketplace without the overhead of traditional development. The platform features a flexible listing system for camping-specific attributes, an admin approval workflow to ensure listing quality, and integrated payments to make booking seamless for both hosts and campers.",
-    achievement: "We built a fully functional camping marketplace on Bubble.io with flexible listings, an admin approval workflow, and integrated payments—giving hosts and campers a trustworthy platform from day one.",
+    seoTitle:
+      "Campuna Case Study: Building a German Camping Marketplace on Bubble.io | WebMavien",
+    metaDescription:
+      "How WebMavien engineered Campuna, a two-sided German camping marketplace on Bubble.io with 200+ verified host listings, admin approval workflows, and integrated payments.",
+    keywords: [
+      "Bubble.io marketplace case study",
+      "camping marketplace development",
+      "two-sided marketplace Bubble.io",
+      "no-code booking platform Germany",
+      "WebMavien case study",
+    ],
+    timeline: "4 Weeks",
+    shortDescription:
+      "A German camping marketplace built on Bubble.io, connecting campers with verified camping spots across Germany.",
+    fullDescription:
+      "Campuna is a German camping marketplace built on Bubble.io, connecting campers with verified camping spots, pitches, and outdoor stays across the country. The no-code platform enables hosts to list their camping spots, manage bookings, and receive payments, while campers can search, compare, and book stays with confidence.",
+    challenge:
+      "Camping hosts across Germany lacked a dedicated, trustworthy platform to list their spots and manage bookings without relying on generic listing sites. Existing options offered little flexibility for camping-specific details, weak host verification, and no streamlined way to manage the full booking lifecycle from listing to payment.",
+    solution:
+      "Campuna was built on Bubble.io to deliver a fully functional marketplace without the overhead of traditional development. The platform features a flexible listing system for camping-specific attributes, an admin approval workflow to ensure listing quality, and integrated payments to make booking seamless for both hosts and campers.",
+    achievement:
+      "We built a fully functional camping marketplace on Bubble.io with flexible listings, an admin approval workflow, and integrated payments—giving hosts and campers a trustworthy platform from day one.",
     stats: [
-  { label: "Listings Launched", value: "200+" },
-  { label: "Growth", value: "50%" }
-],
+      { label: "Listings Launched", value: "200+" },
+      { label: "Platform Growth", value: "50%" },
+    ],
     founder: {
       name: "Voigt",
-      title: "Founder, Campuna"
+      title: "Founder, Campuna",
     },
     testimonial: {
       name: "Voigt",
-      role: " CAMPUNA FOUNDER.",
-      content: "Ahmad, today is a big day, and I’m truly moved.We did it. Campuna is live, I thank you from the bottom of my heart for finding each other and for bringing this project to life together with me. As a thank you, I will love to give you a small bonus. I look forward to continuing this journey with you! It’s truly very important to me to give you this as recognition for your work.",
-      rating: 5
+      role: "CAMPUNA FOUNDER",
+      content:
+        "Ahmad, today is a big day, and I’m truly moved. We did it. Campuna is live, I thank you from the bottom of my heart for finding each other and for bringing this project to life together with me. As a thank you, I will love to give you a small bonus. I look forward to continuing this journey with you! It’s truly very important to me to give you this as recognition for your work.",
+      rating: 5,
     },
     images: {
       main: "/casestudy/campuna 1.png",
-      gallery: [
-        "/casestudy/campuna 2.png",
-        "/casestudy/campuna 3.png"
-      ]
+      gallery: ["/casestudy/campuna 2.png", "/casestudy/campuna 3.png"],
     },
-    number: "06",
+    number: "01",
     gradient: "from-gray-50 to-white",
-    technologies: ["Bubble.io", "No-Code", "API Integrations", "Payment Integration"],
+    technologies: [
+      "Bubble.io",
+      "No-Code Architecture",
+      "API Integrations",
+      "Stripe Payment Integration",
+    ],
     features: [
       "Flexible Listing System – Hosts can list camping spots with custom attributes and details.",
       "Admin Listing Approval – Every listing is reviewed before going live, ensuring quality and trust.",
@@ -41,50 +62,67 @@ export const caseStudies = [
       "Host & Camper Dashboards – Separate, intuitive dashboards for managing listings and bookings.",
       "Search & Discovery Tools – Campers can browse and filter camping spots by location and amenities.",
       "Booking Management – Streamlined booking flow from inquiry to confirmed reservation.",
-      "Scalable No-Code Platform – Built on Bubble.io, making it adaptable as the marketplace grows."
+      "Scalable No-Code Platform – Built on Bubble.io, making it adaptable as the marketplace grows.",
     ],
-    mission: "Campuna's mission is to make finding and booking camping spots across Germany simple, transparent, and trustworthy — connecting hosts and campers directly on an easy-to-use platform.",
-    impact: "Campuna has given camping hosts across Germany a dedicated platform to reach campers directly, with admin-reviewed listings ensuring quality and trust. Campers benefit from a streamlined search and booking experience, while hosts gain visibility and a reliable way to manage their spots and bookings.",
+    mission:
+      "Campuna's mission is to make finding and booking camping spots across Germany simple, transparent, and trustworthy — connecting hosts and campers directly on an easy-to-use platform.",
+    impact:
+      "Campuna has given camping hosts across Germany a dedicated platform to reach campers directly, with admin-reviewed listings ensuring quality and trust. Campers benefit from a streamlined search and booking experience, while hosts gain visibility and a reliable way to manage their spots and bookings.",
     date: "2026",
-    role: "Bubble Developer, No-Code Expert",
-    service: "No-Code Development, API Integration",
-    industry: "Nonprofit & Charity, Crowdfunding"
+    role: "Bubble Developer, No-Code Architect",
+    service: "No-Code Marketplace Development, Payment Integration",
+    industry: "Travel Tech & Two-Sided Marketplaces",
   },
   {
     id: 2,
     slug: "fintalio",
     category: "HR & Recruitment SaaS",
+    stackGroup: "AI & SaaS",
     title: "Fintalio",
-    shortDescription: "AI-powered skill assessment platform for data-driven recruitment decisions.",
-    fullDescription: "Fintalio is a cutting-edge skill assessment platform designed to revolutionize hiring by enabling companies to make data-driven recruitment decisions. With AI-powered evaluations and a comprehensive test library, it ensures that businesses identify and hire top-tier talent with confidence and precision.",
-    challenge: "Traditional hiring methods often rely too heavily on resumes, leading to biased decisions, mis-hires, and inefficient recruitment processes.",
-    solution: "By offering 250+ pre-employment tests, AI-driven CV screening, and automated candidate ranking, Fintalio empowers recruiters to make smarter hiring decisions in a fraction of the time.",
-    achievement: "We delivered a comprehensive skill assessment platform with AI-powered candidate ranking and 250+ pre-employment tests—delivered in just 4 weeks.",
+    seoTitle:
+      "Fintalio Case Study: AI-Powered Skill Assessment & Recruitment SaaS in 4 Weeks | WebMavien",
+    metaDescription:
+      "Discover how WebMavien built Fintalio, an AI recruitment SaaS featuring 250+ pre-employment skill assessments, automated CV screening, and 94% hiring accuracy in 4 weeks.",
+    keywords: [
+      "AI recruitment SaaS case study",
+      "skill assessment platform development",
+      "Bubble.io AI SaaS development",
+      "HR tech software case study",
+      "automated CV screening AI",
+    ],
+    timeline: "4 Weeks",
+    shortDescription:
+      "AI-powered skill assessment platform for data-driven recruitment decisions.",
+    fullDescription:
+      "Fintalio is a cutting-edge skill assessment platform designed to revolutionize hiring by enabling companies to make data-driven recruitment decisions. With AI-powered evaluations and a comprehensive test library, it ensures that businesses identify and hire top-tier talent with confidence and precision.",
+    challenge:
+      "Traditional hiring methods often rely too heavily on resumes, leading to biased decisions, mis-hires, and inefficient recruitment processes.",
+    solution:
+      "By offering 250+ pre-employment tests, AI-driven CV screening, and automated candidate ranking, Fintalio empowers recruiters to make smarter hiring decisions in a fraction of the time.",
+    achievement:
+      "We delivered a comprehensive skill assessment platform with AI-powered candidate ranking and 250+ pre-employment tests—delivered in just 4 weeks.",
     stats: [
       { label: "Tests Available", value: "250+" },
-      { label: "Hiring Accuracy", value: "94%" }
+      { label: "Hiring Accuracy", value: "94%" },
     ],
     founder: {
       name: "James Wilson",
-      title: "CEO, Fintalio"
+      title: "CEO, Fintalio",
     },
     testimonial: {
       name: "James Wilson",
       role: "CEO, Fintalio",
-      content: "WebMavien delivered exactly what they promised—a comprehensive skill assessment platform with 250+ tests and AI-powered candidate ranking. The platform has 94% hiring accuracy, and our clients love how it eliminates bias from their recruitment process. Exceptional work delivered in just 4 weeks.",
-      rating: 5
+      content:
+        "WebMavien delivered exactly what they promised—a comprehensive skill assessment platform with 250+ tests and AI-powered candidate ranking. The platform has 94% hiring accuracy, and our clients love how it eliminates bias from their recruitment process. Exceptional work delivered in just 4 weeks.",
+      rating: 5,
     },
     images: {
       main: "/casestudy/Fintalio 1.png",
-      gallery: [
-        "/casestudy/Fintalio 2.png",
-        "/casestudy/Fintalio 3.png"
-
-      ]
+      gallery: ["/casestudy/Fintalio 2.png", "/casestudy/Fintalio 3.png"],
     },
-    number: "04",
+    number: "02",
     gradient: "from-gray-50 to-white",
-    technologies: ["Bubble.io", "No-Code", "API Integrations"],
+    technologies: ["Bubble.io", "OpenAI API", "No-Code", "ATS API Integrations"],
     features: [
       "AI-Powered Candidate Ranking – Intelligent scoring system highlights top candidates instantly.",
       "250+ Skill-Based Assessments – Covers technical, cognitive, and behavioral skills across industries.",
@@ -92,49 +130,67 @@ export const caseStudies = [
       "Bias-Free Hiring – Data-driven assessments ensure fair and objective evaluations.",
       "Custom Test Creation – Companies can design tailored assessments to fit specific roles.",
       "Real-Time Analytics & Insights – Detailed performance reports help refine hiring strategies.",
-      "Seamless ATS Integration – Easily connects with existing recruitment tools for efficiency."
+      "Seamless ATS Integration – Easily connects with existing recruitment tools for efficiency.",
     ],
-    mission: "Fintalio's mission is to eliminate hiring guesswork by leveraging AI and data-driven assessments—helping businesses build stronger teams, reduce mis-hires, and optimize their recruitment strategies.",
-    impact: "Fintalio has redefined the hiring landscape by making recruitment smarter, faster, and bias-free. Companies using the platform experience reduced screening times, improved hiring accuracy, and stronger employee retention. With AI-driven insights and automated workflows, businesses can confidently select the best talent—leading to more efficient teams, cost savings, and long-term growth.",
+    mission:
+      "Fintalio's mission is to eliminate hiring guesswork by leveraging AI and data-driven assessments—helping businesses build stronger teams, reduce mis-hires, and optimize their recruitment strategies.",
+    impact:
+      "Fintalio has redefined the hiring landscape by making recruitment smarter, faster, and bias-free. Companies using the platform experience reduced screening times, improved hiring accuracy, and stronger employee retention. With AI-driven insights and automated workflows, businesses can confidently select the best talent—leading to more efficient teams, cost savings, and long-term growth.",
     date: "Sep. 2023 - Dec. 2024",
-    role: "Web Developer, AI Integration Specialist",
-    service: "Web Development, Automation Implementation",
-    industry: "HR & Recruitment, Enterprise SaaS"
+    role: "Lead Web Developer, AI Integration Specialist",
+    service: "SaaS MVP Development, AI Automation",
+    industry: "HR Tech & Enterprise Recruitment SaaS",
   },
   {
     id: 3,
     slug: "fivup-ai",
     category: "AI-Powered Freelancing Tool",
+    stackGroup: "AI & SaaS",
     title: "FivUp AI",
-    shortDescription: "AI-powered tool helping freelancers optimize Fiverr and Upwork profiles with high-converting proposals.",
-    fullDescription: "FivUp AI is an innovative AI-powered tool designed to help freelancers optimize their Fiverr and Upwork profiles. It simplifies the process of crafting high-quality job proposals, gig descriptions, and profile summaries, ensuring that freelancers stand out in competitive marketplaces.",
-    challenge: "Freelancers struggle to craft compelling proposals and optimize their profiles, leading to low response rates and missed opportunities.",
-    solution: "By leveraging advanced AI, FivUp AI generates high-converting proposals, gig descriptions, and profile summaries in seconds—eliminating hours of manual work.",
-    achievement: "We built an AI platform generating optimized proposals, gig descriptions, and profile summaries using OpenAI—delivered in just 4 weeks.",
+    seoTitle:
+      "FivUp AI Case Study: Launching an OpenAI SaaS MVP to 1,000+ Users in 4 Weeks | WebMavien",
+    metaDescription:
+      "See how WebMavien built FivUp AI using Bubble.io and OpenAI, scaling to 1,000+ active freelancers with an 85% proposal conversion success rate in just 4 weeks.",
+    keywords: [
+      "OpenAI SaaS MVP case study",
+      "AI proposal generator SaaS",
+      "Bubble.io OpenAI integration",
+      "AI web app development agency",
+      "FivUp AI case study",
+    ],
+    timeline: "4 Weeks",
+    shortDescription:
+      "AI-powered tool helping freelancers optimize Fiverr and Upwork profiles with high-converting proposals.",
+    fullDescription:
+      "FivUp AI is an innovative AI-powered tool designed to help freelancers optimize their Fiverr and Upwork profiles. It simplifies the process of crafting high-quality job proposals, gig descriptions, and profile summaries, ensuring that freelancers stand out in competitive marketplaces.",
+    challenge:
+      "Freelancers struggle to craft compelling proposals and optimize their profiles, leading to low response rates and missed opportunities.",
+    solution:
+      "By leveraging advanced AI, FivUp AI generates high-converting proposals, gig descriptions, and profile summaries in seconds—eliminating hours of manual work.",
+    achievement:
+      "We built an AI platform generating optimized proposals, gig descriptions, and profile summaries using OpenAI—delivered in just 4 weeks.",
     stats: [
       { label: "Active Users", value: "1,000+" },
-      { label: "Success Rate", value: "85%" }
+      { label: "Success Rate", value: "85%" },
     ],
     founder: {
       name: "Michael Roberts",
-      title: "CEO, FivUp AI"
+      title: "CEO, FivUp AI",
     },
     testimonial: {
       name: "Michael Roberts",
       role: "CEO, FivUp AI",
-      content: "WebMavien brought our AI-powered freelancing tool to life in record time. The platform they built generates high-converting proposals that actually work—our users are seeing 85% success rates. Their expertise in Bubble.io and AI integration made all the difference.",
-      rating: 5
+      content:
+        "WebMavien brought our AI-powered freelancing tool to life in record time. The platform they built generates high-converting proposals that actually work—our users are seeing 85% success rates. Their expertise in Bubble.io and AI integration made all the difference.",
+      rating: 5,
     },
     images: {
       main: "/casestudy/Fivup Ai 1.png",
-      gallery: [
-        "/casestudy/Fivup Ai 2.png",
-        "/casestudy/Fivup Ai 3.png"
-      ]
+      gallery: ["/casestudy/Fivup Ai 2.png", "/casestudy/Fivup Ai 3.png"],
     },
-    number: "02",
+    number: "03",
     gradient: "from-gray-50 to-white",
-    technologies: ["Bubble.io", "No-Code", "API Integrations"],
+    technologies: ["Bubble.io", "OpenAI GPT", "No-Code", "API Integrations"],
     features: [
       "AI-Optimized Proposals – Generates persuasive job proposals tailored to specific client requirements.",
       "Gig Description Generator – Crafts compelling Fiverr gig descriptions optimized for higher visibility.",
@@ -142,48 +198,65 @@ export const caseStudies = [
       "Industry-Specific Templates – Pre-designed templates tailored for different niches.",
       "SEO Optimization – Ensures descriptions and titles align with Fiverr and Upwork algorithms.",
       "User-Friendly Dashboard – Minimal learning curve, enabling freelancers to get started instantly.",
-      "Performance Analytics – Insights into proposal effectiveness and optimization suggestions."
+      "Performance Analytics – Insights into proposal effectiveness and optimization suggestions.",
     ],
-    mission: "The mission behind FivUp AI is simple—to empower freelancers with AI-driven tools that eliminate guesswork and maximize their chances of success. Every feature is designed to help users create standout profiles, attract the right clients, and ultimately increase their income.",
-    impact: "FivUp AI has transformed the way freelancers approach job proposals and profile optimization. By automating time-consuming tasks, it allows users to focus on their work while increasing their chances of landing high-quality projects. With AI-generated, high-converting content, freelancers experience improved response rates, stronger client engagement, and greater earning potential—giving them the confidence to grow their careers effortlessly.",
+    mission:
+      "The mission behind FivUp AI is simple—to empower freelancers with AI-driven tools that eliminate guesswork and maximize their chances of success. Every feature is designed to help users create standout profiles, attract the right clients, and ultimately increase their income.",
+    impact:
+      "FivUp AI has transformed the way freelancers approach job proposals and profile optimization. By automating time-consuming tasks, it allows users to focus on their work while increasing their chances of landing high-quality projects. With AI-generated, high-converting content, freelancers experience improved response rates, stronger client engagement, and greater earning potential—giving them the confidence to grow their careers effortlessly.",
     date: "Nov. 2023 - Dec. 2024",
-    role: "Web Developer, UI/UX Designer",
-    service: "Web Development, AI Integration",
-    industry: "Freelancing & Gig Economy, AI & Automation"
+    role: "Full-Stack No-Code Developer, UI/UX Designer",
+    service: "AI SaaS Development, OpenAI Integration",
+    industry: "Freelancing & Gig Economy AI",
   },
   {
     id: 4,
     slug: "pure-clay",
     category: "E-Commerce & Organic Products",
+    stackGroup: "React & Full-Stack",
     title: "Pure Clay",
-    shortDescription: "E-commerce platform for organic food and skincare products with brand storytelling.",
-    fullDescription: "Pure Clay is an e-commerce platform for organic food and skincare products with brand storytelling and educational content. The platform enables customers to easily browse and purchase oils, nuts, dates, and teas while learning about organic living.",
-    challenge: "Outdated website design, manual order handling via social media (Instagram/Facebook), poor product presentation, and non-responsive design causing lost sales.",
-    solution: "Modern e-commerce platform with clean organic aesthetic, automated ordering system, intuitive product categories, and mobile-responsive design.",
-    achievement: "We launched a modern e-commerce platform with automated ordering, intuitive product catalog, and mobile-responsive design—delivered in just 4 weeks.",
+    seoTitle:
+      "Pure Clay Case Study: 10x E-Commerce Sales Growth with Custom React & Node.js | WebMavien",
+    metaDescription:
+      "How WebMavien replaced manual Instagram order handling with a custom React, Node.js, and MongoDB e-commerce store for Pure Clay—driving 10x sales growth and 100% order automation.",
+    keywords: [
+      "custom React e-commerce case study",
+      "Node.js MongoDB e-commerce development",
+      "headless e-commerce agency case study",
+      "DTC brand website redesign ROI",
+      "Pure Clay WebMavien",
+    ],
+    timeline: "4 Weeks",
+    shortDescription:
+      "E-commerce platform for organic food and skincare products with brand storytelling.",
+    fullDescription:
+      "Pure Clay is an e-commerce platform for organic food and skincare products with brand storytelling and educational content. The platform enables customers to easily browse and purchase oils, nuts, dates, and teas while learning about organic living.",
+    challenge:
+      "Outdated website design, manual order handling via social media (Instagram/Facebook), poor product presentation, and non-responsive design causing lost sales.",
+    solution:
+      "Modern e-commerce platform with clean organic aesthetic, automated ordering system, intuitive product categories, and mobile-responsive design.",
+    achievement:
+      "We launched a modern e-commerce platform with automated ordering, intuitive product catalog, and mobile-responsive design—delivered in just 4 weeks.",
     stats: [
       { label: "Sales Growth", value: "10x" },
-      { label: "Order Efficiency", value: "100%" }
+      { label: "Order Efficiency", value: "100%" },
     ],
     founder: {
       name: "Mudasir",
-      title: "Founder, Pure Clay"
+      title: "Founder, Pure Clay",
     },
     testimonial: {
       name: "Mudasir",
       role: "Founder, Pure Clay",
-      content: "Before WebMavien, I was manually handling orders through Instagram. They built a beautiful e-commerce platform that automated everything. Now my customers love the seamless shopping experience, and I've finally escaped the chaos of social media order management.",
-      rating: 5
+      content:
+        "Before WebMavien, I was manually handling orders through Instagram. They built a beautiful e-commerce platform that automated everything. Now my customers love the seamless shopping experience, and I've finally escaped the chaos of social media order management.",
+      rating: 5,
     },
     images: {
       main: "/casestudy/pure clay 1.png",
-      gallery: [
-        "/casestudy/pure clay 2.png",
-        "/casestudy/pure clay 3.png"
-
-      ]
+      gallery: ["/casestudy/pure clay 2.png", "/casestudy/pure clay 3.png"],
     },
-    number: "03",
+    number: "04",
     gradient: "from-gray-50 to-white",
     technologies: ["React", "Node.js", "Express", "Tailwind CSS", "MongoDB"],
     features: [
@@ -196,52 +269,67 @@ export const caseStudies = [
       "Mobile-responsive design for seamless shopping on all devices",
       "Product search and filtering by category and price",
       "Newsletter subscription for exclusive deals and recipes",
-      "Stock availability indicators with low stock alerts"
+      "Stock availability indicators with low stock alerts",
     ],
-    mission: "Pure Clay's mission is to make organic food and skincare accessible through a beautiful, intuitive e-commerce experience that educates and inspires customers.",
-    impact: "The platform transformed Pure Clay's business—eliminating manual order management, providing seamless mobile shopping, and creating an organized product catalog that drives sales. With SEO-optimized content and improved user experience, the brand now reaches more customers and builds lasting relationships.",
+    mission:
+      "Pure Clay's mission is to make organic food and skincare accessible through a beautiful, intuitive e-commerce experience that educates and inspires customers.",
+    impact:
+      "The platform transformed Pure Clay's business—eliminating manual order management, providing seamless mobile shopping, and creating an organized product catalog that drives sales. With SEO-optimized content and improved user experience, the brand now reaches more customers and builds lasting relationships.",
     date: "2024",
-    role: "Web Developer, UI/UX Designer",
-    service: "Web Development, E-Commerce Development",
-    industry: "E-Commerce, Organic Products"
+    role: "Full-Stack React Developer, UI/UX Designer",
+    service: "Custom E-Commerce Development, Conversion UX",
+    industry: "Direct-to-Consumer (DTC) E-Commerce",
   },
-
-
-
-    {
+  {
     id: 5,
     slug: "zola",
     category: "Business Management SaaS",
+    stackGroup: "Bubble.io & No-Code",
     title: "Zola",
-    shortDescription: "An all-in-one business management platform to streamline communication, reviews, and scheduling.",
-    fullDescription: "Zola is an all-in-one business management platform designed to streamline communication, manage customer reviews, and simplify scheduling. Built with Bubble.io, this powerful web application provides business owners with a centralized dashboard to handle chats, meetings, and customer feedback effortlessly—eliminating scattered tools and improving operational efficiency.",
-    challenge: "Business owners struggle with disorganized chats, scattered meeting appointments, and inconsistent customer reviews—resulting in lost opportunities and inefficiencies.",
-    solution: "By bringing all essential business interactions into a single, intuitive dashboard, Zola empowers business owners to stay on top of conversations, schedule appointments seamlessly, and manage their online reputation without hassle.",
-    achievement: "We built a powerful Bubble.io platform with unified communication hub, automated review management, and smart scheduling—delivered in just 4 weeks.",
+    seoTitle:
+      "Zola Case Study: All-in-One CRM, Review Management & Smart Scheduling SaaS | WebMavien",
+    metaDescription:
+      "Learn how WebMavien built Zola, a unified B2B SaaS platform on Bubble.io featuring smart appointment scheduling, automated review management, and 500+ beta users.",
+    keywords: [
+      "Bubble.io CRM SaaS case study",
+      "business management SaaS development",
+      "automated review management software",
+      "no-code B2B SaaS MVP",
+      "Zola WebMavien case study",
+    ],
+    timeline: "4 Weeks",
+    shortDescription:
+      "An all-in-one business management platform to streamline communication, reviews, and scheduling.",
+    fullDescription:
+      "Zola is an all-in-one business management platform designed to streamline communication, manage customer reviews, and simplify scheduling. Built with Bubble.io, this powerful web application provides business owners with a centralized dashboard to handle chats, meetings, and customer feedback effortlessly—eliminating scattered tools and improving operational efficiency.",
+    challenge:
+      "Business owners struggle with disorganized chats, scattered meeting appointments, and inconsistent customer reviews—resulting in lost opportunities and inefficiencies.",
+    solution:
+      "By bringing all essential business interactions into a single, intuitive dashboard, Zola empowers business owners to stay on top of conversations, schedule appointments seamlessly, and manage their online reputation without hassle.",
+    achievement:
+      "We built a powerful Bubble.io platform with unified communication hub, automated review management, and smart scheduling—delivered in just 4 weeks.",
     stats: [
       { label: "Beta Users", value: "500+" },
-      { label: "Efficiency Gain", value: "70%" }
+      { label: "Efficiency Gain", value: "70%" },
     ],
     founder: {
       name: "David Ramos",
-      title: "Founder & CEO"
+      title: "Founder & CEO, Zola",
     },
     testimonial: {
       name: "David Ramos",
-      role: "Founder & CEO",
-      content: "Working with WebMavien on Zola was exceptional. They understood our vision for a unified business management platform and delivered a powerful Bubble.io solution in just 4 weeks. The automated review management and smart scheduling features have completely transformed how our beta users operate their businesses.",
-      rating: 5
+      role: "Founder & CEO, Zola",
+      content:
+        "Working with WebMavien on Zola was exceptional. They understood our vision for a unified business management platform and delivered a powerful Bubble.io solution in just 4 weeks. The automated review management and smart scheduling features have completely transformed how our beta users operate their businesses.",
+      rating: 5,
     },
     images: {
       main: "/casestudy/zola 1.png",
-      gallery: [
-        "/casestudy/zola 2.png",
-        "/casestudy/zola 3.png"
-      ]
+      gallery: ["/casestudy/zola 2.png", "/casestudy/zola 3.png"],
     },
-    number: "01",
+    number: "05",
     gradient: "from-gray-50 to-white",
-    technologies: ["Bubble.io", "No-Code", "API Integrations"],
+    technologies: ["Bubble.io", "No-Code", "API Integrations", "Calendar Webhooks"],
     features: [
       "Unified Communication Hub – Manage all business chats in one place, reducing missed conversations.",
       "Automated Review Management – Collect, respond to, and monitor customer reviews effortlessly.",
@@ -249,49 +337,75 @@ export const caseStudies = [
       "No-Code Customization – Fully built on Bubble.io, allowing for rapid enhancements and scalability.",
       "Seamless Business Workflow – Integrates various tools to streamline daily operations.",
       "User-Friendly Dashboard – Simple, intuitive, and designed for efficiency.",
-      "Secure & Scalable – Ensures data privacy while allowing businesses to grow without tech limitations."
+      "Secure & Scalable – Ensures data privacy while allowing businesses to grow without tech limitations.",
     ],
-    mission: "Zola's mission is to simplify business management by integrating communication, scheduling, and reputation control into a single, powerful platform. With no-code technology at its core, it enables businesses to automate their workflows effortlessly—freeing up time to focus on growth.",
-    impact: "Zola has transformed how businesses handle daily operations. By centralizing communication, automating appointment scheduling, and simplifying review management, it allows business owners to stay organized and responsive. With a no-code foundation, Zola ensures startups and enterprises can scale seamlessly—without technical bottlenecks—resulting in higher productivity, improved customer relationships, and better business growth.",
+    mission:
+      "Zola's mission is to simplify business management by integrating communication, scheduling, and reputation control into a single, powerful platform. With no-code technology at its core, it enables businesses to automate their workflows effortlessly—freeing up time to focus on growth.",
+    impact:
+      "Zola has transformed how businesses handle daily operations. By centralizing communication, automating appointment scheduling, and simplifying review management, it allows business owners to stay organized and responsive. With a no-code foundation, Zola ensures startups and enterprises can scale seamlessly—without technical bottlenecks—resulting in higher productivity, improved customer relationships, and better business growth.",
     date: "Apr. 2023 - Jun. 2023",
     role: "Senior Bubble Developer, No-Code Expert",
-    service: "No-Code Development, Custom Development",
-    industry: "Business Management, SaaS"
+    service: "B2B SaaS Development, Workflow Automation",
+    industry: "Business Management & CRM SaaS",
   },
   {
     id: 6,
     slug: "united-mercy",
     category: "Nonprofit & Crowdfunding",
+    stackGroup: "Bubble.io & No-Code",
     title: "United Mercy",
-    shortDescription: "A nonprofit crowdfunding platform making fundraising effortless, transparent, and impactful.",
-    fullDescription: "United Mercy is a nonprofit crowdfunding platform built on Bubble.io, making fundraising effortless, transparent, and impactful. It enables individuals and organizations to launch campaigns, receive direct donations, and engage with their communities. Whether for medical aid, education, or disaster relief, United Mercy connects donors with those in need, ensuring every contribution counts.",
-    challenge: "Traditional fundraising methods are often slow, complex, and lack transparency, making it difficult for individuals and organizations to secure the financial support they need. Many crowdfunding platforms also come with hidden fees, delayed fund transfers, and limited customization, restricting their effectiveness.",
-    solution: "United Mercy was built to change that. With direct digital wallet deposits, an intuitive campaign creation system, and built-in community engagement tools, it enables fundraisers to connect with donors seamlessly while ensuring transparency and trust. The platform's automated donation tracking and impact-driven storytelling features enhance credibility, helping campaigners raise funds faster and more efficiently.",
-    achievement: "We built a transparent crowdfunding platform with instant digital wallet transfers, community engagement tools, and impact-driven storytelling—delivered in just 4 weeks.",
+    seoTitle:
+      "United Mercy Case Study: Transparent Crowdfunding & Digital Wallet Platform | WebMavien",
+    metaDescription:
+      "How WebMavien built United Mercy on Bubble.io—a transparent crowdfunding platform with instant digital wallet payouts that helped raise $250K+ across 50+ campaigns.",
+    keywords: [
+      "crowdfunding platform development case study",
+      "nonprofit donation platform Bubble.io",
+      "digital wallet integration web app",
+      "custom fundraising software agency",
+      "United Mercy WebMavien",
+    ],
+    timeline: "4 Weeks",
+    shortDescription:
+      "A nonprofit crowdfunding platform making fundraising effortless, transparent, and impactful.",
+    fullDescription:
+      "United Mercy is a nonprofit crowdfunding platform built on Bubble.io, making fundraising effortless, transparent, and impactful. It enables individuals and organizations to launch campaigns, receive direct donations, and engage with their communities. Whether for medical aid, education, or disaster relief, United Mercy connects donors with those in need, ensuring every contribution counts.",
+    challenge:
+      "Traditional fundraising methods are often slow, complex, and lack transparency, making it difficult for individuals and organizations to secure the financial support they need. Many crowdfunding platforms also come with hidden fees, delayed fund transfers, and limited customization, restricting their effectiveness.",
+    solution:
+      "United Mercy was built to change that. With direct digital wallet deposits, an intuitive campaign creation system, and built-in community engagement tools, it enables fundraisers to connect with donors seamlessly while ensuring transparency and trust. The platform's automated donation tracking and impact-driven storytelling features enhance credibility, helping campaigners raise funds faster and more efficiently.",
+    achievement:
+      "We built a transparent crowdfunding platform with instant digital wallet transfers, community engagement tools, and impact-driven storytelling—delivered in just 4 weeks.",
     stats: [
       { label: "Campaigns Launched", value: "50+" },
-      { label: "Growth", value: "50%" }
+      { label: "Funds Raised", value: "$250K+" },
     ],
     founder: {
       name: "Rebecca Johnson",
-      title: "Founder, United Mercy"
+      title: "Founder, United Mercy",
     },
     testimonial: {
       name: "Rebecca Johnson",
       role: "Founder, United Mercy",
-      content: "United Mercy exists to make fundraising transparent and accessible. WebMavien understood this mission perfectly and built a platform with instant wallet transfers and community engagement tools that have helped raise over $250K for worthy causes. Campaigners tell us they've never experienced such fast donation delivery.",
-      rating: 5
+      content:
+        "United Mercy exists to make fundraising transparent and accessible. WebMavien understood this mission perfectly and built a platform with instant wallet transfers and community engagement tools that have helped raise over $250K for worthy causes. Campaigners tell us they've never experienced such fast donation delivery.",
+      rating: 5,
     },
     images: {
       main: "/casestudy/united mercy 1.png",
       gallery: [
         "/casestudy/united mercy 3.png",
-        "/casestudy/united mercy 4.png"
-      ]
+        "/casestudy/united mercy 4.png",
+      ],
     },
-    number: "05",
+    number: "06",
     gradient: "from-gray-50 to-white",
-    technologies: ["Bubble.io", "No-Code", "API Integrations", "Digital Wallet Integration"],
+    technologies: [
+      "Bubble.io",
+      "No-Code",
+      "API Integrations",
+      "Digital Wallet Integration",
+    ],
     features: [
       "Instant Digital Wallet Transfers – Donations go directly to the recipient's digital wallet without delays.",
       "Effortless Campaign Creation – Users can launch fundraisers in minutes with a simple, guided setup.",
@@ -299,13 +413,15 @@ export const caseStudies = [
       "Secure & Transparent Transactions – Every donation is tracked, ensuring accountability and credibility.",
       "Customizable Fundraising Goals – Flexible options allow fundraisers to set and manage their targets easily.",
       "Impact-Driven Storytelling – Personalized campaign pages help inspire and attract more donors.",
-      "Scalable No-Code Platform – Built on Bubble.io, making it adaptable to growing needs."
+      "Scalable No-Code Platform – Built on Bubble.io, making it adaptable to growing needs.",
     ],
-    mission: "United Mercy's mission is to democratize fundraising by providing a transparent, fee-free, and efficient platform where anyone can raise funds for meaningful causes. By leveraging no-code technology, it eliminates technical barriers, making fundraising accessible to everyone—whether an individual in need or an established nonprofit.",
-    impact: "United Mercy has transformed the crowdfunding landscape by offering a trust-based, community-driven, and tech-enabled fundraising solution. Campaigners experience faster donations, stronger engagement, and greater visibility, while donors contribute with confidence, knowing their funds are reaching the right people without unnecessary delays or intermediaries. With a seamless donation flow, automated tracking, and built-in community engagement, United Mercy empowers fundraising efforts to create real, lasting change.",
+    mission:
+      "United Mercy's mission is to democratize fundraising by providing a transparent, fee-free, and efficient platform where anyone can raise funds for meaningful causes. By leveraging no-code technology, it eliminates technical barriers, making fundraising accessible to everyone—whether an individual in need or an established nonprofit.",
+    impact:
+      "United Mercy has transformed the crowdfunding landscape by offering a trust-based, community-driven, and tech-enabled fundraising solution. Campaigners experience faster donations, stronger engagement, and greater visibility, while donors contribute with confidence, knowing their funds are reaching the right people without unnecessary delays or intermediaries. With a seamless donation flow, automated tracking, and built-in community engagement, United Mercy empowers fundraising efforts to create real, lasting change.",
     date: "Nov. 2024 - Jan. 2025",
-    role: "Bubble Developer, No-Code Expert",
-    service: "No-Code Development, API Integration",
-    industry: "Nonprofit & Charity, Crowdfunding"
-  }
+    role: "Bubble Developer, No-Code FinTech Specialist",
+    service: "Crowdfunding Platform Development, Wallet API Integration",
+    industry: "Nonprofit, FinTech & Crowdfunding",
+  },
 ];

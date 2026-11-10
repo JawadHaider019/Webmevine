@@ -546,10 +546,73 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Featured Case Studies & Guides Internal Link Graph (SEO & Discovery) */}
+          <div className="pt-8 mt-8 border-t border-gray-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+              <div>
+                <h4 className="font-['Marcellus'] text-gray-900 font-bold text-sm mb-3">
+                  Featured Client Case Studies
+                </h4>
+                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                  {[
+                    { name: 'Campuna (Bubble.io Marketplace)', href: '/casestudies/campuna' },
+                    { name: 'Fintalio (AI Hiring SaaS)', href: '/casestudies/fintalio' },
+                    { name: 'FivUp AI (OpenAI SaaS MVP)', href: '/casestudies/fivup-ai' },
+                    { name: 'Pure Clay (React E-Commerce)', href: '/casestudies/pure-clay' },
+                    { name: 'Zola (Business CRM SaaS)', href: '/casestudies/zola' },
+                    { name: 'United Mercy (Crowdfunding)', href: '/casestudies/united-mercy' },
+                  ].map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="font-['Manrope'] text-gray-500 hover:text-red-600 transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-['Marcellus'] text-gray-900 font-bold text-sm mb-3">
+                  Founder &amp; Engineering Guides
+                </h4>
+                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                  {[
+                    {
+                      name: 'How to Choose a Web Agency (2026)',
+                      href: '/blog/how-to-choose-web-development-agency',
+                    },
+                    {
+                      name: 'React vs Bubble.io for SaaS',
+                      href: '/blog/react-vs-bubble-io-for-saas-mvp-2026',
+                    },
+                    {
+                      name: 'Build an AI SaaS MVP in 21 Days',
+                      href: '/blog/how-to-build-ai-saas-mvp-in-21-days',
+                    },
+                    {
+                      name: 'Two-Sided Marketplace Guide',
+                      href: '/blog/two-sided-marketplace-development-guide',
+                    },
+                  ].map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="font-['Manrope'] text-gray-500 hover:text-red-600 transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Bottom Bar */}
           <motion.div
             variants={itemVariants}
-            className="pt-8 mt-8 border-t border-gray-200"
+            className="pt-6 mt-6 border-t border-gray-200"
           >
             <div className="flex flex-col md:flex-row justify-center items-center gap-4">
               {/* Copyright */}

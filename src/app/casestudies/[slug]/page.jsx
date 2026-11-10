@@ -5,16 +5,14 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import { FiArrowLeft, FiCheckCircle, FiCalendar, FiTag, FiCode, FiUsers, FiStar, FiExternalLink, FiX } from "react-icons/fi";
+import { useState, useEffect, useMemo } from "react";
+import { FiArrowLeft, FiArrowRight, FiCheckCircle, FiCalendar, FiTag, FiCode, FiUsers, FiStar, FiExternalLink, FiX, FiChevronRight } from "react-icons/fi";
 import GlowingButton from "@/components/GlowingButton";
 import { caseStudies } from "@/data/caseStudies";
 import SectionHeader from "@/components/SectionHeader";
 
 export default function CaseStudyDetail() {
   const params = useParams();
-  const [mounted, setMounted] = useState(false);
-  const [relatedStudies, setRelatedStudies] = useState([]);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageErrors, setImageErrors] = useState({});
@@ -25,8 +23,6 @@ export default function CaseStudyDetail() {
   });
 
   useEffect(() => {
-    setMounted(true);
-    
     // Farmer animation sequence
     const animationSequence = setInterval(() => {
       setFarmerAnimation(prev => ({
@@ -39,16 +35,17 @@ export default function CaseStudyDetail() {
     return () => clearInterval(animationSequence);
   }, []);
 
-  const study = caseStudies.find(s => s.slug === params.slug);
+  const study = caseStudies.find(s => s.slug === params?.slug);
 
-  useEffect(() => {
-    if (study) {
-      // Get related studies from same category (excluding current)
-      const related = caseStudies
-        .filter(s => s.category === study.category && s.id !== study.id)
-        .slice(0, 2);
-      setRelatedStudies(related);
-    }
+  const relatedStudies = useMemo(() => {
+    if (!study) return [];
+    const sameStack = caseStudies.filter(
+      (s) => s.id !== study.id && (s.stackGroup === study.stackGroup || s.category === study.category)
+    );
+    const others = caseStudies.filter(
+      (s) => s.id !== study.id && !sameStack.some((m) => m.id === s.id)
+    );
+    return [...sameStack, ...others].slice(0, 2);
   }, [study]);
 
   const handleImageError = (imageKey) => {
@@ -81,8 +78,6 @@ export default function CaseStudyDetail() {
     // Filter out any null/undefined images
     return study.images.gallery.filter(img => img && typeof img === 'string' && img.trim() !== '');
   };
-
-  if (!mounted) return null;
 
   if (!study) {
     return (
@@ -263,15 +258,21 @@ export default function CaseStudyDetail() {
         study.category.toLowerCase().includes('agri')
       ) && <FarmerAnimation />}
 
-      {/* Back Navigation with enhanced hover */}
+      {/* Breadcrumb & Back Navigation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24">
-        <motion.div
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <Link href="/casestudies" className="inline-flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-red-600 transition-colors font-['Manrope'] text-xs sm:text-sm group">
             <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Back to Case Studies
           </Link>
-        </motion.div>
+
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs font-['Manrope'] text-gray-500">
+            <Link href="/" className="hover:text-red-600 transition-colors">Home</Link>
+            <FiChevronRight className="w-3.5 h-3.5 text-gray-400" />
+            <Link href="/casestudies" className="hover:text-red-600 transition-colors">Case Studies</Link>
+            <FiChevronRight className="w-3.5 h-3.5 text-gray-400" />
+            <span className="text-gray-900 font-semibold">{study.title}</span>
+          </nav>
+        </div>
       </div>
 
       {/* Hero Section */}
@@ -729,99 +730,101 @@ export default function CaseStudyDetail() {
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mt-8 sm:mt-12">
-              {relatedStudies.map((study, index) => (
-                <motion.div
-                  key={study.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ 
-                    y: -10,
-                    scale: 1.02,
-                    boxShadow: "0 30px 35px -12px rgba(220, 38, 38, 0.3)"
-                  }}
-                  className="group cursor-pointer bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 relative"
-                  onClick={() => window.location.href = `/casestudies/${study.slug}`}
-                  onHoverStart={() => setHoveredCard(`related-${study.id}`)}
-                  onHoverEnd={() => setHoveredCard(null)}
-                >
-                  <div className="relative h-40 sm:h-44 md:h-48 bg-gray-100 overflow-hidden">
-                    <motion.div
-                      animate={{ 
-                        scale: hoveredCard === `related-${study.id}` ? 1.1 : 1,
-                        rotate: hoveredCard === `related-${study.id}` ? 2 : 0
-                      }}
-                      transition={{ duration: 0.4 }}
-                      className="w-full h-full"
-                    >
-                      <Image
-                        src={getImageSource(study.image, study.title)}
-                        alt={study.title}
-                        fill
-                        className="object-contain p-3 sm:p-4"
-                        onError={() => handleImageError(study.image)}
-                      />
-                    </motion.div>
-                    
-                    {/* Overlay with external link icon */}
-                    <motion.div 
-                      className="absolute inset-0 bg-red-600/0 flex items-center justify-center"
-                      whileHover={{ backgroundColor: "rgba(220, 38, 38, 0.1)" }}
-                    >
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ 
-                          opacity: hoveredCard === `related-${study.id}` ? 1 : 0,
-                          scale: hoveredCard === `related-${study.id}` ? 1 : 0.5
-                        }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <FiExternalLink className="w-8 h-8 text-red-600" />
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                  
-                  <div className="p-4 sm:p-5 md:p-6 relative">
-                    <motion.span 
-                      className="text-[10px] sm:text-xs font-['Manrope'] text-red-600 mb-1 sm:mb-2 block"
-                      animate={{ 
-                        x: hoveredCard === `related-${study.id}` ? 5 : 0
-                      }}
-                    >
-                      {study.category}
-                    </motion.span>
-                    
-                    <motion.h3 
-                      className="font-['Marcellus'] text-lg sm:text-xl text-gray-900 mb-1 sm:mb-2 group-hover:text-red-600 transition-colors"
-                      animate={{ 
-                        x: hoveredCard === `related-${study.id}` ? 5 : 0
-                      }}
-                    >
-                      {study.title}
-                    </motion.h3>
-                    
-                    <p className="font-['Manrope'] text-xs sm:text-sm text-gray-600 line-clamp-2">
-                      {study.description}
-                    </p>
-                    
-                    {/* Learn more indicator */}
-                    <motion.div 
-                      className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
-                      animate={{ 
-                        x: hoveredCard === `related-${study.id}` ? 0 : 10
-                      }}
-                    >
-                      <span className="text-xs text-red-600 font-['Manrope']">Learn more →</span>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              ))}
+              {relatedStudies.map((relStudy, index) => {
+                const relImg = relStudy.image || relStudy.images?.main;
+                return (
+                  <motion.div
+                    key={relStudy.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{
+                      y: -8,
+                      scale: 1.01,
+                      boxShadow: "0 30px 35px -12px rgba(220, 38, 38, 0.2)",
+                    }}
+                    className="group bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 relative border border-gray-100"
+                    onHoverStart={() => setHoveredCard(`related-${relStudy.id}`)}
+                    onHoverEnd={() => setHoveredCard(null)}
+                  >
+                    <Link href={`/casestudies/${relStudy.slug}`} className="block">
+                      <div className="relative h-48 sm:h-56 bg-gray-100 overflow-hidden">
+                        {relImg && (
+                          <Image
+                            src={getImageSource(relImg, relStudy.title)}
+                            alt={`${relStudy.title} — ${relStudy.category} Case Study`}
+                            fill
+                            className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                            onError={() => handleImageError(relImg)}
+                          />
+                        )}
+                      </div>
+
+                      <div className="p-5 sm:p-6 relative">
+                        <span className="text-xs font-['Manrope'] font-semibold text-red-600 mb-1.5 block">
+                          {relStudy.category}
+                        </span>
+
+                        <h3 className="font-['Marcellus'] text-xl sm:text-2xl text-gray-900 mb-2 group-hover:text-red-600 transition-colors">
+                          {relStudy.title}
+                        </h3>
+
+                        <p className="font-['Manrope'] text-xs sm:text-sm text-gray-600 line-clamp-2 mb-4">
+                          {relStudy.shortDescription || relStudy.description}
+                        </p>
+
+                        <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-['Manrope'] font-bold text-red-600">
+                          Read Case Study <FiArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
       )}
 
-      </div>
+      {/* Executive Bottom Conversion Banner */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div
+            style={{
+              background:
+                "linear-gradient(135deg, #000000 0%, #18181b 60%, #450a0a 100%)",
+            }}
+            className="rounded-3xl p-8 sm:p-12 lg:p-14 text-white shadow-2xl border border-red-500/20 flex flex-col lg:flex-row lg:items-center justify-between gap-8"
+          >
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-600/20 border border-red-500/30 text-red-400 text-xs font-bold uppercase tracking-widest mb-3">
+                <FiStar className="w-3.5 h-3.5" /> Proven {study.category} Expertise
+              </span>
+              <h2 className="font-['Marcellus'] text-2xl sm:text-4xl font-bold text-white leading-tight mb-3">
+                Want a Platform Like {study.title} Built in 21 Days?
+              </h2>
+              <p className="font-['Manrope'] text-zinc-300 text-sm sm:text-base leading-relaxed">
+                We engineered {study.title} using {(study.technologies || []).slice(0, 3).join(", ")} with fixed milestone pricing and full post-launch support. Book a free strategy session to scope your roadmap.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+              <Link
+                href={`/contact?project=${encodeURIComponent(study.slug)}`}
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-['Manrope'] font-bold text-sm transition-all shadow-lg shadow-red-600/25"
+              >
+                Book Free Strategy Call <FiArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/blog/how-to-choose-web-development-agency"
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/15 font-['Manrope'] font-semibold text-sm transition-all"
+              >
+                2026 Agency Guide
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

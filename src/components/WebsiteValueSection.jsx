@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { FiCheckCircle } from "react-icons/fi";
 import GlowingButton from "./GlowingButton";
 
@@ -99,15 +100,16 @@ export default function WebsiteValueSection() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
             >
-              <GlowingButton
-                glowColor="200, 0, 0"
-                spreadSize="small"
-                speed="medium"
-                waveCount={3}
-                onClick={() => window.location.href = "/contact"}
-              >
-                Build Your Digital Asset
-              </GlowingButton>
+              <Link href="/contact" className="inline-block">
+                <GlowingButton
+                  glowColor="200, 0, 0"
+                  spreadSize="small"
+                  speed="medium"
+                  waveCount={3}
+                >
+                  Build Your Digital Asset
+                </GlowingButton>
+              </Link>
             </motion.div>
           </motion.div>
 
@@ -132,6 +134,8 @@ export default function WebsiteValueSection() {
                   src="/valuee.jpg"
                   alt="Website as digital asset"
                   fill
+                  sizes="(max-width: 1024px) 100vw, 640px"
+                  loading="lazy"
                   className="object-cover transition-transform duration-700 hover:scale-105"
                 />
 

@@ -1,4 +1,5 @@
 import { getBlogsFromDb } from '@/lib/blogDb';
+import { caseStudies } from '@/data/caseStudies';
 
 const SITE_URL = 'https://webmavien.com';
 
@@ -48,6 +49,13 @@ export default async function sitemap() {
     },
   ];
 
+  const caseStudyRoutes = (caseStudies || []).map((study) => ({
+    url: `${SITE_URL}/casestudies/${study.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.85,
+  }));
+
   let blogRoutes = [];
   try {
     const { blogs } = await getBlogsFromDb({
@@ -64,5 +72,5 @@ export default async function sitemap() {
     console.error('Error building blog sitemap routes:', err);
   }
 
-  return [...staticRoutes, ...blogRoutes];
+  return [...staticRoutes, ...caseStudyRoutes, ...blogRoutes];
 }

@@ -7,9 +7,10 @@ const WebsiteValueSection = dynamic(() => import('@/components/WebsiteValueSecti
 const Whyus = dynamic(() => import('@/components/Whyus'), { ssr: true });
 const CaseStudies = dynamic(() => import('@/components/CaseStudies'), { ssr: true });
 const Partners = dynamic(() => import('@/components/Partners'), { ssr: true });
-const HowItWorks = dynamic(() => import('@/components/HowItWorks'), { ssr: false, loading: () => <div className="h-96 bg-black/5 animate-pulse" /> });
-const Testimonials = dynamic(() => import('@/components/Testimonials'), { ssr: false, loading: () => <div className="h-96 bg-black/5 animate-pulse" /> });
-const FAQ = dynamic(() => import('@/components/FAQ'), { ssr: false, loading: () => <div className="h-96 bg-black/5 animate-pulse" /> });
+const HowItWorks = dynamic(() => import('@/components/HowItWorks'), { ssr: true });
+const ProjectEstimatorSection = dynamic(() => import('@/components/ProjectEstimatorSection'), { ssr: true });
+const Testimonials = dynamic(() => import('@/components/Testimonials'), { ssr: true });
+const FAQ = dynamic(() => import('@/components/FAQ'), { ssr: true });
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <CaseStudies />
       <Partners />
       <HowItWorks />
+      <ProjectEstimatorSection />
       <Testimonials />
       <FAQ />
     </>

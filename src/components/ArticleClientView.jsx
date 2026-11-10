@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { parseArticleMarkdown, formatInlineText } from '@/utils/articleParser';
 import { parseCmsSections, DEFAULT_CTA } from '@/utils/cmsSectionParser';
+import { caseStudies } from '@/data/caseStudies';
 
 export default function ArticleClientView({
   slug,
@@ -604,8 +605,8 @@ export default function ArticleClientView({
                             className="pr-4"
                             dangerouslySetInnerHTML={{ __html: formatInlineText(item.q) }}
                           />
-                          <span className="w-7 h-7 rounded-full bg-white border border-zinc-200 text-zinc-900 flex items-center justify-center shrink-0 transition-transform duration-200 group-open:rotate-180 group-open:bg-red-600 group-open:text-white group-open:border-red-600 text-xs">
-                            ▼
+                          <span className="w-7 h-7 rounded-full bg-white border border-zinc-200 text-zinc-900 flex items-center justify-center shrink-0 transition-transform duration-200 group-open:rotate-180 group-open:bg-red-600 group-open:text-white group-open:border-red-600">
+                            <ChevronRight className="w-3.5 h-3.5 rotate-90" />
                           </span>
                         </summary>
                         <div
@@ -685,7 +686,83 @@ export default function ArticleClientView({
         </div>
       </section>
 
-      {/* 4. RELATED ARTICLES SECTION */}
+      {/* 4. PROVEN CLIENT CASE STUDIES SHOWCASE */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 mt-14 sm:mt-16">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-widest text-red-600 block mb-1.5">
+              Proven Engineering Outcomes
+            </span>
+            <h2 className="font-['Marcellus'] text-2xl sm:text-3xl font-bold text-zinc-950">
+              Real Projects Delivered in 21–28 Days
+            </h2>
+          </div>
+          <Link
+            href="/casestudies"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-red-600 hover:gap-2.5 transition-all"
+          >
+            Explore All 6 Case Studies <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {(caseStudies || []).slice(0, 3).map((study) => (
+            <Link
+              key={study.slug}
+              href={`/casestudies/${study.slug}`}
+              className="group bg-white rounded-2xl p-6 border border-zinc-200/90 shadow-xs hover:shadow-xl hover:border-red-500/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <span className="px-3 py-1 rounded-full bg-red-50 text-red-600 text-[11px] font-bold">
+                    {study.category}
+                  </span>
+                  {study.timeline && (
+                    <span className="text-[11px] font-semibold text-zinc-500">
+                      {study.timeline}
+                    </span>
+                  )}
+                </div>
+
+                <h3 className="font-['Marcellus'] font-bold text-xl text-zinc-950 group-hover:text-red-600 transition-colors mb-2">
+                  {study.title}
+                </h3>
+
+                <p className="text-xs sm:text-[13.5px] text-zinc-600 leading-relaxed mb-4 line-clamp-2">
+                  {study.shortDescription}
+                </p>
+
+                <div className="grid grid-cols-2 gap-2.5 mb-4">
+                  {(study.stats || []).map((st, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-zinc-50 border border-zinc-100 rounded-xl p-2.5"
+                    >
+                      <div className="font-['Marcellus'] font-bold text-base sm:text-lg text-red-600">
+                        {st.value}
+                      </div>
+                      <div className="text-[11px] text-zinc-500 font-medium">
+                        {st.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-zinc-100 flex items-center justify-between">
+                <span className="text-[11px] text-zinc-500 font-medium truncate max-w-[60%]">
+                  {(study.technologies || []).slice(0, 2).join(' • ')}
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-red-600 group-hover:gap-2 transition-all">
+                  Case Study <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. RELATED ARTICLES SECTION */}
       {relatedPosts.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 mt-16 sm:mt-20">
           <div className="flex items-end justify-between mb-8">

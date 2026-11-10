@@ -55,9 +55,11 @@ export default function Navbar() {
 
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
     { href: "/services", label: "Services" },
+    { href: "/casestudies", label: "Case Studies" },
     { href: "/process", label: "Process" },
+    { href: "/blog", label: "Blog" },
+    { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];
 
@@ -89,72 +91,27 @@ export default function Navbar() {
     })
   };
 
-  // Don't render anything until mounted to prevent hydration mismatch
-  if (!mounted) {
-    return (
-      <>
-        <nav className="fixed top-0 left-0 right-0 z-50">
-          <div className="w-full mx-auto">
-            <div className="relative group">
-              <div className="relative shadow-xl px-3 sm:px-4 py-1 bg-white">
-                <div className="flex items-center justify-between h-12 sm:h-14">
-                  <div className="flex items-center">
-                    <div className="flex items-center">
-                      <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
-                        <Image
-                          src="/logo.png"
-                          alt="WebMavien Logo"
-                          width={140}
-                          height={140}
-                          className="object-contain w-full h-auto"
-                          priority
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
-
-      </>
-    );
-  }
-
   return (
     <>
-      <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="fixed top-0 left-0 right-0 z-50"
-      >
+      <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="w-full mx-auto">
           {/* Main navbar container */}
           <div className="relative group">
-            {/* Main navbar with scroll-based blur - SOLUTION 3 APPLIED */}
-            <motion.div
-              animate={{
-                backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.9)' : 'white',
+            {/* Main navbar with scroll-based blur */}
+            <div
+              className="relative shadow-xl px-3 sm:px-4 py-1 transition-all duration-300"
+              style={{
+                backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.92)' : '#ffffff',
                 backdropFilter: scrolled ? 'blur(10px)' : 'none',
+                WebkitBackdropFilter: scrolled ? 'blur(10px)' : 'none',
                 boxShadow: scrolled
                   ? '0 4px 30px rgba(0, 0, 0, 0.1)'
                   : '0 2px 10px rgba(0, 0, 0, 0.05)',
               }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="relative shadow-xl px-3 sm:px-4 py-1"
-              style={{
-                WebkitBackdropFilter: scrolled ? 'blur(10px)' : 'none',
-              }}
             >
               <div className="flex items-center justify-between h-15">
                 {/* Logo */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
+                <div>
                   <Link href="/" className="flex items-center group/logo">
                     <div className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[140px]">
                       <Image
@@ -167,44 +124,35 @@ export default function Navbar() {
                       />
                     </div>
                   </Link>
-                </motion.div>
+                </div>
 
                 {/* Desktop Navigation Links */}
-                <div className="hidden lg:flex items-center gap-1">
-                  {navLinks.map((link, index) => {
-                    const isActive = pathname === link.href;
+                <div className="hidden lg:flex items-center gap-0.5 xl:gap-1">
+                  {navLinks.map((link) => {
+                    const isActive =
+                      link.href === '/'
+                        ? pathname === '/'
+                        : pathname === link.href || pathname?.startsWith(`${link.href}/`);
                     return (
-                      <motion.div
+                      <Link
                         key={link.href}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.2 + index * 0.1 }}
+                        href={link.href}
+                        className={`relative px-2.5 xl:px-3.5 py-1.5 uppercase transition-all duration-300 text-[11px] xl:text-xs tracking-[0.16em] font-light group/link whitespace-nowrap ${
+                          isActive ? 'text-red-600 font-normal' : 'text-black hover:text-red-600'
+                        }`}
+                        style={{ fontFamily: 'var(--font-manrope)' }}
                       >
-                        <Link
-                          href={link.href}
-                          className={`relative px-3 xl:px-4 py-1.5 uppercase transition-all duration-300 text-[11px] xl:text-xs tracking-[0.2em] font-light group/link ${isActive
-                            ? 'text-red-600 font-normal'
-                            : 'text-black hover:text-gray-800'
-                            }`}
-                          style={{ fontFamily: 'var(--font-manrope)' }}
-                        >
-                          <span className="relative z-10 font-bold ">{link.label}</span>
-                          {isActive && (
-                            <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-red-600 " />
-                          )}
-                        </Link>
-                      </motion.div>
+                        <span className="relative z-10 font-bold">{link.label}</span>
+                        {isActive && (
+                          <span className="absolute bottom-0 left-2.5 right-2.5 h-[2px] bg-red-600" />
+                        )}
+                      </Link>
                     );
                   })}
                 </div>
 
                 {/* Book Meeting - Desktop & Tablet (text) + Mobile (icon) */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                  className="flex items-center gap-1"
-                >
+                <div className="flex items-center gap-1">
                   {/* Desktop & Tablet: Text button */}
                   <Link
                     href="/contact"
@@ -215,7 +163,7 @@ export default function Navbar() {
                       variant="primary"
                       className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 text-base sm:text-lg"
                     >
-                      Book a Meeting
+                      Book Free Call
                     </GlowingButton>
                   </Link>
 
@@ -250,12 +198,12 @@ export default function Navbar() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                   </motion.button>
-                </motion.div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
 
       {/* Premium Side Drawer for Mobile/Tablet */}

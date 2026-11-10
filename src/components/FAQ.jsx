@@ -158,41 +158,51 @@ export default function FAQ() {
                     </div>
                   </button>
 
-                  {/* Answer */}
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        id={`faq-answer-${item.id}`}
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="overflow-hidden"
-                      >
-                        <div className="p-6 pt-0 border-t border-gray-100">
-                          <div className="flex gap-4">
-                            {/* Decorative line */}
-                            <motion.div
-                              initial={{ scaleY: 0 }}
-                              animate={{ scaleY: 1 }}
-                              transition={{ delay: 0.2 }}
-                              className="w-1 bg-gradient-to-b from-red-600 to-red-400 rounded-full origin-top"
-                            />
+                  {/* Answer - kept in SSR DOM for full Google indexability */}
+                  <div
+                    id={`faq-answer-${item.id}`}
+                    className={`grid transition-all duration-300 ease-in-out ${
+                      isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="p-6 pt-0 border-t border-gray-100">
+                        <div className="flex gap-4">
+                          {/* Decorative line */}
+                          <div className="w-1 bg-gradient-to-b from-red-600 to-red-400 rounded-full shrink-0" />
 
-                            {/* Answer text */}
-                            <p className="font-['Manrope'] text-gray-600 leading-relaxed">
-                              {item.answer}
-                            </p>
-                          </div>
+                          {/* Answer text */}
+                          <p className="font-['Manrope'] text-gray-600 leading-relaxed">
+                            {item.answer}
+                          </p>
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             );
           })}
         </motion.div>
+
+        {/* Structured FAQPage JSON-LD for Google Rich Snippets */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: faqItems.map((item) => ({
+                '@type': 'Question',
+                name: item.question,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: item.answer,
+                },
+              })),
+            }),
+          }}
+        />
 
       </div>
     </section>

@@ -384,7 +384,10 @@ export default function WordPressBlogEditor({
 
   // Filtered body snippets (since Takeaways, FAQ, Sources, CTA have dedicated visual form builders!)
   const bodyDesignSnippets = useMemo(
-    () => BLOG_SNIPPETS.filter((s) => ['tip', 'warning', 'steps', 'grid'].includes(s.id)),
+    () =>
+      BLOG_SNIPPETS.filter((s) =>
+        ['tip', 'warning', 'steps', 'grid', 'casestudy'].includes(s.id)
+      ),
     []
   );
 

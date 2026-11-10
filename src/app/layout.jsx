@@ -65,6 +65,9 @@ export const metadata = {
     images: ["/fav.png"],
   },
 
+  alternates: {
+    canonical: "https://webmavien.com",
+  },
   robots: {
     index: true,
     follow: true,
@@ -142,33 +145,50 @@ export default function RootLayout({ children }) {
 
         <meta name="google-site-verification" content="6f__qaPJK4fGfUrDK255aelCxzz7nIitsVXRAa6OycM" />
 
-        {/* JSON-LD Schema Markup */}
+        {/* Rich @graph JSON-LD Schema Markup */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "WebMavien",
-              "url": "https://webmavien.com",
-            }),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              "name": "WebMavien",
-              "url": "https://webmavien.com",
-              "logo": "https://webmavien.com/logo.png",
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "telephone": "+44 7424 672943",
-                "contactType": "customer service",
-                "email": "team@webmavien.com"
-              }
+              "@graph": [
+                {
+                  "@type": "WebSite",
+                  "@id": "https://webmavien.com/#website",
+                  "name": "WebMavien",
+                  "url": "https://webmavien.com",
+                  "description": "WebMavien is a premier web development agency specializing in AI-powered MVPs, SaaS platforms, and conversion-optimized websites delivered in 21 days."
+                },
+                {
+                  "@type": ["Organization", "ProfessionalService"],
+                  "@id": "https://webmavien.com/#organization",
+                  "name": "WebMavien",
+                  "url": "https://webmavien.com",
+                  "logo": "https://webmavien.com/fav.png",
+                  "email": "team@webmavien.com",
+                  "telephone": "+44 7424 672943",
+                  "sameAs": [
+                    "https://www.linkedin.com/company/web-mavien",
+                    "https://www.instagram.com/webmavien"
+                  ],
+                  "areaServed": ["US", "GB", "DE", "EU", "Worldwide"],
+                  "knowsAbout": [
+                    "React JS Development",
+                    "Next.js App Router",
+                    "Bubble.io No-Code Development",
+                    "AI SaaS MVP Development",
+                    "Custom E-Commerce Engineering",
+                    "Technical SEO"
+                  ],
+                  "contactPoint": {
+                    "@type": "ContactPoint",
+                    "telephone": "+44 7424 672943",
+                    "contactType": "sales",
+                    "email": "team@webmavien.com",
+                    "availableLanguage": ["English"]
+                  }
+                }
+              ]
             }),
           }}
         />

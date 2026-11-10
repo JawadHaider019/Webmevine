@@ -215,36 +215,25 @@ export default function ServicesPage() {
                       )}
                     </motion.div>
 
-                    {/* Description with smooth height animation */}
-                    <AnimatePresence mode="wait">
-                      {isOpen && (
-                        <motion.div
-                          variants={descriptionVariants}
-                          initial="hidden"
-                          animate="visible"
-                          exit="hidden"
-                          className="w-full overflow-hidden"
-                        >
-                          <div className="flex flex-col gap-2 mt-4">
-                            {service.description.map((desc, i) => (
-                              <motion.p
-                                key={i}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ 
-                                  duration: 0.3, 
-                                  delay: 0.1 + (i * 0.05),
-                                  ease: "easeOut"
-                                }}
-                                className="font-['Manrope'] text-gray-600 text-base leading-relaxed text-right"
-                              >
-                                {desc}
-                              </motion.p>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    {/* Description - kept in SSR DOM with smooth CSS height transition for full search indexability */}
+                    <div
+                      className={`w-full grid transition-all duration-300 ease-in-out ${
+                        isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                      }`}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="flex flex-col gap-2 mt-4">
+                          {service.description.map((desc, i) => (
+                            <p
+                              key={i}
+                              className="font-['Manrope'] text-gray-600 text-base leading-relaxed text-right"
+                            >
+                              {desc}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>

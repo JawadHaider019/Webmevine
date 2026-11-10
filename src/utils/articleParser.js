@@ -832,6 +832,83 @@ function renderCustomBlock(type, rawLines) {
     };
   }
 
+  // 9. CASE STUDY PROOF CARD BLOCK (:::casestudy)
+  if (type === 'casestudy') {
+    let title = 'Featured Client Case Study';
+    let category = 'WebMavien Launch Story';
+    let summary = '';
+    let quote = '';
+    let author = '';
+    let metrics = [];
+    let linkLabel = 'Read Full Case Study';
+    let linkUrl = '/casestudies';
+
+    lines.forEach((line) => {
+      if (line.startsWith('### ') || line.startsWith('## ')) {
+        title = stripLeadingEmojis(line.replace(/^#{2,3}\s+/, ''));
+      } else if (line.toLowerCase().startsWith('category:')) {
+        category = line.replace(/^category:\s*/i, '').trim();
+      } else if (line.toLowerCase().startsWith('metrics:')) {
+        metrics = line
+          .replace(/^metrics:\s*/i, '')
+          .split('|')
+          .map((m) => m.trim())
+          .filter(Boolean);
+      } else if (line.toLowerCase().startsWith('quote:')) {
+        quote = line.replace(/^quote:\s*/i, '').replace(/^["']|["']$/g, '').trim();
+      } else if (line.toLowerCase().startsWith('author:')) {
+        author = line.replace(/^author:\s*/i, '').trim();
+      } else if (line.toLowerCase().startsWith('link:') || line.toLowerCase().startsWith('button:')) {
+        const parts = line.replace(/^(?:link|button):\s*/i, '').split('|');
+        linkLabel = parts[0]?.trim() || linkLabel;
+        linkUrl = parts[1]?.trim() || linkUrl;
+      } else if (!summary) {
+        summary = line;
+      }
+    });
+
+    const metricsHtml = metrics.length
+      ? `<div class="flex flex-wrap gap-2.5 my-4">
+          ${metrics
+            .map(
+              (m) =>
+                `<span style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;" class="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold">${formatInlineText(m)}</span>`
+            )
+            .join('')}
+        </div>`
+      : '';
+
+    const quoteHtml = quote
+      ? `<blockquote style="margin: 12px 0 0 0; padding: 12px 16px; background: #fafafa; border-left: 3px solid #dc2626; border-radius: 0 12px 12px 0;">
+          <p style="margin: 0; color: #3f3f46; font-style: italic;" class="text-xs sm:text-sm leading-relaxed">"${formatInlineText(quote)}"</p>
+          ${author ? `<p style="margin: 6px 0 0 0; color: #09090b; font-weight: 700;" class="text-xs">— ${formatInlineText(author)}</p>` : ''}
+        </blockquote>`
+      : '';
+
+    return {
+      html: `
+      <div class="my-8 p-6 sm:p-7 rounded-2xl bg-white border border-zinc-200/90 border-l-4 border-l-red-600 shadow-md hover:shadow-lg transition-all">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="background: linear-gradient(135deg, #dc2626 0%, #000000 100%); color: #ffffff; width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 10px;" class="shadow-sm">${SVG_ICONS.chart}</span>
+            <div>
+              <span style="color: #dc2626;" class="block text-[11px] font-bold uppercase tracking-widest">${formatInlineText(category)}</span>
+              <h4 style="margin: 0; padding: 0; color: #09090b;" class="font-['Marcellus'] text-lg sm:text-xl font-bold">${formatInlineText(title)}</h4>
+            </div>
+          </div>
+          <a href="${linkUrl}" style="background: linear-gradient(135deg, #dc2626 0%, #000000 100%); color: #ffffff; display: inline-flex; align-items: center; gap: 6px;" class="px-4 py-2 rounded-xl text-xs font-bold shadow-sm hover:opacity-95 transition-opacity">
+            <span>${formatInlineText(linkLabel)}</span>
+            ${SVG_ICONS.arrowRight}
+          </a>
+        </div>
+        ${summary ? `<p style="margin: 0; color: #3f3f46;" class="text-[15px] leading-relaxed">${formatInlineText(summary)}</p>` : ''}
+        ${metricsHtml}
+        ${quoteHtml}
+      </div>`,
+      faqItems: [],
+    };
+  }
+
   return { html: '', faqItems: [] };
 }
 
@@ -1260,10 +1337,17 @@ export const BLOG_SNIPPETS = [
   },
   {
     id: 'grid',
-    label: '🗂️ 3-Column Card Grid',
+    label: 'Feature Card Grid',
     badge: 'Grid',
-    description: 'Side-by-side cards for pros/cons, tech stacks, or service tiers',
-    snippet: `\n:::grid\n### 🚀 High Performance\nSub-second page loads powered by Next.js App Router, edge caching, and optimized assets.\n---\n### 🤖 AI-Native Workflows\nSeamless integration with OpenAI, vector databases, and automated lead qualification.\n---\n### 📈 Technical SEO Built-In\nAutomated JSON-LD schemas, canonical URLs, dynamic sitemaps, and semantic HTML.\n:::\n`,
+    description: 'Structured cards with SVG icons for pros/cons, tech stacks, or service tiers',
+    snippet: `\n:::grid\n### High Performance\nSub-second page loads powered by Next.js App Router, edge caching, and optimized assets.\n---\n### AI-Native Workflows\nSeamless integration with OpenAI, vector databases, and automated lead qualification.\n---\n### Technical SEO Built-In\nAutomated JSON-LD schemas, canonical URLs, dynamic sitemaps, and semantic HTML.\n:::\n`,
+  },
+  {
+    id: 'casestudy',
+    label: 'Case Study Proof Card',
+    badge: 'Client ROI',
+    description: 'Embed a verified WebMavien client case study with ROI stats, founder quote, and link',
+    snippet: `\n:::casestudy\n### Campuna — German Camping Marketplace\ncategory: Marketplace & Travel Tech (Bubble.io)\nWe engineered a two-sided German camping marketplace with flexible host listings, admin verification workflows, and integrated Stripe bookings in 4 weeks.\nmetrics: 200+ Listings Launched | 50% Platform Growth | 4-Week Delivery\nquote: Campuna is live! Thank you from the bottom of my heart for bringing this project to life together with me.\nauthor: Voigt, Founder of Campuna\nlink: Read Campuna Case Study | /casestudies/campuna\n:::\n`,
   },
   {
     id: 'faq',

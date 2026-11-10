@@ -153,16 +153,16 @@ export default function Testimonials() {
     }
   ];
 
-  // Duplicate testimonials for infinite scroll effect (3x for seamless loop)
+  // Duplicate curated reviews 2x for a lighter DOM and seamless loop
+  const curatedTestimonials = testimonials.slice(0, 8);
   const duplicatedTestimonials = [
-    ...testimonials,
-    ...testimonials,
-    ...testimonials
+    ...curatedTestimonials,
+    ...curatedTestimonials
   ];
 
   useEffect(() => {
     if (scrollRef.current) {
-      setWidth(scrollRef.current.scrollWidth / 4);
+      setWidth(scrollRef.current.scrollWidth / 2);
     }
   }, []);
 
@@ -361,6 +361,8 @@ export default function Testimonials() {
                                 src={countryFlags[testimonial.location]}
                                 alt={`${testimonial.location} flag`}
                                 fill
+                                loading="lazy"
+                                sizes="20px"
                                 className="object-cover"
                                 unoptimized
                               />

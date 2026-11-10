@@ -13,14 +13,12 @@ export default function CaseStudiesSection() {
   const router = useRouter(); // Add this
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   // Get only the first 4 case studies
   const featuredCaseStudies = caseStudies.slice(0, 4);
 
   // Check if mobile on mount and when window resizes
   useEffect(() => {
-    setMounted(true);
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -30,11 +28,6 @@ export default function CaseStudiesSection() {
 
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  // Don't render on server to avoid hydration mismatch
-  if (!mounted) {
-    return null;
-  }
 
   const handleSlideClick = (index) => {
     // On both mobile and desktop, clicking a slide opens it
@@ -240,8 +233,10 @@ export default function CaseStudiesSection() {
                             {study.images.main ? (
                               <Image
                                 src={study.images.main}
-                                alt={study.category}
+                                alt={`${study.title} — ${study.category}`}
                                 fill
+                                sizes="(max-width: 1024px) 100vw, 520px"
+                                loading="lazy"
                                 className="object-contain transition-transform duration-700"
                               />
                             ) : (
@@ -298,53 +293,20 @@ export default function CaseStudiesSection() {
                             <p className="font-['Manrope'] text-[10px] text-gray-400">{study.founder.title}</p>
                           </div>
 
-                          {/* "Read the Story" text indicator - Enhanced */}
-                          <motion.div
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.5, duration: 0.5 }}
-                            whileHover={{ x: 5 }}
-                            className="flex items-center gap-2 text-red-600 text-xs sm:text-sm mt-4 group cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenSlideClick(study.slug);
-                            }}
+                          {/* "Read the Story" text indicator - Enhanced crawlable Link */}
+                          <Link
+                            href={`/casestudies/${study.slug}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-2 text-red-600 text-xs sm:text-sm mt-4 group cursor-pointer"
                           >
-                            <motion.span
-                              className="relative font-medium"
-                              whileHover={{ letterSpacing: "0.05em" }}
-                              transition={{ duration: 0.3 }}
-                            >
+                            <span className="relative font-medium group-hover:tracking-wider transition-all duration-300">
                               Read The Story
-                              <motion.span
-                                className="absolute -bottom-1 left-0 h-[2px] bg-red-600 rounded-full"
-                                initial={{ width: 0 }}
-                                whileHover={{ width: "100%" }}
-                                transition={{ duration: 0.3 }}
-                              />
-                            </motion.span>
-
-                            <motion.div
-                              animate={{
-                                x: [0, 3, 0],
-                              }}
-                              transition={{
-                                duration: 1.5,
-                                repeat: Infinity,
-                                repeatType: "loop",
-                                ease: "easeInOut"
-                              }}
-                              whileHover={{
-                                scale: 1.2,
-                                x: 5,
-                                rotate: [0, 10, 0]
-                              }}
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                              </svg>
-                            </motion.div>
-                          </motion.div>
+                              <span className="absolute -bottom-1 left-0 h-[2px] w-0 group-hover:w-full bg-red-600 rounded-full transition-all duration-300" />
+                            </span>
+                            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                          </Link>
                         </div>
                       </motion.div>
                     ) : (

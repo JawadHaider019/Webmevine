@@ -6,16 +6,23 @@ import { BsCalendarCheck } from "react-icons/bs";
 export default function CalendlyEmbed() {
   const [loaded, setLoaded] = useState(false);
   const [cached, setCached] = useState(false);
+  const [embedDomain, setEmbedDomain] = useState('webmavien.com');
   const iframeRef = useRef(null);
   
   const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || 
     "https://calendly.com/webmavien/30min";
 
-  // Add embed parameters for better performance
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hostname) {
+      setEmbedDomain(window.location.hostname);
+    }
+  }, []);
+
+  // Deterministic SSR + initial hydration URL
   const embedParams = new URLSearchParams({
     hide_gdpr_banner: '1',
     primary_color: 'ff0000',
-    embed_domain: typeof window !== 'undefined' ? window.location.hostname : 'localhost',
+    embed_domain: embedDomain,
     background_color: 'ffffff',
     text_color: '1f2937'
   });
