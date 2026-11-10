@@ -171,7 +171,13 @@ export default function RootLayout({ children }) {
                     "https://www.linkedin.com/company/web-mavien",
                     "https://www.instagram.com/webmavien"
                   ],
-                  "areaServed": ["US", "GB", "DE", "EU", "Worldwide"],
+                  "areaServed": [
+                    { "@type": "Country", "name": "United Kingdom" },
+                    { "@type": "Country", "name": "United States" },
+                    { "@type": "Country", "name": "United Arab Emirates" },
+                    { "@type": "Country", "name": "Germany" },
+                    "Worldwide"
+                  ],
                   "knowsAbout": [
                     "React JS Development",
                     "Next.js App Router",

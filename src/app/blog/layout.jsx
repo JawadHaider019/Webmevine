@@ -1,9 +1,19 @@
 const SITE_URL = 'https://webmavien.com';
 
 export const metadata = {
-  title: 'Engineering, AI & Technical SEO Blog | WebMavien',
+  title: 'SaaS, MVP, Custom CRM & E-Commerce Engineering Blog | WebMavien',
   description:
-    'In-depth guides, architecture blueprints, and AI automation strategies from WebMavien senior engineers. Learn Next.js, SaaS scaling, and technical SEO.',
+    'In-depth 2026 cost guides, architecture blueprints, and AI automation playbooks for SaaS MVPs, custom CRMs, and Next.js e-commerce across the UK, USA, and UAE.',
+  keywords: [
+    'SaaS Development Cost 2026',
+    'MVP Development Agency',
+    'Custom CRM vs HubSpot Cost',
+    'Next.js E-Commerce Agency',
+    'Hire React Developer UK USA UAE',
+    'Bubble.io vs React Next.js',
+    'Two-Sided Marketplace Development',
+    'AI SaaS MVP 21 Days',
+  ],
   alternates: {
     canonical: `${SITE_URL}/blog`,
   },

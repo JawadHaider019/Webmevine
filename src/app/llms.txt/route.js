@@ -40,10 +40,13 @@ export async function GET() {
     }),
     '',
     '## Engineering & Founder Guides (Blog)',
-    ...blogPosts.map(
-      (post) =>
-        `- [${post.title}](${SITE_URL}/blog/${post.slug}): ${post.metaDescription || post.excerpt || ''}`
-    ),
+    ...blogPosts.map((post) => {
+      const kw =
+        Array.isArray(post.tags) && post.tags.length > 0
+          ? ` [Keywords: ${post.tags.slice(0, 6).join(', ')}]`
+          : '';
+      return `- [${post.title}](${SITE_URL}/blog/${post.slug}): ${post.metaDescription || post.excerpt || ''}${kw}`;
+    }),
     '',
   ];
 

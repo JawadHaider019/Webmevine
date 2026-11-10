@@ -25,10 +25,23 @@ export async function generateMetadata({ params }) {
   const ogImage =
     post.imageUrl ||
     'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80';
+  const keywordsList =
+    Array.isArray(post.tags) && post.tags.length > 0
+      ? post.tags
+      : [
+          'SaaS Development Agency',
+          'MVP Development Company',
+          'Custom CRM Software',
+          'Next.js E-Commerce Agency',
+          'WebMavien',
+        ];
 
   return {
     title: metaTitle,
     description: metaDescription,
+    keywords: keywordsList,
+    authors: [{ name: post.author || 'WebMavien Engineering Team' }],
+    category: post.category || 'Engineering & AI',
     alternates: {
       canonical: canonicalUrl,
     },
@@ -42,6 +55,7 @@ export async function generateMetadata({ params }) {
       modifiedTime: post.updatedAt || post.createdAt,
       authors: [post.author || 'WebMavien Engineering Team'],
       section: post.category || 'Engineering & AI',
+      tags: keywordsList,
       images: [
         {
           url: ogImage,
@@ -149,8 +163,14 @@ export default async function BlogArticleLayout({ children, params }) {
           },
         },
         articleSection: post.category || 'Development',
+        keywords: Array.isArray(post.tags) ? post.tags.join(', ') : '',
         wordCount,
+        isAccessibleForFree: true,
         inLanguage: 'en-US',
+        speakable: {
+          '@type': 'SpeakableSpecification',
+          cssSelector: ['h1', 'h2', 'summary'],
+        },
       },
     ];
 
