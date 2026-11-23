@@ -57,6 +57,7 @@ const SERVICES = [
   },
   {
     title: "Business Process Automation",
+    page: "business-process-automation",
     description: [
       "Streamline your operations with custom automation solutions.",
       "Reduce manual work, eliminate errors, and save thousands of hours.",

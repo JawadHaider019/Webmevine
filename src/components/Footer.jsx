@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { serviceNav } from "@/data/serviceNav";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -24,15 +25,7 @@ export default function Footer() {
   const orbsInView = useInView(orbsRef);
 
   const footerLinks = {
-    product: [
-      { name: "MVP Development", href: "/services/mvp-development" },
-      { name: "Bubble.io Development", href: "/services/bubble-io-development" },
-      { name: "AI SaaS Development", href: "/services/ai-saas-development" },
-      { name: "Custom CRM Development", href: "/services/custom-crm-development" },
-      { name: "Next.js E-Commerce", href: "/services/nextjs-ecommerce-development" },
-      { name: "React & Next.js", href: "/services/react-nextjs-development" },
-      { name: "Marketplace Development", href: "/services/marketplace-development" }
-    ],
+    product: serviceNav.map((s) => ({ name: s.name, href: `/services/${s.slug}` })),
     company: [
       { name: "About", href: "/about" },
       { name: "Services", href: "/services" },

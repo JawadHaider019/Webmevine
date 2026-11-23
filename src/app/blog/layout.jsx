@@ -18,18 +18,18 @@ export const metadata = {
     canonical: `${SITE_URL}/blog`,
   },
   openGraph: {
-    title: 'Engineering, AI & Technical SEO Blog | WebMavien',
+    title: 'Guides for Building Web, SaaS & AI Products | WebMavien',
     description:
-      'In-depth guides, architecture blueprints, and AI automation strategies from WebMavien senior engineers.',
+      'Practical guides on MVP and SaaS development, AI products, custom CRMs, e-commerce and hiring the right agency, by WebMavien.',
     url: `${SITE_URL}/blog`,
     siteName: 'WebMavien',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Engineering, AI & Technical SEO Blog | WebMavien',
+    title: 'Guides for Building Web, SaaS & AI Products | WebMavien',
     description:
-      'In-depth guides, architecture blueprints, and AI automation strategies from WebMavien senior engineers.',
+      'Practical guides on MVP and SaaS development, AI products, custom CRMs, e-commerce and hiring the right agency, by WebMavien.',
   },
 };
 

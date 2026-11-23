@@ -454,7 +454,7 @@ const PROCESS_FAQ = [
   {
     id: 5,
     question: "What happens if my scope changes during the project?",
-    answer: "We protect your launch date by keeping the agreed scope fixed. New ideas go on a list for after launch, or are planned as a separate milestone if they are essential.",
+    answer: "We protect your launch date by keeping to the agreed scope. New ideas go on a list for after launch, or are planned as a separate milestone if they are essential.",
   },
   {
     id: 6,

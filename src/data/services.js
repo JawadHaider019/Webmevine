@@ -17,7 +17,7 @@ export const services = [
     intro:
       "WebMavien is an MVP development company that helps founders turn a validated idea into a working product in about 21 days. We scope the one workflow customers will pay for, design it, build it in React, Next.js or Bubble.io, and launch it with analytics, so you learn from real users instead of guessing.",
     highlights: [
-      "Fixed scope and launch date agreed before we start",
+      "Scope and launch date agreed in writing before we start",
       "Senior engineers only, no juniors learning on your budget",
       "React, Next.js or Bubble.io, chosen for your goals",
       "100% code and account ownership on delivery",
@@ -34,8 +34,8 @@ export const services = [
     caseStudies: ["zola", "campuna", "fivup-ai"],
     guides: [
       "mvp-development-agency-for-startups-21-days",
+      "vibe-coded-app-to-production",
       "startup-mvp-scoping-and-bubble-to-nextjs-migration",
-      "saas-application-development-cost-2026",
     ],
     faqs: [
       { q: "How long does it take to build an MVP?", a: "Most focused MVPs launch in about 21 days. Larger scopes with several integrations take 21 to 28 days. We agree the timeline in writing before the build starts." },
@@ -129,6 +129,48 @@ export const services = [
     ],
   },
   {
+    slug: "business-process-automation",
+    name: "Business Process Automation",
+    metaTitle: "Business Process Automation Services | WebMavien",
+    metaDescription:
+      "Business process automation that removes manual data entry: connected tools, automated workflows, AI document processing and live reports, built fast.",
+    kicker: "Business Process Automation Services",
+    heading: "Automate the Work",
+    headingAccent: "That Slows You Down",
+    subheading:
+      "Connect your tools, remove manual data entry and let routine work run itself, so your team can focus on customers.",
+    intro:
+      "WebMavien builds business process automation for teams that lose hours to copying data between tools, chasing approvals and building reports by hand. We map your workflows, connect the apps you already use, add AI where it saves real time, and deliver reliable automations and internal tools that run without anyone remembering to do them.",
+    highlights: [
+      "Workflows mapped and automated around how your team really works",
+      "Connects the tools you already use instead of replacing them",
+      "AI for reading documents, emails and forms where it saves time",
+      "Monitoring and alerts so automations never fail silently",
+    ],
+    deliverables: [
+      { title: "Workflow Automation", desc: "Lead routing, approvals, onboarding steps, reminders and follow-ups that run automatically." },
+      { title: "Tool Integrations", desc: "Connect CRMs, spreadsheets, accounting, email, calendars and messaging apps through their APIs." },
+      { title: "AI Document Processing", desc: "Extract data from invoices, forms, emails and PDFs and send it to the right system." },
+      { title: "Automated Reporting", desc: "Live dashboards and scheduled reports instead of weekly spreadsheet exports." },
+      { title: "Internal Tools", desc: "Simple portals and admin tools that replace fragile spreadsheets and manual checklists." },
+      { title: "Automation Rescue", desc: "Audit and rebuild unreliable Zapier or Make automations into stable, monitored workflows." },
+    ],
+    stack: ["Node.js", "Next.js", "Bubble.io", "Zapier / Make", "n8n", "OpenAI", "Google Workspace / Microsoft 365", "Slack", "Xero / QuickBooks"],
+    caseStudies: ["zola", "fintalio"],
+    guides: [
+      "ai-agents-business-process-automation",
+      "when-to-build-custom-crm-workflows-automation",
+      "custom-crm-development-vs-hubspot-salesforce-cost",
+    ],
+    faqs: [
+      { q: "What business processes can be automated?", a: "Repetitive, rule-based work is the best fit: lead routing, data entry between tools, approvals, reminders, invoicing, onboarding steps, document processing and reporting." },
+      { q: "Do I need to replace my existing software?", a: "Usually not. We connect the tools you already use through their APIs and only build new software where a gap or spreadsheet is slowing your team down." },
+      { q: "Should I use Zapier and Make or a custom automation?", a: "No-code tools such as Zapier and Make are great for simple, low-volume workflows. Custom automations are better when workflows are complex, business-critical, high-volume or need proper error handling and monitoring." },
+      { q: "How long does an automation project take?", a: "Focused automations can go live within days. A larger set of connected workflows or an internal tool typically takes about 2 to 4 weeks, delivered in milestones." },
+      { q: "What happens if an automation fails?", a: "We build in error handling, retries, logging and alerts, so failures are caught and fixed quickly instead of going unnoticed." },
+    ],
+  },
+  {
     slug: "nextjs-ecommerce-development",
     name: "Next.js E-Commerce Development",
     metaTitle: "Next.js E-Commerce Development Agency | WebMavien",
@@ -158,9 +200,9 @@ export const services = [
     stack: ["Next.js", "React", "Node.js", "Shopify Storefront API", "Stripe", "Apple Pay / Google Pay", "MongoDB", "Vercel"],
     caseStudies: ["pure-clay"],
     guides: [
+      "agentic-commerce-ai-shopping-agents-guide",
       "shopify-vs-custom-nextjs-ecommerce-2026",
       "ecommerce-seo-and-checkout-conversion-optimization",
-      "instagram-dm-to-automated-ecommerce-website-cost",
     ],
     faqs: [
       { q: "Is Next.js good for e-commerce?", a: "Yes. Next.js supports fast server-rendered and static pages, image optimisation and full control over metadata and structured data, which improve both conversion rates and search rankings." },
@@ -202,7 +244,7 @@ export const services = [
     guides: [
       "how-to-build-ai-saas-mvp-in-21-days",
       "ai-wrapper-vs-defensible-ai-saas-2026",
-      "multi-tenant-saas-stripe-billing-architecture",
+      "ai-agents-business-process-automation",
     ],
     faqs: [
       { q: "How long does it take to build an AI SaaS MVP?", a: "A focused AI SaaS MVP with retrieval, one structured workflow, one integration and billing typically launches in about 21 to 28 days." },
@@ -242,9 +284,9 @@ export const services = [
     stack: ["React", "Next.js", "TypeScript", "Node.js", "Tailwind CSS", "PostgreSQL", "MongoDB", "Vercel"],
     caseStudies: ["pure-clay"],
     guides: [
+      "vibe-coded-app-to-production",
       "react-vs-bubble-io-for-saas-mvp-2026",
       "multi-tenant-saas-stripe-billing-architecture",
-      "how-to-choose-web-development-agency",
     ],
     faqs: [
       { q: "Why choose Next.js for a website or web app?", a: "Next.js combines React with server rendering, static generation, routing and API routes, which gives fast pages, strong SEO and one codebase for front end and back end." },

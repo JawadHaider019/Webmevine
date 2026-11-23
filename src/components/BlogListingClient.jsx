@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   Search,
@@ -19,9 +20,35 @@ export default function BlogListingClient({ posts = [] }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Topic filters in a fixed, meaningful order (any new category is appended).
+  const CATEGORY_ORDER = ['SaaS & MVP', 'AI Products', 'E-Commerce', 'CRM & Automation', 'Hiring an Agency'];
+
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    posts.forEach((p) => {
+      if (p.category) counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+    return counts;
+  }, [posts]);
+
   const categories = useMemo(() => {
-    const unique = new Set(posts.map((p) => p.category).filter(Boolean));
-    return ['All', ...Array.from(unique)];
+    const present = Object.keys(categoryCounts);
+    const ordered = CATEGORY_ORDER.filter((c) => present.includes(c));
+    const extra = present.filter((c) => !CATEGORY_ORDER.includes(c));
+    return ['All', ...ordered, ...extra];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryCounts]);
+
+  // Most recent update across all guides (UTC so server and client render the same text)
+  const lastUpdated = useMemo(() => {
+    const times = posts.map((p) => new Date(p.updatedAt || p.createdAt).getTime()).filter(Boolean);
+    if (!times.length) return '';
+    return new Date(Math.max(...times)).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'UTC',
+    });
   }, [posts]);
 
   const filteredPosts = useMemo(() => {
@@ -74,23 +101,42 @@ export default function BlogListingClient({ posts = [] }) {
             transition={{ duration: 0.5 }}
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/15 border border-red-500/30 text-red-400 text-xs font-bold uppercase tracking-widest mb-5">
-              <Sparkles className="w-3.5 h-3.5" /> WebMavien Engineering & AI Insights
+              <Sparkles className="w-3.5 h-3.5" /> The WebMavien Blog
             </span>
-            <h1 className="font-['Marcellus'] text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white max-w-4xl mx-auto leading-[1.12]">
-              Architecting the Future of <span className="text-red-500">Web & AI</span>
+            <h1 className="font-['Marcellus'] text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white max-w-4xl mx-auto leading-[1.12] text-balance">
+              Guides for Building <span className="text-red-500">Web, SaaS &amp; AI Products</span>
             </h1>
-            <p className="text-zinc-400 text-base sm:text-lg max-w-2xl mx-auto mt-5 leading-relaxed">
-              Deep-dive technical guides, SaaS architecture blueprints, AI agent workflows, and programmatic SEO playbooks written by our senior engineering team.
+            <p className="text-zinc-400 text-base sm:text-lg max-w-2xl mx-auto mt-5 leading-relaxed text-balance">
+              Practical guides on MVP and SaaS development, AI products, custom CRMs, e-commerce and hiring the right agency, from the team that builds them.
             </p>
+
+            {/* Author & freshness (E-E-A-T) */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs sm:text-sm text-zinc-400">
+              <Link href="/about#muhammad-ahmad" className="inline-flex items-center gap-2 hover:text-white transition-colors">
+                <span className="relative w-7 h-7 rounded-full overflow-hidden border border-white/20 bg-zinc-800">
+                  <Image src="/founder-webmavien.png" alt="Muhammad Ahmad" fill sizes="28px" className="object-cover object-top" />
+                </span>
+                By <span className="text-white font-semibold">Muhammad Ahmad</span>
+              </Link>
+              <span className="inline-flex items-center gap-1.5">
+                <BookOpen className="w-4 h-4 text-red-500" /> {posts.length} in-depth guides
+              </span>
+              {lastUpdated && (
+                <span className="inline-flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-red-500" /> Updated {lastUpdated}
+                </span>
+              )}
+            </div>
 
             {/* Live Search Bar */}
             <div className="max-w-xl mx-auto mt-8 relative">
-              <Search className="w-4 h-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-zinc-300 absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none" />
               <input
-                type="text"
+                type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search articles by topic, stack, or keyword..."
+                placeholder="Search guides: MVP, Bubble.io, CRM, Shopify..."
+                aria-label="Search blog guides"
                 className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-sm text-white placeholder-zinc-400 focus:outline-none focus:bg-white/15 focus:border-red-500 transition-all"
               />
             </div>
@@ -100,24 +146,33 @@ export default function BlogListingClient({ posts = [] }) {
 
       {/* 2. CATEGORY FILTER BAR */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 -mt-6 relative z-20">
-        <div className="bg-white rounded-2xl border border-zinc-200/90 p-3 sm:px-5 shadow-md flex items-center justify-between gap-4 overflow-x-auto">
-          <div className="flex items-center gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                  selectedCategory === cat
-                    ? 'bg-red-600 text-white shadow-sm'
-                    : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-950'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+        <div className="bg-white rounded-2xl border border-zinc-200/90 p-3 sm:p-4 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2" role="group" aria-label="Filter guides by topic">
+            {categories.map((cat) => {
+              const active = selectedCategory === cat;
+              const count = cat === 'All' ? posts.length : categoryCounts[cat] || 0;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  aria-pressed={active}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    active
+                      ? 'bg-gradient-to-r from-red-600 via-red-700 to-black text-white shadow-md shadow-red-600/20'
+                      : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-950'
+                  }`}
+                >
+                  {cat === 'All' ? 'All Guides' : cat}
+                  <span className={`min-w-5 px-1.5 py-0.5 rounded-full text-[10px] leading-none ${active ? 'bg-white/20 text-white' : 'bg-white text-zinc-500'}`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
-          <span className="text-xs font-semibold text-zinc-400 whitespace-nowrap hidden md:inline">
-            {filteredPosts.length} {filteredPosts.length === 1 ? 'Article' : 'Articles'}
+          <span className="text-xs font-semibold text-zinc-400 whitespace-nowrap text-center md:text-right">
+            Showing {filteredPosts.length} {filteredPosts.length === 1 ? 'guide' : 'guides'}
           </span>
         </div>
       </section>

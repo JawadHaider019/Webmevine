@@ -177,7 +177,7 @@ export default async function ServicePage({ params }) {
           How We Deliver in 21–28 Days
         </h2>
         <p className="font-['Manrope'] text-gray-600 text-center max-w-2xl mx-auto mb-10">
-          A fixed scope, weekly demos and a clear launch date.{' '}
+          An agreed scope, weekly demos and a clear launch date.{' '}
           <Link href="/process" className="text-red-600 font-semibold hover:underline">See our full process</Link>.
         </p>
         <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
