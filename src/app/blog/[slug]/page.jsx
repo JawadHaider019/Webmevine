@@ -1,47 +1,26 @@
+import { notFound } from 'next/navigation';
 import ArticleClientView from '@/components/ArticleClientView';
-import { getBlogBySlugFromDb, getBlogsFromDb } from '@/lib/blogDb';
+import { getAllBlogs, getBlogBySlug, getRelatedBlogs } from '@/lib/blogs';
 import { parseArticleMarkdown } from '@/utils/articleParser';
 
-export const dynamic = 'force-dynamic';
+// Every post is pre-rendered at build time; unknown slugs return 404.
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return getAllBlogs().map((post) => ({ slug: post.slug }));
+}
 
 export default async function BlogPostPage({ params }) {
-  const resolvedParams = await params;
-  const slug = resolvedParams?.slug;
-
-  const initialPost = await getBlogBySlugFromDb(slug, { includeDrafts: true });
-  const initialParsed = initialPost
-    ? parseArticleMarkdown(initialPost.content || '', { extractLead: true })
-    : null;
-
-  let initialRelated = [];
-  if (initialPost) {
-    const { blogs } = await getBlogsFromDb({
-      status: 'published',
-      excludeSlug: initialPost.slug,
-      includeFallbackIfEmpty: true,
-    });
-
-    // Prioritize same category first, then recent
-    const sameCategory = blogs.filter(
-      (b) =>
-        (b.category || '').toLowerCase() ===
-        (initialPost.category || '').toLowerCase()
-    );
-    const others = blogs.filter(
-      (b) =>
-        (b.category || '').toLowerCase() !==
-        (initialPost.category || '').toLowerCase()
-    );
-
-    initialRelated = [...sameCategory, ...others].slice(0, 3);
-  }
+  const { slug } = await params;
+  const post = getBlogBySlug(slug);
+  if (!post) notFound();
 
   return (
     <ArticleClientView
       slug={slug}
-      initialPost={initialPost}
-      initialParsed={initialParsed}
-      initialRelated={initialRelated}
+      initialPost={post}
+      initialParsed={parseArticleMarkdown(post.content || '', { extractLead: true })}
+      initialRelated={getRelatedBlogs(post, 3)}
     />
   );
 }

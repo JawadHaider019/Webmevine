@@ -1,22 +1,14 @@
 import { NextResponse } from 'next/server';
 import { caseStudies } from '@/data/caseStudies';
-import { getBlogsFromDb } from '@/lib/blogDb';
+import { getAllBlogs } from '@/lib/blogs';
 
 const SITE_URL = 'https://webmavien.com';
 
-export const dynamic = 'force-dynamic';
+// Built once at build time from src/data/blogs.json.
+export const dynamic = 'force-static';
 
 export async function GET() {
-  let blogPosts = [];
-  try {
-    const { blogs } = await getBlogsFromDb({
-      status: 'published',
-      includeFallbackIfEmpty: true,
-    });
-    blogPosts = blogs || [];
-  } catch (err) {
-    console.error('Error fetching blogs for llms.txt:', err);
-  }
+  const blogPosts = getAllBlogs();
 
   const lines = [
     '# WebMavien — Rapid Launch Web, AI & SaaS Engineering Agency',

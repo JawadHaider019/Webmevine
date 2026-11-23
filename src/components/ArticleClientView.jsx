@@ -30,9 +30,9 @@ export default function ArticleClientView({
   initialParsed = null,
   initialRelated = [],
 }) {
-  const [post, setPost] = useState(initialPost);
-  const [relatedPosts, setRelatedPosts] = useState(initialRelated);
-  const [loading, setLoading] = useState(!initialPost);
+  // Post data is pre-rendered from src/data/blogs.json at build time.
+  const post = initialPost;
+  const relatedPosts = initialRelated;
   const [activeHeading, setActiveHeading] = useState('');
   const [copied, setCopied] = useState(false);
   const [helpfulVote, setHelpfulVote] = useState(null);
@@ -52,22 +52,6 @@ export default function ArticleClientView({
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-
-  // Client fallback fetch if not provided by SSR
-  useEffect(() => {
-    if (!slug || initialPost) return;
-    setLoading(true);
-
-    fetch(`/api/blogs/${encodeURIComponent(slug)}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((found) => {
-        if (found) {
-          setPost(found);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [slug, initialPost]);
 
   const parsed = useMemo(() => {
     if (initialParsed && post?.content === initialPost?.content) {
@@ -216,25 +200,6 @@ export default function ArticleClientView({
       setTimeout(() => setCopied(false), 2500);
     }
   };
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-zinc-50 pt-10 pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 animate-pulse space-y-8">
-          <div className="h-[360px] rounded-3xl bg-zinc-200" />
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <div className="lg:col-span-4 h-96 rounded-2xl bg-zinc-200" />
-            <div className="lg:col-span-8 space-y-4">
-              <div className="h-8 bg-zinc-200 rounded w-3/4" />
-              <div className="h-4 bg-zinc-200 rounded w-full" />
-              <div className="h-4 bg-zinc-200 rounded w-5/6" />
-              <div className="h-64 bg-zinc-200 rounded-2xl w-full mt-6" />
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   if (!post) {
     return (

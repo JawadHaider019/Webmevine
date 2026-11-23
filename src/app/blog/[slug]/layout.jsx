@@ -1,14 +1,12 @@
-import { getBlogBySlugFromDb } from '@/lib/blogDb';
+import { getBlogBySlug } from '@/lib/blogs';
 import { parseArticleMarkdown, stripMarkdown } from '@/utils/articleParser';
-
-export const dynamic = 'force-dynamic';
 
 const SITE_URL = 'https://webmavien.com';
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
-  const post = await getBlogBySlugFromDb(slug, { includeDrafts: true });
+  const post = getBlogBySlug(slug);
 
   if (!post) {
     return {
@@ -77,7 +75,7 @@ export async function generateMetadata({ params }) {
 export default async function BlogArticleLayout({ children, params }) {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
-  const post = await getBlogBySlugFromDb(slug, { includeDrafts: true });
+  const post = getBlogBySlug(slug);
 
   let jsonLdGraph = null;
 
