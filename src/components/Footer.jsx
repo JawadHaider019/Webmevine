@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -18,6 +19,9 @@ export default function Footer() {
   const pathname = usePathname();
   const router = useRouter();
   const currentYear = new Date().getFullYear();
+  // Decorative orbs animate only while visible (saves main-thread work off-screen)
+  const orbsRef = useRef(null);
+  const orbsInView = useInView(orbsRef);
 
   const footerLinks = {
     product: [
@@ -328,24 +332,24 @@ export default function Footer() {
         className="relative bg-white overflow-hidden"
       >
         {/* Animated Premium Background Elements */}
-        <div className="absolute inset-0 pointer-events-none">
+        <div ref={orbsRef} className="absolute inset-0 pointer-events-none">
           <motion.div
             variants={backgroundOrbVariants}
-            animate="animate"
+            animate={orbsInView ? "animate" : undefined}
             className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-red-600/5 to-transparent rounded-full blur-3xl"
           />
           <motion.div
             variants={backgroundOrbVariants}
-            animate="animate"
+            animate={orbsInView ? "animate" : undefined}
             custom={1}
             className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-red-600/5 to-transparent rounded-full blur-3xl"
           />
 
           <motion.div
-            animate={{
+            animate={orbsInView ? {
               scale: [1, 1.3, 1],
               opacity: [0.05, 0.1, 0.05],
-            }}
+            } : undefined}
             transition={{
               duration: 7,
               repeat: Infinity,
@@ -355,10 +359,10 @@ export default function Footer() {
             className="absolute top-1/4 right-1/3 w-24 h-24 sm:w-40 sm:h-40 bg-red-600/5 rounded-full blur-2xl"
           />
           <motion.div
-            animate={{
+            animate={orbsInView ? {
               scale: [1.2, 1, 1.2],
               opacity: [0.05, 0.1, 0.05],
-            }}
+            } : undefined}
             transition={{
               duration: 9,
               repeat: Infinity,

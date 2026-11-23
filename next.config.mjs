@@ -8,6 +8,8 @@ const nextConfig = {
   },
   images: {
     formats: ['image/avif', 'image/webp'],
+    // Cache optimized images for 30 days (default is 60s, flagged by PageSpeed)
+    minimumCacheTTL: 2592000,
     remotePatterns: [
       {
         protocol: 'https',

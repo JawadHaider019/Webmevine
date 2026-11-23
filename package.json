@@ -24,11 +24,5 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4"
-  },
-  "browserslist": [
-    "last 2 versions",
-    "> 0.5%",
-    "not dead",
-    "not op_mini all"
-  ]
+  }
 }

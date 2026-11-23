@@ -1,16 +1,11 @@
-"use client";
-
-import dynamic from 'next/dynamic';
+// Server component: the page shell is static HTML; each section hydrates its own interactivity.
 import Hero from "@/components/Hero";
-
-const WebsiteValueSection = dynamic(() => import('@/components/WebsiteValueSection'), { ssr: true });
-const Whyus = dynamic(() => import('@/components/Whyus'), { ssr: true });
-const CaseStudies = dynamic(() => import('@/components/CaseStudies'), { ssr: true });
-const Partners = dynamic(() => import('@/components/Partners'), { ssr: true });
-const HowItWorks = dynamic(() => import('@/components/HowItWorks'), { ssr: true });
-const ProjectEstimatorSection = dynamic(() => import('@/components/ProjectEstimatorSection'), { ssr: true });
-const Testimonials = dynamic(() => import('@/components/Testimonials'), { ssr: true });
-const FAQ = dynamic(() => import('@/components/FAQ'), { ssr: true });
+import WebsiteValueSection from "@/components/WebsiteValueSection";
+import Whyus from "@/components/Whyus";
+import CaseStudies from "@/components/CaseStudies";
+import Partners from "@/components/Partners";
+import Testimonials from "@/components/Testimonials";
+import FAQ from "@/components/FAQ";
 
 export default function Home() {
   return (
@@ -20,8 +15,6 @@ export default function Home() {
       <Whyus />
       <CaseStudies />
       <Partners />
-      <HowItWorks />
-      <ProjectEstimatorSection />
       <Testimonials />
       <FAQ />
     </>
