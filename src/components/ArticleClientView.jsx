@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Calendar,
   Clock,
@@ -599,13 +600,29 @@ export default function ArticleClientView({
               {/* E-E-A-T Author Box */}
               <div className="mt-12 pt-8 border-t border-zinc-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-zinc-50 p-6 rounded-2xl border border-zinc-200/80">
                 <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-zinc-950 text-white font-['Marcellus'] font-bold text-lg flex items-center justify-center shrink-0 shadow-sm border border-red-500/30">
-                    {authorInitials}
+                  <div className="relative w-14 h-14 rounded-2xl bg-zinc-950 text-white font-['Marcellus'] font-bold text-lg flex items-center justify-center shrink-0 shadow-sm border border-red-500/30 overflow-hidden">
+                    {post.authorImage ? (
+                      <Image
+                        src={post.authorImage}
+                        alt={post.author}
+                        fill
+                        sizes="56px"
+                        className="object-cover object-top"
+                      />
+                    ) : (
+                      authorInitials
+                    )}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-['Marcellus'] font-bold text-zinc-950 text-base">
-                        {post.author || 'WebMavien Engineering Team'}
+                        {post.authorUrl ? (
+                          <Link href={post.authorUrl} className="hover:text-red-600 transition-colors">
+                            {post.author}
+                          </Link>
+                        ) : (
+                          post.author || 'WebMavien Engineering Team'
+                        )}
                       </h3>
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-700 text-[10px] font-bold uppercase tracking-wider border border-red-200">
                         <CheckCircle2 className="w-3 h-3" /> Verified Author

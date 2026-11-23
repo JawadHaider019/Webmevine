@@ -31,6 +31,7 @@ const sections = [
       {/* Hero Section */}
       <HeroSection
         badge=" 100+ Successful Launches "
+        kicker="About WebMavien · Web & SaaS Development Agency"
         heading="We Build"
         headingAccent="Momentum"
         subheading="Your rapid launch partner for AI-powered apps"

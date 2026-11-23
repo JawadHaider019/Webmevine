@@ -1,9 +1,9 @@
 const SITE_URL = 'https://webmavien.com';
 
 export const metadata = {
-  title: 'Our 21-Day Website & SaaS MVP Development Process | WebMavien',
+  title: 'Our 21-Day Web & SaaS MVP Development Process',
   description:
-    'Discover WebMavien’s 4-week milestone-driven engineering framework: Week 1 Strategy & Architecture, Week 2 UX Wireframes, Week 3 React or Bubble.io Build, and Week 4 QA & Production Launch.',
+    'How WebMavien launches websites and SaaS MVPs in 21–28 days: strategy, UX wireframes, React or Bubble.io build, then QA and launch. You own all the code.',
   keywords: [
     '21-day website development process',
     '4-week MVP launch framework',
@@ -15,7 +15,7 @@ export const metadata = {
     canonical: `${SITE_URL}/process`,
   },
   openGraph: {
-    title: 'Our 21-Day Website & SaaS MVP Development Process | WebMavien',
+    title: 'Our 21-Day Web & SaaS MVP Development Process',
     description:
       'From idea to live production product in 21–28 days with 100% code ownership and a zero-risk money-back guarantee.',
     url: `${SITE_URL}/process`,

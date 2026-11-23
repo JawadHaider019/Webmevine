@@ -1,9 +1,9 @@
 const SITE_URL = 'https://webmavien.com';
 
 export const metadata = {
-  title: 'About WebMavien | Founder-First React, AI & Bubble.io Development Agency',
+  title: { absolute: 'About WebMavien | Web & SaaS Development Agency' },
   description:
-    'Learn why SaaS founders, e-commerce brands, and startups partner with WebMavien for strategic web engineering, full code ownership, and 21-day production launches.',
+    'Why founders, e-commerce brands and startups choose WebMavien: senior engineers, full code ownership and 21-day launches, led by founder Muhammad Ahmad.',
   keywords: [
     'About WebMavien',
     'founder-first web development agency',
@@ -46,12 +46,26 @@ export default function AboutLayout({ children }) {
         '@id': `${SITE_URL}/about#aboutpage`,
         url: `${SITE_URL}/about`,
         name: 'About WebMavien',
-        mainEntity: {
-          '@type': 'Organization',
-          name: 'WebMavien',
-          url: SITE_URL,
-          logo: `${SITE_URL}/fav.png`,
-        },
+        mainEntity: { '@id': `${SITE_URL}/#organization` },
+        about: { '@id': `${SITE_URL}/about#muhammad-ahmad` },
+      },
+      {
+        '@type': 'Person',
+        '@id': `${SITE_URL}/about#muhammad-ahmad`,
+        name: 'Muhammad Ahmad',
+        jobTitle: 'Founder & CEO',
+        url: `${SITE_URL}/about`,
+        image: `${SITE_URL}/founder-webmavien.png`,
+        description:
+          'Founder of WebMavien with 8+ years of experience building React, Next.js and Bubble.io websites, SaaS MVPs and AI-powered platforms, with 100+ projects delivered.',
+        worksFor: { '@id': `${SITE_URL}/#organization` },
+        knowsAbout: [
+          'React and Next.js development',
+          'Bubble.io development',
+          'SaaS MVP development',
+          'AI integrations',
+          'Conversion-focused web design',
+        ],
       },
     ],
   };

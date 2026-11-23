@@ -25,14 +25,18 @@ export default function Footer() {
 
   const footerLinks = {
     product: [
-      { name: "Why Choose Us", href: "/about" },
-      { name: "How It Works", href: "/process" },
-      { name: "Case Studies", href: "/casestudies" },
-      { name: "FAQ", href: "/#faq" }
+      { name: "MVP Development", href: "/services/mvp-development" },
+      { name: "Bubble.io Development", href: "/services/bubble-io-development" },
+      { name: "AI SaaS Development", href: "/services/ai-saas-development" },
+      { name: "Custom CRM Development", href: "/services/custom-crm-development" },
+      { name: "Next.js E-Commerce", href: "/services/nextjs-ecommerce-development" },
+      { name: "React & Next.js", href: "/services/react-nextjs-development" },
+      { name: "Marketplace Development", href: "/services/marketplace-development" }
     ],
     company: [
       { name: "About", href: "/about" },
       { name: "Services", href: "/services" },
+      { name: "Case Studies", href: "/casestudies" },
       { name: "Process", href: "/process" },
       { name: "Contact", href: "/contact" },
       { name: "Blogs", href: "/blog" }
@@ -449,7 +453,7 @@ export default function Footer() {
                 {/* Product */}
                 <div className="pl-5 md:border-r md:border-gray-200 md:pr-6 pb-6 md:pb-0 border-b border-gray-200 md:border-b-0">
                   <h3 className="font-['Marcellus'] text-gray-900 text-lg font-bold mb-6 pb-2 inline-block border-b-2 border-red-600">
-                    Product
+                    Services
                   </h3>
                   <ul className="space-y-3 ">
                     {footerLinks.product.map((link, i) => (

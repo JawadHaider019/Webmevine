@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { caseStudies } from '@/data/caseStudies';
 import { getAllBlogs } from '@/lib/blogs';
+import { services } from '@/data/services';
 
 const SITE_URL = 'https://webmavien.com';
 
@@ -22,6 +23,9 @@ export async function GET() {
     `- [Case Studies](${SITE_URL}/casestudies): Verified production launches with measurable ROI and founder testimonials.`,
     `- [Engineering Blog](${SITE_URL}/blog): Technical architecture guides, stack comparisons, and founder playbooks.`,
     `- [Contact / Book Free Strategy Call](${SITE_URL}/contact): Schedule a 30-minute architecture & roadmap call (team@webmavien.com | +44 7424 672943).`,
+    '',
+    '## Services',
+    ...services.map((s) => `- [${s.name}](${SITE_URL}/services/${s.slug}): ${s.metaDescription}`),
     '',
     '## Verified Case Studies',
     ...caseStudies.map((study) => {

@@ -118,8 +118,10 @@ export default async function BlogArticleLayout({ children, params }) {
       // 2. Author (Person) Schema
       {
         '@type': 'Person',
-        '@id': `${canonicalUrl}#author`,
+        '@id': post.authorUrl ? `${SITE_URL}${post.authorUrl}` : `${canonicalUrl}#author`,
         name: post.author || 'WebMavien Engineering Team',
+        ...(post.authorUrl ? { url: `${SITE_URL}${post.authorUrl.split('#')[0]}` } : {}),
+        ...(post.authorImage ? { image: `${SITE_URL}${encodeURI(post.authorImage)}` } : {}),
         jobTitle: post.authorRole || 'Senior Full-Stack & AI Architects',
         description:
           post.authorBio ||
@@ -149,7 +151,7 @@ export default async function BlogArticleLayout({ children, params }) {
         datePublished: post.createdAt,
         dateModified: post.updatedAt || post.createdAt,
         author: {
-          '@id': `${canonicalUrl}#author`,
+          '@id': post.authorUrl ? `${SITE_URL}${post.authorUrl}` : `${canonicalUrl}#author`,
         },
         publisher: {
           '@type': 'Organization',

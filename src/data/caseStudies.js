@@ -7,9 +7,9 @@ export const caseStudies = [
     stackGroup: "Bubble.io & No-Code",
     title: "Campuna",
     seoTitle:
-      "Campuna Case Study: Building a German Camping Marketplace on Bubble.io | WebMavien",
+      "Campuna: Bubble.io Camping Marketplace | WebMavien",
     metaDescription:
-      "How WebMavien engineered Campuna, a two-sided German camping marketplace on Bubble.io with 200+ verified host listings, admin approval workflows, and integrated payments.",
+      "How WebMavien built Campuna, a German camping marketplace on Bubble.io with 200+ verified host listings, admin approval workflows and Stripe payments.",
     keywords: [
       "Bubble.io marketplace case study",
       "camping marketplace development",
@@ -80,9 +80,9 @@ export const caseStudies = [
     stackGroup: "AI & SaaS",
     title: "Fintalio",
     seoTitle:
-      "Fintalio Case Study: AI-Powered Skill Assessment & Recruitment SaaS in 4 Weeks | WebMavien",
+      "Fintalio: AI Recruitment SaaS in 4 Weeks | WebMavien",
     metaDescription:
-      "Discover how WebMavien built Fintalio, an AI recruitment SaaS featuring 250+ pre-employment skill assessments, automated CV screening, and 94% hiring accuracy in 4 weeks.",
+      "How WebMavien built Fintalio, an AI skill assessment platform on Bubble.io and OpenAI with 250+ tests, ATS integrations and 94% hiring accuracy.",
     keywords: [
       "AI recruitment SaaS case study",
       "skill assessment platform development",
@@ -148,9 +148,9 @@ export const caseStudies = [
     stackGroup: "AI & SaaS",
     title: "FivUp AI",
     seoTitle:
-      "FivUp AI Case Study: Launching an OpenAI SaaS MVP to 1,000+ Users in 4 Weeks | WebMavien",
+      "FivUp AI: OpenAI SaaS MVP to 1,000+ Users | WebMavien",
     metaDescription:
-      "See how WebMavien built FivUp AI using Bubble.io and OpenAI, scaling to 1,000+ active freelancers with an 85% proposal conversion success rate in just 4 weeks.",
+      "How WebMavien built FivUp AI, a Bubble.io and OpenAI tool that optimises Fiverr and Upwork profiles and proposals for 1,000+ active freelancers.",
     keywords: [
       "OpenAI SaaS MVP case study",
       "AI proposal generator SaaS",
@@ -216,9 +216,9 @@ export const caseStudies = [
     stackGroup: "React & Full-Stack",
     title: "Pure Clay",
     seoTitle:
-      "Pure Clay Case Study: 10x E-Commerce Sales Growth with Custom React & Node.js | WebMavien",
+      "Pure Clay: 10x Sales With a Custom React Store | WebMavien",
     metaDescription:
-      "How WebMavien replaced manual Instagram order handling with a custom React, Node.js, and MongoDB e-commerce store for Pure Clay—driving 10x sales growth and 100% order automation.",
+      "How WebMavien replaced manual Instagram orders with a custom React, Node.js and MongoDB store for Pure Clay, driving 10x sales growth.",
     keywords: [
       "custom React e-commerce case study",
       "Node.js MongoDB e-commerce development",
@@ -287,9 +287,9 @@ export const caseStudies = [
     stackGroup: "Bubble.io & No-Code",
     title: "Zola",
     seoTitle:
-      "Zola Case Study: All-in-One CRM, Review Management & Smart Scheduling SaaS | WebMavien",
+      "Zola: All-in-One Business SaaS on Bubble.io | WebMavien",
     metaDescription:
-      "Learn how WebMavien built Zola, a unified B2B SaaS platform on Bubble.io featuring smart appointment scheduling, automated review management, and 500+ beta users.",
+      "How WebMavien built Zola, an all-in-one business platform on Bubble.io unifying chat, reviews and scheduling for 500+ beta users in 4 weeks.",
     keywords: [
       "Bubble.io CRM SaaS case study",
       "business management SaaS development",
@@ -355,9 +355,9 @@ export const caseStudies = [
     stackGroup: "Bubble.io & No-Code",
     title: "United Mercy",
     seoTitle:
-      "United Mercy Case Study: Transparent Crowdfunding & Digital Wallet Platform | WebMavien",
+      "United Mercy: Crowdfunding & Wallet Platform | WebMavien",
     metaDescription:
-      "How WebMavien built United Mercy on Bubble.io—a transparent crowdfunding platform with instant digital wallet payouts that helped raise $250K+ across 50+ campaigns.",
+      "How WebMavien built United Mercy, a nonprofit crowdfunding platform on Bubble.io with digital wallet transfers and 50+ campaigns launched.",
     keywords: [
       "crowdfunding platform development case study",
       "nonprofit donation platform Bubble.io",

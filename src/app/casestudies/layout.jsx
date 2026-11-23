@@ -1,11 +1,10 @@
-import { caseStudies } from '@/data/caseStudies';
 
 const SITE_URL = 'https://webmavien.com';
 
 export const metadata = {
-  title: 'Case Studies & Client Launch Stories | WebMavien Web Development Agency',
+  title: 'Web, SaaS & E-Commerce Development Case Studies',
   description:
-    'Explore real-world web development, SaaS MVP, e-commerce, and AI case studies delivered by WebMavien in 21–28 days using React, Next.js, Node.js, and Bubble.io.',
+    'Real web, SaaS MVP, e-commerce and AI case studies delivered by WebMavien in 21–28 days with React, Next.js, Node.js and Bubble.io, with measurable results.',
   keywords: [
     'WebMavien case studies',
     'web development agency portfolio',
@@ -33,61 +32,7 @@ export const metadata = {
   },
 };
 
+// Structured data is rendered by page.jsx so child pages do not inherit it.
 export default function CaseStudiesLayout({ children }) {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'BreadcrumbList',
-        '@id': `${SITE_URL}/casestudies#breadcrumb`,
-        itemListElement: [
-          {
-            '@type': 'ListItem',
-            position: 1,
-            name: 'Home',
-            item: SITE_URL,
-          },
-          {
-            '@type': 'ListItem',
-            position: 2,
-            name: 'Case Studies',
-            item: `${SITE_URL}/casestudies`,
-          },
-        ],
-      },
-      {
-        '@type': 'CollectionPage',
-        '@id': `${SITE_URL}/casestudies#collection`,
-        url: `${SITE_URL}/casestudies`,
-        name: 'WebMavien Client Case Studies & Launch Stories',
-        description:
-          'Verified client case studies showcasing custom React, Node.js, Bubble.io, and AI SaaS platforms delivered by WebMavien.',
-        isPartOf: {
-          '@type': 'WebSite',
-          name: 'WebMavien',
-          url: SITE_URL,
-        },
-        mainEntity: {
-          '@type': 'ItemList',
-          itemListElement: caseStudies.map((study, index) => ({
-            '@type': 'ListItem',
-            position: index + 1,
-            url: `${SITE_URL}/casestudies/${study.slug}`,
-            name: `${study.title} — ${study.category}`,
-            description: study.shortDescription,
-          })),
-        },
-      },
-    ],
-  };
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      {children}
-    </>
-  );
+  return children;
 }

@@ -2,6 +2,13 @@ import { caseStudies } from '@/data/caseStudies';
 
 const SITE_URL = 'https://webmavien.com';
 
+// Pre-render every case study at build time; unknown slugs return 404.
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return caseStudies.map((study) => ({ slug: study.slug }));
+}
+
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;

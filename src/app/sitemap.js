@@ -1,5 +1,6 @@
 import { getAllBlogs } from '@/lib/blogs';
 import { caseStudies } from '@/data/caseStudies';
+import { services } from '@/data/services';
 
 const SITE_URL = 'https://webmavien.com';
 
@@ -63,5 +64,12 @@ export default async function sitemap() {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...caseStudyRoutes, ...blogRoutes];
+  const serviceRoutes = services.map((service) => ({
+    url: `${SITE_URL}/services/${service.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.9,
+  }));
+
+  return [...staticRoutes, ...serviceRoutes, ...caseStudyRoutes, ...blogRoutes];
 }

@@ -9,6 +9,8 @@ export default function HeroSection({
   // Content Props
   heading = "Who we are",
   headingAccent = "",
+  // Optional keyword line rendered inside the <h1> above the display heading (for SEO)
+  kicker = "",
   subheading = "We're a leader in No Code digital transformation",
   ctaText = "Book a Free Call",
   ctaLink = "/contact",
@@ -102,6 +104,11 @@ export default function HeroSection({
             variants={itemVariants}
             className={`font-['Marcellus'] text-5xl md:text-6xl lg:text-7xl ${textColor} mb-6`}
           >
+            {kicker && (
+              <span className="block font-['Manrope'] text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-white/70 mb-5">
+                {kicker}
+              </span>
+            )}
             {heading} {headingAccent && (
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-100 via-red-200 to-red-400">
                 {headingAccent}

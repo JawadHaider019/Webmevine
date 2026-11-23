@@ -1,54 +1,63 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import SectionHeader from "./SectionHeader";
 
-export default function FAQ() {
-  const [openItems, setOpenItems] = useState([1]); // First item open by default
+// Homepage questions (default). Other pages pass their own `items`.
+const DEFAULT_FAQ_ITEMS = [
+  {
+    id: 1,
+    question: "How does the 21-day website development process work?",
+    answer: "Our 21-day framework is structured and milestone-driven. Week 1 focuses on strategy and conversion architecture. Week 2 covers UX design and wireframes. Week 3 is dedicated to custom React or Bubble.io development. Week 4 includes QA testing, performance optimization, and launch. No delays. No guesswork."
+  },
+  {
+    id: 2,
+    question: "Do you build custom-coded websites or use templates?",
+    answer: "We specialize in custom website development. Every project is either custom-coded in React JS with scalable architecture or strategically built in Bubble.io for SaaS MVPs. No templates. No shortcuts."
+  },
+  {
+    id: 3,
+    question: "Are you a React JS development company or a Bubble.io agency?",
+    answer: "We are both. WebMavien is a React JS development company and a Bubble.io development agency. We choose the right technology based on your business model, scalability needs, and growth roadmap."
+  },
+  {
+    id: 4,
+    question: "Do you build SaaS and e-commerce platforms?",
+    answer: "Yes. We specialize in SaaS website development and high-performance e-commerce website development. From MVP validation to scalable revenue-driven platforms, we build for growth and conversions."
+  },
+  {
+    id: 5,
+    question: "What if I'm not satisfied with the final result?",
+    answer: "We operate with a zero-risk guarantee. If you're not satisfied after project completion, you get your money back. We remove hesitation so you can move forward with confidence."
+  },
+  {
+    id: 6,
+    question: "How do I get a quote for a custom website or SaaS MVP?",
+    answer: "Every project is tailored to your scope, architecture, and integrations. Book a free strategy call with our engineering team to get a custom roadmap and scope for your build."
+  },
+  {
+    id: 7,
+    question: "Do you offer support after launch?",
+    answer: "Yes. We provide post-launch support, optimization, and performance monitoring. We don’t disappear after deployment. We build long-term partnerships."
+  },
+  {
+    id: 8,
+    question: "Is WebMavien a good fit for small businesses?",
+    answer: "We work with serious small businesses, SaaS founders, and e-commerce brands focused on long-term growth. If you're looking for the cheapest option, we’re not the right fit. If you're building for scale, we are."
+  }
+];
 
-  const faqItems = [
-    {
-      id: 1,
-      question: "How does the 21-day website development process work?",
-      answer: "Our 21-day framework is structured and milestone-driven. Week 1 focuses on strategy and conversion architecture. Week 2 covers UX design and wireframes. Week 3 is dedicated to custom React or Bubble.io development. Week 4 includes QA testing, performance optimization, and launch. No delays. No guesswork."
-    },
-    {
-      id: 2,
-      question: "Do you build custom-coded websites or use templates?",
-      answer: "We specialize in custom website development. Every project is either custom-coded in React JS with scalable architecture or strategically built in Bubble.io for SaaS MVPs. No templates. No shortcuts."
-    },
-    {
-      id: 3,
-      question: "Are you a React JS development company or a Bubble.io agency?",
-      answer: "We are both. WebMavien is a React JS development company and a Bubble.io development agency. We choose the right technology based on your business model, scalability needs, and growth roadmap."
-    },
-    {
-      id: 4,
-      question: "Do you build SaaS and e-commerce platforms?",
-      answer: "Yes. We specialize in SaaS website development and high-performance e-commerce website development. From MVP validation to scalable revenue-driven platforms, we build for growth and conversions."
-    },
-    {
-      id: 5,
-      question: "What if I'm not satisfied with the final result?",
-      answer: "We operate with a zero-risk guarantee. If you're not satisfied after project completion, you get your money back. We remove hesitation so you can move forward with confidence."
-    },
-    {
-      id: 6,
-      question: "How do I get a quote for a custom website or SaaS MVP?",
-      answer: "Every project is tailored to your scope, architecture, and integrations. Book a free strategy call with our engineering team to get a custom roadmap and scope for your build."
-    },
-    {
-      id: 7,
-      question: "Do you offer support after launch?",
-      answer: "Yes. We provide post-launch support, optimization, and performance monitoring. We don’t disappear after deployment. We build long-term partnerships."
-    },
-    {
-      id: 8,
-      question: "Is WebMavien a good fit for small businesses?",
-      answer: "We work with serious small businesses, SaaS founders, and e-commerce brands focused on long-term growth. If you're looking for the cheapest option, we’re not the right fit. If you're building for scale, we are."
-    }
-  ];
+// Reusable FAQ section with FAQPage JSON-LD for Google rich results and AI answers.
+export default function FAQ({
+  items = DEFAULT_FAQ_ITEMS,
+  smallHeading = "Got Questions?",
+  heading = "Frequently Asked Questions",
+  description = "Everything you need to know about working with us",
+  sectionId = "faq",
+}) {
+  const [openItems, setOpenItems] = useState([items[0]?.id]); // First item open by default
+  const faqItems = items;
 
   // Toggle FAQ item
   const toggleItem = (id) => {
@@ -60,7 +69,7 @@ export default function FAQ() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden" id="faq">
+    <section className="py-16 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden" id={sectionId}>
       {/* Luxury Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 right-0 w-96 h-96 bg-gradient-to-l from-red-600/5 via-amber-200/5 to-transparent rounded-full blur-3xl" />
@@ -84,9 +93,9 @@ export default function FAQ() {
           transition={{ duration: 0.8 }}
         >
           <SectionHeader
-            smallHeading="Got Questions?"
-            heading="Frequently Asked Questions"
-            description="Everything you need to know about working with us"
+            smallHeading={smallHeading}
+            heading={heading}
+            description={description}
             gradientHeading={true}
             gradientFrom="from-black"
             gradientVia="via-red-600"
@@ -127,7 +136,7 @@ export default function FAQ() {
                     onClick={() => toggleItem(item.id)}
                     className="w-full text-left p-6 pr-12 focus:outline-none"
                     aria-expanded={isOpen}
-                    aria-controls={`faq-answer-${item.id}`}
+                    aria-controls={`${sectionId}-answer-${item.id}`}
                   >
                     <div className="flex items-center justify-between">
                       {/* Question with number */}
@@ -160,7 +169,7 @@ export default function FAQ() {
 
                   {/* Answer - kept in SSR DOM for full Google indexability */}
                   <div
-                    id={`faq-answer-${item.id}`}
+                    id={`${sectionId}-answer-${item.id}`}
                     className={`grid transition-all duration-300 ease-in-out ${
                       isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
                     }`}

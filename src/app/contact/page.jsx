@@ -9,6 +9,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { useRef, useCallback, useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import CalendlyEmbed from "@/components/CalendlyEmbed";
+import FAQ from "@/components/FAQ";
 import { caseStudies } from "@/data/caseStudies";
 
 const GOAL_LABELS = {
@@ -109,6 +110,7 @@ export default function ContactPage() {
       </Suspense>
       {/* Hero Section */}
       <HeroSection
+        kicker="Contact WebMavien · Book a Free Strategy Call"
         heading="Let's Build"
         headingAccent="Something Great"
         subheading="Book a free 30-minute discovery call—or send a 60-second project brief—to get a custom architecture roadmap and 21-day delivery plan."
@@ -448,9 +450,50 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      <FAQ
+        items={CONTACT_FAQ}
+        smallHeading="Before You Book"
+        heading="Strategy Call FAQ"
+        description="What to expect when you contact WebMavien"
+        sectionId="contact-faq"
+      />
     </div>
   );
 }
+
+const CONTACT_FAQ = [
+  {
+    id: 1,
+    question: "What happens on the free strategy call?",
+    answer: "In 30 minutes we discuss your goals, customers and must-have features, recommend the right stack (React, Next.js or Bubble.io), and outline a launch roadmap and timeline for your project.",
+  },
+  {
+    id: 2,
+    question: "Is the strategy call really free, with no obligation?",
+    answer: "Yes. The call is free and there is no obligation to work with us. You leave with clear next steps either way.",
+  },
+  {
+    id: 3,
+    question: "How do I get a quote for my project?",
+    answer: "Every project is scoped to your goals, features and integrations. After the strategy call we send a written scope, timeline and tailored quote.",
+  },
+  {
+    id: 4,
+    question: "What should I prepare before the call?",
+    answer: "A short description of your idea or business, who your customers are, the main features you need and any websites or apps you like. A rough brief is enough; we help refine it.",
+  },
+  {
+    id: 5,
+    question: "Which countries do you work with?",
+    answer: "We work with founders and businesses worldwide, mainly in the United Kingdom, United States, United Arab Emirates and Germany, and schedule calls in your time zone.",
+  },
+  {
+    id: 6,
+    question: "Can I contact you on WhatsApp or by email instead?",
+    answer: "Yes. You can message us on WhatsApp at +44 7424 672943 or email team@webmavien.com during business hours, Monday to Friday.",
+  },
+];
 
 /* Contact Card Component */
 function ContactCard({ icon, title, text, link, delay = 0 }) {

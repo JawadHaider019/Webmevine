@@ -21,10 +21,10 @@ const manrope = Manrope({
 export const metadata = {
   metadataBase: new URL("https://webmavien.com"),
   title: {
-    default: "WebMavien | Website in 21 days Or Money Back",
+    default: "Web & SaaS Development Agency | 21-Day Launch | WebMavien",
     template: "%s | WebMavien"
   },
-  description: "WebMavien is a premier web development agency specializing in AI-powered MVPs, SaaS platforms, and conversion-optimized websites. Launch your vision in 21 days.",
+  description: "Web and SaaS development agency building custom websites, AI MVPs and Bubble.io apps in 21 days, or your money back. Book a free strategy call.",
   keywords: ["Web Development", "AI Solutions", "SaaS Development", "MVP Builder", "WebMavien", "Bubble.io", "React JS"],
   authors: [{ name: "WebMavien Team" }],
   creator: "WebMavien",
@@ -45,7 +45,7 @@ export const metadata = {
     apple: "/fav.png",
   },
   openGraph: {
-    title: "WebMavien | Website in 21 days Or Money Back",
+    title: "Web & SaaS Development Agency | 21-Day Launch | WebMavien",
     description: "Launch your AI-powered MVP or SaaS in just 21 days with WebMavien's expert development team.",
     url: "https://webmavien.com",
     siteName: "WebMavien",
@@ -60,7 +60,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "WebMavien | Website in 21 days Or Money Back",
+    title: "Web & SaaS Development Agency | 21-Day Launch | WebMavien",
     description: "Launch your AI-powered MVP or SaaS in just 21 days with WebMavien's expert development team.",
     images: ["/fav.png"],
   },
@@ -116,7 +116,14 @@ export default function RootLayout({ children }) {
                   "@id": "https://webmavien.com/#organization",
                   "name": "WebMavien",
                   "url": "https://webmavien.com",
-                  "logo": "https://webmavien.com/fav.png",
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://webmavien.com/logo.png",
+                    "width": 2000,
+                    "height": 671
+                  },
+                  "image": "https://webmavien.com/logo.png",
+                  "founder": { "@id": "https://webmavien.com/about#muhammad-ahmad" },
                   "email": "team@webmavien.com",
                   "telephone": "+44 7424 672943",
                   "sameAs": [

@@ -1,7 +1,7 @@
 const SITE_URL = 'https://webmavien.com';
 
 export const metadata = {
-  title: 'Contact WebMavien | Book a Free 30-Minute Strategy Call',
+  title: { absolute: 'Contact WebMavien | Book a Free Strategy Call' },
   description:
     'Ready to launch your website, AI SaaS MVP, or marketplace in 21 days? Book a free 30-minute discovery and architecture consultation with WebMavien.',
   keywords: [

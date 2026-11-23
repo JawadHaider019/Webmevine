@@ -55,7 +55,8 @@ const FounderSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-r from-black via-red-600 to-black"
+      id="muhammad-ahmad"
+      className="scroll-mt-20 relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-r from-black via-red-600 to-black"
     >
       {/* Background Effects */}
       <div className="absolute inset-0">
@@ -164,8 +165,8 @@ const FounderSection = () => {
 
                 <div className="relative w-full h-full rounded-xl overflow-hidden">
                   <Image
-                    src="/Founder image.png"
-                    alt="Muhammad Ahmad - Founder & CEO"
+                    src="/founder-webmavien.png"
+                    alt="Muhammad Ahmad - Founder & CEO at WebMavien"
                     fill
                     className={`object-contain transition-all duration-700 ${imageLoaded ? 'scale-100 blur-0' : 'scale-105 blur-sm'
                       } group-hover:scale-105`}

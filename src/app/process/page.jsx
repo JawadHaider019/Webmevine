@@ -14,6 +14,7 @@ import {
   FiClock
 } from "react-icons/fi";
 import HowItWorks from "@/components/HowItWorks";
+import FAQ from "@/components/FAQ";
 import GlowingButton from "@/components/GlowingButton";
 
 export default function ProcessPage() {
@@ -83,6 +84,7 @@ export default function ProcessPage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <HeroSection
+        kicker="Our 21-Day Web & SaaS MVP Development Process"
         heading="From Idea to"
         headingAccent="Launch"
         subheading="We turn your vision into a live product in just 21 days with complete transparency every step of the way."
@@ -416,6 +418,57 @@ export default function ProcessPage() {
           </div>
         </div>
       </section>
+
+      <FAQ
+        items={PROCESS_FAQ}
+        smallHeading="Process FAQ"
+        heading="Questions About Our 21-Day Process"
+        description="How we plan, build and launch your website or SaaS MVP"
+        sectionId="process-faq"
+      />
     </div>
   );
 }
+
+const PROCESS_FAQ = [
+  {
+    id: 1,
+    question: "How long does it take to build a website or SaaS MVP with WebMavien?",
+    answer: "Most focused websites and SaaS MVPs launch in 21 days. Larger scopes with several integrations or complex data usually take 21 to 28 days. The exact timeline is agreed in writing before the build starts.",
+  },
+  {
+    id: 2,
+    question: "What happens in each week of the 21-day process?",
+    answer: "Week 1 covers strategy, goals and conversion planning. Week 2 covers UX design and wireframes. Week 3 is the React, Next.js or Bubble.io build. Week 4 is QA testing, performance optimisation and launch.",
+  },
+  {
+    id: 3,
+    question: "What do you need from me to get started?",
+    answer: "A short description of your customers and the problem you solve, the main thing a user must be able to do in the product, any brand assets you already have, and examples of websites or apps you like.",
+  },
+  {
+    id: 4,
+    question: "How involved will I be during the build?",
+    answer: "You review progress at the end of each week and give feedback on designs and working builds. Most founders spend an hour or two per week with us; we handle everything else.",
+  },
+  {
+    id: 5,
+    question: "What happens if my scope changes during the project?",
+    answer: "We protect your launch date by keeping the agreed scope fixed. New ideas go on a list for after launch, or are planned as a separate milestone if they are essential.",
+  },
+  {
+    id: 6,
+    question: "Do I own the code and designs after launch?",
+    answer: "Yes. You receive full ownership of the source code, design files, database and every account we set up for your project.",
+  },
+  {
+    id: 7,
+    question: "What does the money-back guarantee cover?",
+    answer: "If you are not satisfied after project completion, you get your money back. The guarantee exists so you can start with confidence.",
+  },
+  {
+    id: 8,
+    question: "Do you provide support after launch?",
+    answer: "Yes. Every project includes post-launch support for fixes and adjustments, and we offer ongoing improvement sprints when you are ready to add new features.",
+  },
+];
